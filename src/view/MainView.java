@@ -59,6 +59,10 @@ public class MainView extends GameFrame {
 	public void removeDrawable(Drawable d) {
 		drawables.remove(d);
 	}
+
+	public void addUpdatable(BulletView bv) {
+		this.updatables.add(bv);
+	}
 	
 	@Override
 	public void handleWindowInit() {
@@ -120,5 +124,4 @@ public class MainView extends GameFrame {
 	public void handleKeyUp(int keyCode) {
 		this.controller.handleKeyUp(keyCode);
 	}
-
 }

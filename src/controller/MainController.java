@@ -5,6 +5,7 @@ import java.awt.event.KeyListener;
 
 import model.Bullet;
 import model.Model;
+import view.BulletView;
 import view.MainView;
 
 public class MainController {
@@ -27,6 +28,7 @@ public class MainController {
 
 	public void handleKeyDown(int keyCode) {
 		Bullet b;
+		BulletView bv;
 		switch(keyCode) {
 		case KeyEvent.VK_UP:
 			System.out.println("shoot");
@@ -36,6 +38,9 @@ public class MainController {
 				break;
 			}
 			model.addUpdatable(b);
+			bv = new BulletView(b);
+			view.addDrawable(bv);
+			view.addUpdatable(bv);
 			break;
 		case KeyEvent.VK_LEFT:
 			model.getBottomPlayer().moveLeft();
@@ -50,6 +55,10 @@ public class MainController {
 				break;
 			}
 			model.addUpdatable(b);
+			bv = new BulletView(b);
+			view.addDrawable(bv);
+			view.addUpdatable(bv);
+			
 			break;
 		case KeyEvent.VK_A:
 			model.getTopPlayer().moveLeft();
