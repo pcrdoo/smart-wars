@@ -19,4 +19,9 @@ public class Model {
 	public Player getBottomPlayer() {
 		return bottomPlayer;
 	}
+	
+	public void update(double dt) {
+		topPlayer.update(dt);
+		bottomPlayer.update(dt);
+	}
 }
