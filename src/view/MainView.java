@@ -4,8 +4,10 @@ import java.util.ArrayList;
 
 import controller.MainController;
 import main.Constants;
+import model.Bullet;
 import model.Model;
 import rafgfxlib.GameFrame;
+import util.Vector2D;
 
 public class MainView extends GameFrame {
 	private BackdropView backdrop;
@@ -16,6 +18,8 @@ public class MainView extends GameFrame {
 	
 	private Model model;
 	private MainController controller;
+	
+	private Bullet b;
 	
 	public MainView() {
 		super("Smart Wars", Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
@@ -35,9 +39,14 @@ public class MainView extends GameFrame {
 		drawables.add(bottomPlayerView);
 		updatables.add(bottomPlayerView);
 
+		Bullet b = new Bullet(new Vector2D(200,0), new Vector2D(0, 50));
+		BulletView bv = new BulletView(b);
+		this.b=b;
 		PlayerView topPlayerView = new PlayerView(model.getTopPlayer(), true);
 		drawables.add(topPlayerView);
 		updatables.add(topPlayerView);
+		drawables.add(bv);
+		updatables.add(bv);
 		
 		setUpdateRate(60);
 		startThread();
@@ -75,6 +84,7 @@ public class MainView extends GameFrame {
 		long currentTime = System.nanoTime();
 		double dt = (currentTime - lastUpdateTime) / 1000000000.0;
 		
+		b.update(dt);
 		model.update(dt);
 		for (Updatable u : updatables) {
 			u.update(dt);
