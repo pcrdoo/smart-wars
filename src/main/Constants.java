@@ -9,12 +9,13 @@ public class Constants {
 	public static final double BACKGROUND_ALPHA_PER_SECOND = 0.1f;
 	public static final double STARS_ALPHA_PER_SECOND = 0.2f;
 	
+	public static final int PLAYER_ANIMATION_FPS = 5;
 	
 	// OGI
 	
 	// Player
 	public static double PLAYER_SPEED = 10;
-	public static double PLAYER_RADIUS = 10;
+	public static double PLAYER_RADIUS = 20;
 	public static double PLAYER_HEALTH = 10;
 	
 	// Bullet
