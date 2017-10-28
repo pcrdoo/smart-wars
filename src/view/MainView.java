@@ -31,9 +31,13 @@ public class MainView extends GameFrame {
 		this.model = new Model();
 		this.controller = new MainController(this);
 		
-		PlayerView bottomPlayerView = new PlayerView(model.getBottomPlayer());
+		PlayerView bottomPlayerView = new PlayerView(model.getBottomPlayer(), false);
 		drawables.add(bottomPlayerView);
 		updatables.add(bottomPlayerView);
+
+		PlayerView topPlayerView = new PlayerView(model.getTopPlayer(), true);
+		drawables.add(topPlayerView);
+		updatables.add(topPlayerView);
 		
 		setUpdateRate(60);
 		startThread();
