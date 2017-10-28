@@ -2,6 +2,7 @@ package view;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import model.Model;
 import rafgfxlib.GameFrame;
 
 public class MainView extends GameFrame {
@@ -10,6 +11,8 @@ public class MainView extends GameFrame {
 	
 	private ArrayList<Drawable> drawables;
 	private ArrayList<Updatable> updatables;
+	
+	private Model model;
 	
 	public MainView() {
 		super("Smart Wars", Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
@@ -20,6 +23,8 @@ public class MainView extends GameFrame {
 		lastUpdateTime = System.nanoTime();
 		backdrop = new BackdropView();
 		drawables.add(backdrop);
+		
+		this.model = new Model();
 		
 		setUpdateRate(60);
 		startThread();
