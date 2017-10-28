@@ -22,40 +22,28 @@ public class MainController {
 	public MainController(MainView view, Model model) {
 		this.view = view;
 		this.model = model;
-		
-		this.view.addKeyListener(new SKeyListener());
 	}
-	
-	class SKeyListener implements KeyListener {
 
-		@Override
-		public void keyPressed(KeyEvent e) {
-			switch(e.getKeyCode()) {
-			case KeyEvent.VK_LEFT:
-				model.getBottomPlayer().moveLeft();
-				break;
-			case KeyEvent.VK_RIGHT:
-				model.getBottomPlayer().moveRight();
-				break;
-			}
+	public void handleKeyDown(int keyCode) {
+		System.out.println(keyCode);
+		switch(keyCode) {
+		case KeyEvent.VK_LEFT:
+			model.getBottomPlayer().moveLeft();
+			break;
+		case KeyEvent.VK_RIGHT:
+			model.getBottomPlayer().moveRight();
+			break;
 		}
+	}
 
-		@Override
-		public void keyReleased(KeyEvent e) {
-			switch(e.getKeyCode()) {
-			case KeyEvent.VK_LEFT:
-				model.getBottomPlayer().stop();
-				break;
-			case KeyEvent.VK_RIGHT:
-				model.getBottomPlayer().stop();
-				break;
-			}
-		}
-
-		@Override
-		public void keyTyped(KeyEvent e) {
-			// TODO Auto-generated method stub
-			
+	public void handleKeyUp(int keyCode) {
+		switch(keyCode) {
+		case KeyEvent.VK_LEFT:
+			model.getBottomPlayer().stop();
+			break;
+		case KeyEvent.VK_RIGHT:
+			model.getBottomPlayer().stop();
+			break;
 		}
 	}
 }

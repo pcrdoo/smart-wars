@@ -101,14 +101,12 @@ public class MainView extends GameFrame {
 
 	@Override
 	public void handleKeyDown(int keyCode) {
-		// TODO Auto-generated method stub
-		
+		this.controller.handleKeyDown(keyCode);
 	}
 
 	@Override
 	public void handleKeyUp(int keyCode) {
-		// TODO Auto-generated method stub
-		
+		this.controller.handleKeyUp(keyCode);
 	}
 
 }
