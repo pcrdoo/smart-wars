@@ -29,7 +29,7 @@ public class MainView extends GameFrame {
 		updatables.add(backdrop);
 		
 		this.model = new Model();
-		this.controller = new MainController(this);
+		this.controller = new MainController(this, this.model);
 		
 		PlayerView bottomPlayerView = new PlayerView(model.getBottomPlayer());
 		drawables.add(bottomPlayerView);

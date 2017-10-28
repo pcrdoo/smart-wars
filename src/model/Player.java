@@ -24,4 +24,16 @@ public class Player extends RoundEntity {
 	public boolean isAlive() {
 		return this.health > 0;
 	}
+
+	public void moveLeft() {
+		this.setVelocity(new Vector2D(0, -speed));
+	}
+
+	public void moveRight() {
+		this.setVelocity(new Vector2D(0, +speed));
+	}
+	
+	public void stop() {
+		this.setVelocity(new Vector2D(0, 0));
+	}
 }
