@@ -74,6 +74,8 @@ public class MainView extends GameFrame {
 	public void update() {
 		long currentTime = System.nanoTime();
 		double dt = (currentTime - lastUpdateTime) / 1000000000.0;
+		
+		model.update(dt);
 		for (Updatable u : updatables) {
 			u.update(dt);
 		}
