@@ -11,9 +11,9 @@ public class Constants {
 	
 	public static final int PLAYER_ANIMATION_FPS = 24;
 	
-	public static final int MAX_BULLET_FIRE_PARTICLES = 20;
-	public static final double BULLET_FIRE_PARTICLE_LIFETIME = 0.2;
-	public static final double BULLET_FIRE_PARTICLE_SPAWN_INTERVAL = 0.1;
+	public static final int MAX_BULLET_FIRE_PARTICLES = 40;
+	public static final double BULLET_FIRE_PARTICLE_LIFETIME = 1.0;
+	public static final double BULLET_FIRE_PARTICLE_SPAWN_INTERVAL = 0.05;
 	
 	// OGI
 	// Player

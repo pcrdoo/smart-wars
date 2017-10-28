@@ -54,7 +54,7 @@ public class BulletView implements Drawable, Updatable {
 		time += dt;
 		if (time > Constants.BULLET_FIRE_PARTICLE_SPAWN_INTERVAL) {
 			time = 0.0;
-			spawnParticle((int)bullet.getPosition().getdX() + (int)(Math.random() * 10.0 - 5), (int)bullet.getPosition().getdY());
+			spawnParticle((int)bullet.getPosition().getdX() + (int)(Math.random() * 10.0 - 5) - bulletSprite.getWidth()/2, (int)bullet.getPosition().getdY());
 		}
 		
 		for (int i = 0; i < Constants.MAX_BULLET_FIRE_PARTICLES; i++) {
