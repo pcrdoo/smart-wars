@@ -1,8 +1,15 @@
-package model;
-
+package main;
 import util.Vector2D;
 
 public class Constants {
+	// DAVID
+	public static final int WINDOW_WIDTH = 1200;
+	public static final int WINDOW_HEIGHT = 800;
+	
+	
+	
+	// OGI
+	
 	// Player
 	public static double PLAYER_SPEED = 10;
 	public static double PLAYER_RADIUS = 10;

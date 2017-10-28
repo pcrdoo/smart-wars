@@ -2,7 +2,7 @@ package view;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import Constants;
+import main.Constants;
 import model.Model;
 import rafgfxlib.GameFrame;
 
