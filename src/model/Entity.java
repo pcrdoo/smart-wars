@@ -1,8 +1,9 @@
 package model;
 
 import util.Vector2D;
+import view.Updatable;
 
-public class Entity {
+public class Entity implements Updatable {
 	protected Vector2D position;
 	protected Vector2D velocity; // pixels per second
 
@@ -19,7 +20,7 @@ public class Entity {
 	public void update(double dt) {
 		position = position.add(velocity.scale(dt));
 
-		System.out.println(this.position.getdX());
+//		System.out.println(this.position.getdX());
 	}
 	
 	public boolean hitTest(Vector2D point) {

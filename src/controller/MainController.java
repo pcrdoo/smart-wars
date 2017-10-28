@@ -3,6 +3,7 @@ package controller;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import model.Bullet;
 import model.Model;
 import view.MainView;
 
@@ -26,12 +27,27 @@ public class MainController {
 
 	public void handleKeyDown(int keyCode) {
 		System.out.println(keyCode);
+		Bullet b;
 		switch(keyCode) {
+		case KeyEvent.VK_UP:
+			b = model.getBottomPlayer().shoot();
+			model.addUpdatable(b);
+			break;
 		case KeyEvent.VK_LEFT:
 			model.getBottomPlayer().moveLeft();
 			break;
 		case KeyEvent.VK_RIGHT:
 			model.getBottomPlayer().moveRight();
+			break;
+		case KeyEvent.VK_W:
+			b = model.getTopPlayer().shoot();
+			model.addUpdatable(b);
+			break;
+		case KeyEvent.VK_A:
+			model.getTopPlayer().moveLeft();
+			break;
+		case KeyEvent.VK_D:
+			model.getTopPlayer().moveRight();
 			break;
 		}
 	}
@@ -43,6 +59,12 @@ public class MainController {
 			break;
 		case KeyEvent.VK_RIGHT:
 			model.getBottomPlayer().stop();
+			break;
+		case KeyEvent.VK_A:
+			model.getTopPlayer().stop();
+			break;
+		case KeyEvent.VK_D:
+			model.getTopPlayer().stop();
 			break;
 		}
 	}

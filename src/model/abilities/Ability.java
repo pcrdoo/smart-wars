@@ -13,7 +13,14 @@ public class Ability {
 		return this.cooldown == 0;
 	}
 	
-	public void fire() {
+	public boolean isBusy() {
+		return this.cooldown > 0;
+	}
+	
+	public boolean fire() {
+		if(this.isBusy())
+			return false;
 		this.cooldown = this.maxCooldown;
+		return true;
 	}
 }

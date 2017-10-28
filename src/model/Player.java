@@ -11,14 +11,16 @@ public class Player extends RoundEntity {
 	private int health;
 	private int maxHealth;
 	private double speed;
-	private ArrayList<Ability> abilities;
+//	private ArrayList<Ability> abilities;
+	private Shoot shoot;
 	
 	public Player(Vector2D startPosition) {
 		super(startPosition, Constants.PLAYER_RADIUS);
 		this.health = this.maxHealth = Constants.PLAYER_HEALTH;
 		this.speed = Constants.PLAYER_SPEED;
-		this.abilities = new ArrayList<Ability>();
-		this.abilities.add(new Shoot());
+//		this.abilities = new ArrayList<Ability>();
+//		this.abilities.add(new Shoot());
+		this.shoot = new Shoot();
 		
 		System.out.println(this.position.getdX());
 	}
@@ -37,5 +39,9 @@ public class Player extends RoundEntity {
 	
 	public void stop() {
 		this.setVelocity(new Vector2D(0, 0));
+	}
+
+	public Bullet shoot() {
+		return this.shoot.fire(this.position);
 	}
 }
