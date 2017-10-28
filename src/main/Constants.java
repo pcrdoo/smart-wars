@@ -6,12 +6,15 @@ public class Constants {
 	public static final int WINDOW_WIDTH = 1200;
 	public static final int WINDOW_HEIGHT = 800;
 	
+	public static final double BACKGROUND_ALPHA_PER_SECOND = 0.1f;
+	public static final double STARS_ALPHA_PER_SECOND = 0.2f;
+	
 	// OGI
 	// Player
 	public static Vector2D TOP_PLAYER_START_POS = new Vector2D(10, WINDOW_WIDTH / 2);
 	public static Vector2D BOTTOM_PLAYER_START_POS = new Vector2D(WINDOW_HEIGHT - 10, WINDOW_WIDTH / 2);
 	public static double PLAYER_SPEED = 10;
-	public static double PLAYER_RADIUS = 10;
+	public static double PLAYER_RADIUS = 20;
 	public static int PLAYER_HEALTH = 10;
 	
 	// Bullet
