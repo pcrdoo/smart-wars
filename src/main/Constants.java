@@ -6,6 +6,8 @@ public class Constants {
 	public static final int WINDOW_WIDTH = 1200;
 	public static final int WINDOW_HEIGHT = 800;
 	
+	public static final double BACKGROUND_ALPHA_PER_SECOND = 0.1f;
+	public static final double STARS_ALPHA_PER_SECOND = 0.2f;
 	
 	
 	// OGI

@@ -24,6 +24,7 @@ public class MainView extends GameFrame {
 		lastUpdateTime = System.nanoTime();
 		backdrop = new BackdropView();
 		drawables.add(backdrop);
+		updatables.add(backdrop);
 		
 		this.model = new Model();
 		
@@ -31,6 +32,14 @@ public class MainView extends GameFrame {
 		startThread();
 	}
 
+	public void addDrawable(Drawable d) {
+		drawables.add(d);
+	}
+	
+	public void removeDrawable(Drawable d) {
+		drawables.remove(d);
+	}
+	
 	@Override
 	public void handleWindowInit() {
 		// TODO Auto-generated method stub
@@ -53,7 +62,7 @@ public class MainView extends GameFrame {
 	@Override
 	public void update() {
 		long currentTime = System.nanoTime();
-		double dt = (currentTime - lastUpdateTime) / 1000000.0;
+		double dt = (currentTime - lastUpdateTime) / 1000000000.0;
 		for (Updatable u : updatables) {
 			u.update(dt);
 		}
