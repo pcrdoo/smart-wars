@@ -17,8 +17,8 @@ public class PlayerView implements Drawable, Updatable {
 	private int spriteWidth, spriteHeight;
 	private double time = 0.0;
 	
-	public PlayerView(Player player) {
-		sprite = ImageCache.getInstance().get("assets/player.png");
+	public PlayerView(Player player, boolean alternativeSprite) {
+		sprite = ImageCache.getInstance().get(alternativeSprite ? "assets/player2.png" : "assets/player1.png");
 		spriteWidth = sprite.getWidth();
 		spriteHeight = sprite.getHeight() / FRAME_COUNT;
 		this.player = player;
@@ -29,7 +29,7 @@ public class PlayerView implements Drawable, Updatable {
 		
 		double frameTime = 1.0 / Constants.PLAYER_ANIMATION_FPS;
 		while (time > frameTime) {
-			time -= 1.0;
+			time -= frameTime;
 			frame++;
 		}
 		
@@ -40,6 +40,6 @@ public class PlayerView implements Drawable, Updatable {
 		int x = (int)player.getPosition().getdX() - spriteWidth / 2;
 		int y = (int)player.getPosition().getdY() - spriteHeight / 2;
 
-		g.drawImage(sprite, x, y, x + spriteWidth, y + spriteHeight, 0, frame * spriteHeight, 0, (frame + 1) * spriteHeight, Color.WHITE, null);
+		g.drawImage(sprite, x, y, x + spriteWidth, y + spriteHeight, 0, frame * spriteHeight, spriteWidth - 1, (frame + 1) * spriteHeight - 1, null);
 	}
 }

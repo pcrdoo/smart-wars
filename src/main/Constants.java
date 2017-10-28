@@ -3,18 +3,18 @@ import util.Vector2D;
 
 public class Constants {
 	// DAVID
-	public static final int WINDOW_WIDTH = 1200;
-	public static final int WINDOW_HEIGHT = 800;
+	public static final int WINDOW_WIDTH = 800;
+	public static final int WINDOW_HEIGHT = 600;
 	
-	public static final double BACKGROUND_ALPHA_PER_SECOND = 0.1f;
-	public static final double STARS_ALPHA_PER_SECOND = 0.2f;
+	public static final double BACKGROUND_ALPHA_PER_SECOND = 0.03f;
+	public static final double STARS_ALPHA_PER_SECOND = 0.07f;
 	
-	public static final int PLAYER_ANIMATION_FPS = 5;
+	public static final int PLAYER_ANIMATION_FPS = 24;
 	
 	// OGI
 	// Player
-	public static Vector2D TOP_PLAYER_START_POS = new Vector2D(10, WINDOW_WIDTH / 2);
-	public static Vector2D BOTTOM_PLAYER_START_POS = new Vector2D(WINDOW_HEIGHT - 10, WINDOW_WIDTH / 2);
+	public static Vector2D TOP_PLAYER_START_POS = new Vector2D(WINDOW_WIDTH / 2, 30);
+	public static Vector2D BOTTOM_PLAYER_START_POS = new Vector2D(WINDOW_WIDTH / 2, WINDOW_HEIGHT - 30);
 	public static double PLAYER_SPEED = 10;
 	public static double PLAYER_RADIUS = 20;
 	public static int PLAYER_HEALTH = 10;
