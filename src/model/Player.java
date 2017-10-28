@@ -19,6 +19,8 @@ public class Player extends RoundEntity {
 		this.speed = Constants.PLAYER_SPEED;
 		this.abilities = new ArrayList<Ability>();
 		this.abilities.add(new Shoot());
+		
+		System.out.println(this.position.getdX());
 	}
 	
 	public boolean isAlive() {
@@ -26,11 +28,11 @@ public class Player extends RoundEntity {
 	}
 
 	public void moveLeft() {
-		this.setVelocity(new Vector2D(0, -speed));
+		this.setVelocity(new Vector2D(-speed, 0));
 	}
 
 	public void moveRight() {
-		this.setVelocity(new Vector2D(0, +speed));
+		this.setVelocity(new Vector2D(+speed, 0));
 	}
 	
 	public void stop() {

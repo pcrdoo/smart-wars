@@ -8,6 +8,7 @@ public class Entity {
 
 	public Entity(Vector2D position) {
 		this.position = position;
+		this.velocity = new Vector2D(0, 0);
 	}
 
 	public Entity(Vector2D position, Vector2D velocity) {
@@ -16,7 +17,9 @@ public class Entity {
 	}
 	
 	public void update(double dt) {
-		position = position.add(velocity).scale(dt);
+		position = position.add(velocity.scale(dt));
+
+		System.out.println(this.position.getdX());
 	}
 	
 	public boolean hitTest(Vector2D point) {

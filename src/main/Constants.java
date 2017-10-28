@@ -15,7 +15,7 @@ public class Constants {
 	// Player
 	public static Vector2D TOP_PLAYER_START_POS = new Vector2D(WINDOW_WIDTH / 2, 30);
 	public static Vector2D BOTTOM_PLAYER_START_POS = new Vector2D(WINDOW_WIDTH / 2, WINDOW_HEIGHT - 30);
-	public static double PLAYER_SPEED = 10;
+	public static double PLAYER_SPEED = 100;
 	public static double PLAYER_RADIUS = 20;
 	public static int PLAYER_HEALTH = 10;
 	
