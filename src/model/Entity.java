@@ -5,6 +5,15 @@ import util.Vector2D;
 public class Entity {
 	protected Vector2D position;
 	protected Vector2D velocity; // pixels per second
+
+	public Entity(Vector2D position) {
+		this.position = position;
+	}
+
+	public Entity(Vector2D position, Vector2D velocity) {
+		this.position = position;
+		this.velocity = velocity;
+	}
 	
 	public void update(double dt) {
 		position = position.add(velocity).scale(dt);

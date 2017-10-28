@@ -2,6 +2,7 @@ package view;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import controller.MainController;
 import main.Constants;
 import model.Model;
 import rafgfxlib.GameFrame;
@@ -14,6 +15,7 @@ public class MainView extends GameFrame {
 	private ArrayList<Updatable> updatables;
 	
 	private Model model;
+	private MainController controller;
 	
 	public MainView() {
 		super("Smart Wars", Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
@@ -27,7 +29,11 @@ public class MainView extends GameFrame {
 		updatables.add(backdrop);
 		
 		this.model = new Model();
-		drawables.add(new PlayerView(model.getBottomPlayer()));
+		this.controller = new MainController(this);
+		
+		PlayerView bottomPlayerView = new PlayerView(model.getBottomPlayer());
+		drawables.add(bottomPlayerView);
+		updatables.add(bottomPlayerView);
 		
 		setUpdateRate(60);
 		startThread();

@@ -29,16 +29,17 @@ public class PlayerView implements Drawable, Updatable {
 		
 		double frameTime = 1.0 / Constants.PLAYER_ANIMATION_FPS;
 		while (time > frameTime) {
-			frameTime -= 1.0;
+			time -= 1.0;
 			frame++;
 		}
 		
 		frame %= FRAME_COUNT;
 	}
 	
-	public void draw(Graphics2D g) {
+	public void draw(Graphics2D g) {		
 		int x = (int)player.getPosition().getdX() - spriteWidth / 2;
 		int y = (int)player.getPosition().getdY() - spriteHeight / 2;
-		g.drawImage(sprite, x, y, x + spriteWidth, y + spriteWidth, 0, frame * spriteHeight, 0, (frame + 1) * spriteHeight, Color.WHITE, null);
+
+		g.drawImage(sprite, x, y, x + spriteWidth, y + spriteHeight, 0, frame * spriteHeight, 0, (frame + 1) * spriteHeight, Color.WHITE, null);
 	}
 }
