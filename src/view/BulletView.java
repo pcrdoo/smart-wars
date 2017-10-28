@@ -54,7 +54,7 @@ public class BulletView implements Drawable, Updatable {
 		time += dt;
 		if (time > Constants.BULLET_FIRE_PARTICLE_SPAWN_INTERVAL) {
 			time = 0.0;
-			spawnParticle((int)bullet.getPosition().getdX(), (int)bullet.getPosition().getdY());
+			spawnParticle((int)bullet.getPosition().getdX() + (int)(Math.random() * 10.0 - 5), (int)bullet.getPosition().getdY());
 		}
 		
 		for (int i = 0; i < Constants.MAX_BULLET_FIRE_PARTICLES; i++) {
@@ -68,12 +68,11 @@ public class BulletView implements Drawable, Updatable {
 				(int)(bullet.getPosition().getdX() - bulletSprite.getWidth() / 2),
 				(int)(bullet.getPosition().getdY() + bulletSprite.getHeight() / 2), null);
 		
-		g.setComposite(BlendComposite.Add);
+		//g.setComposite(BlendComposite.Add);
 		for (int i = 0; i < Constants.MAX_BULLET_FIRE_PARTICLES; i++) {
 			if (particleTime[i] > 0) {
 				g.drawImage(particleSprite, particleX[i], particleY[i], null);
 			}
 		}
-		
 	}
 }
