@@ -27,6 +27,7 @@ public class MainView extends GameFrame {
 		updatables.add(backdrop);
 		
 		this.model = new Model();
+		drawables.add(new PlayerView(model.getBottomPlayer()));
 		
 		setUpdateRate(60);
 		startThread();

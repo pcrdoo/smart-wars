@@ -8,4 +8,12 @@ public class Model {
 		this.topPlayer = new Player();
 		this.bottomPlayer = new Player();
 	}
+
+	public Player getTopPlayer() {
+		return topPlayer;
+	}
+
+	public Player getBottomPlayer() {
+		return bottomPlayer;
+	}
 }
