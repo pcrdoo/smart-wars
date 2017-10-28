@@ -11,6 +11,10 @@ public class Constants {
 	
 	public static final int PLAYER_ANIMATION_FPS = 24;
 	
+	public static final int MAX_BULLET_FIRE_PARTICLES = 20;
+	public static final double BULLET_FIRE_PARTICLE_LIFETIME = 0.2;
+	public static final double BULLET_FIRE_PARTICLE_SPAWN_INTERVAL = 0.1;
+	
 	// OGI
 	// Player
 	public static Vector2D TOP_PLAYER_START_POS = new Vector2D(WINDOW_WIDTH / 2, 30);
