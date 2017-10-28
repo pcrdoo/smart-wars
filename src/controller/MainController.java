@@ -26,11 +26,15 @@ public class MainController {
 	}
 
 	public void handleKeyDown(int keyCode) {
-		System.out.println(keyCode);
 		Bullet b;
 		switch(keyCode) {
 		case KeyEvent.VK_UP:
+			System.out.println("shoot");
 			b = model.getBottomPlayer().shoot();
+			if(b == null) {
+				System.out.println("not shooting");
+				break;
+			}
 			model.addUpdatable(b);
 			break;
 		case KeyEvent.VK_LEFT:
@@ -41,6 +45,10 @@ public class MainController {
 			break;
 		case KeyEvent.VK_W:
 			b = model.getTopPlayer().shoot();
+			if(b == null) {
+				System.out.println("not shooting");
+				break;
+			}
 			model.addUpdatable(b);
 			break;
 		case KeyEvent.VK_A:
