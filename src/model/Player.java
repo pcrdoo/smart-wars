@@ -2,7 +2,10 @@ package model;
 
 import java.util.ArrayList;
 
+import main.Constants;
 import model.abilities.Ability;
+import model.abilities.Shoot;
+import util.Vector2D;
 
 public class Player extends RoundEntity {
 	private int health;
@@ -10,8 +13,12 @@ public class Player extends RoundEntity {
 	private double speed;
 	private ArrayList<Ability> abilities;
 	
-	public Player() {
-		this.health = this.maxHealth = 0;// todo
+	public Player(Vector2D startPosition) {
+		super(startPosition, Constants.PLAYER_RADIUS);
+		this.health = this.maxHealth = Constants.PLAYER_HEALTH;
+		this.speed = Constants.PLAYER_SPEED;
+		this.abilities = new ArrayList<Ability>();
+		this.abilities.add(new Shoot());
 	}
 	
 	public boolean isAlive() {
