@@ -6,6 +6,10 @@ import util.Vector2D;
 
 public class Shoot extends Ability {
 	
+	public Shoot() {
+		super(Constants.BULLET_COOLDOWN);
+	}
+	
 	public Bullet fire(Vector2D position) {
 		if (!super.fire()) {
 			return null;

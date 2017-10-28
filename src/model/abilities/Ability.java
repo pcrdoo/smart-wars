@@ -1,8 +1,14 @@
 package model.abilities;
 
-public class Ability {
+import view.Updatable;
+
+public class Ability implements Updatable {
 	protected double maxCooldown;
 	protected double cooldown;
+	
+	public Ability(double cooldown) {
+		this.maxCooldown = this.cooldown = cooldown;
+	}
 	
 	public void update(double dt) {
 		this.cooldown -= dt;

@@ -6,6 +6,7 @@ import main.Constants;
 import model.abilities.Ability;
 import model.abilities.Shoot;
 import util.Vector2D;
+import view.Updatable;
 
 public class Player extends RoundEntity {
 	private int health;
@@ -13,6 +14,7 @@ public class Player extends RoundEntity {
 	private double speed;
 //	private ArrayList<Ability> abilities;
 	private Shoot shoot;
+	private ArrayList<Updatable> updatables;
 	
 	public Player(Vector2D startPosition) {
 		super(startPosition, Constants.PLAYER_RADIUS);
@@ -21,8 +23,11 @@ public class Player extends RoundEntity {
 //		this.abilities = new ArrayList<Ability>();
 //		this.abilities.add(new Shoot());
 		this.shoot = new Shoot();
+		this.updatables = new ArrayList<Updatable>();
+		this.updatables.add(shoot);
 		
-		System.out.println(this.position.getdX());
+		
+//		System.out.println(this.position.getdX());
 	}
 	
 	public boolean isAlive() {
@@ -43,5 +48,12 @@ public class Player extends RoundEntity {
 
 	public Bullet shoot() {
 		return this.shoot.fire(this.position);
+	}
+	
+	public void update(double dt) {
+		super.update(dt);
+		for (Updatable updatable : updatables) {
+			updatable.update(dt);
+		}
 	}
 }
