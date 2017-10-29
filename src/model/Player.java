@@ -12,22 +12,17 @@ public class Player extends RoundEntity {
 	private int health;
 	private int maxHealth;
 	private double speed;
-//	private ArrayList<Ability> abilities;
-	private Shoot shoot;
+	
 	private ArrayList<Updatable> updatables;
+	private Shoot shoot;
 	
 	public Player(Vector2D startPosition) {
 		super(startPosition, Constants.PLAYER_RADIUS);
 		this.health = this.maxHealth = Constants.PLAYER_HEALTH;
 		this.speed = Constants.PLAYER_SPEED;
-//		this.abilities = new ArrayList<Ability>();
-//		this.abilities.add(new Shoot());
 		this.shoot = new Shoot();
 		this.updatables = new ArrayList<Updatable>();
 		this.updatables.add(shoot);
-		
-		
-//		System.out.println(this.position.getdX());
 	}
 	
 	public boolean isAlive() {
@@ -42,7 +37,7 @@ public class Player extends RoundEntity {
 		this.setVelocity(new Vector2D(+speed, 0));
 	}
 	
-	public void stop() {
+	public void stopMoving() {
 		this.setVelocity(new Vector2D(0, 0));
 	}
 

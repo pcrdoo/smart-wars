@@ -30,7 +30,7 @@ public class BulletView implements Drawable, Updatable {
 		for (int i = 0; i < Constants.MAX_BULLET_FIRE_PARTICLES; i++) {
 			particleX[i] = (int)bullet.getPosition().getdX();
 			particleY[i] = (int)bullet.getPosition().getdY();
-			particleTime[i] = Constants.BULLET_FIRE_PARTICLE_LIFETIME;
+			particleTime[i] = -1.0;
 		}
 	}
 

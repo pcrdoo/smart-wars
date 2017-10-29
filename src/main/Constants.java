@@ -12,8 +12,8 @@ public class Constants {
 	public static final int PLAYER_ANIMATION_FPS = 24;
 	
 	public static final int MAX_BULLET_FIRE_PARTICLES = 40;
-	public static final double BULLET_FIRE_PARTICLE_LIFETIME = 1.0;
-	public static final double BULLET_FIRE_PARTICLE_SPAWN_INTERVAL = 0.05;
+	public static final double BULLET_FIRE_PARTICLE_LIFETIME = 0.1;
+	public static final double BULLET_FIRE_PARTICLE_SPAWN_INTERVAL = 0.005;
 	
 	// OGI
 	// Player
@@ -26,7 +26,7 @@ public class Constants {
 	// Bullet
 	public static double BULLET_SPEED = 400;
 	public static Vector2D BULLET_SIZE = new Vector2D(3, 3);
-	public static final double BULLET_COOLDOWN = 0.5;
+	public static final double BULLET_COOLDOWN = 0.1;
 	
 	// Mirror
 	public static double MIRROR_SPEED = 0;

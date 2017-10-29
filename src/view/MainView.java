@@ -90,6 +90,7 @@ public class MainView extends GameFrame {
 		
 		b.update(dt);
 		model.update(dt);
+		controller.update();
 		for (Updatable u : updatables) {
 			u.update(dt);
 		}
