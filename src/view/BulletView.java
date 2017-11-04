@@ -6,73 +6,63 @@ import java.awt.image.BufferedImage;
 
 import org.jdesktop.swingx.graphics.BlendComposite;
 
+import view.gfx.AdditiveComposite;
+import view.gfx.ParticleSystem;
 import main.Constants;
 import model.Bullet;
 import util.ImageCache;
+import util.ImageConverter;
+import util.Vector2D;
+import view.gfx.PointParticleEmitter;
 
 public class BulletView implements Drawable, Updatable {
 	private Bullet bullet;
 	private BufferedImage bulletSprite, particleSprite;
-	
-	int[] particleX, particleY;
-	double[] particleTime;
-	double time = 0.0;
-	
+	private ParticleSystem trail;
+	private PointParticleEmitter trailEmitter;
+
+	private static final int MAX_PARTICLES = 30;
+	private static final double PARTICLE_LIFETIME = 0.2;
+	private static final double PARTICLES_PER_SECOND = 75;
+	private static final double PARTICLE_MIN_EMIT_ANGLE = 0.6 * Math.PI;
+	private static final double PARTICLE_MAX_EMIT_ANGLE = 1.4 * Math.PI;
+	private static final double PARTICLE_VELOCITY = -50.0;
+	private static final double PARTICLE_VELOCITY_JITTER = 0.0;
+	private static final double PARTICLE_POSITION_JITTER = 2.0;
+	private static final double PARTICLE_DECAY_TIME = 0.3;
+
 	public BulletView(Bullet bullet) {
 		this.bullet = bullet;
-		bulletSprite = ImageCache.getInstance().get("assets/bullet.png");
+
 		particleSprite = ImageCache.getInstance().get("assets/fire.png");
-		
-		particleX = new int[Constants.MAX_BULLET_FIRE_PARTICLES];
-		particleY = new int[Constants.MAX_BULLET_FIRE_PARTICLES];
-		particleTime = new double[Constants.MAX_BULLET_FIRE_PARTICLES];
-		
-		for (int i = 0; i < Constants.MAX_BULLET_FIRE_PARTICLES; i++) {
-			particleX[i] = (int)bullet.getPosition().getdX();
-			particleY[i] = (int)bullet.getPosition().getdY();
-			particleTime[i] = -1.0;
-		}
+		bulletSprite = ImageCache.getInstance().get("assets/bullet.png");
+		trail = new ParticleSystem(particleSprite, MAX_PARTICLES, PARTICLE_DECAY_TIME);
+		trailEmitter = new PointParticleEmitter(PARTICLES_PER_SECOND, PARTICLE_LIFETIME, 0.0, bullet.getPosition(),
+				new Vector2D(PARTICLE_POSITION_JITTER, 0), PARTICLE_VELOCITY, PARTICLE_VELOCITY_JITTER,
+				PARTICLE_MIN_EMIT_ANGLE, PARTICLE_MAX_EMIT_ANGLE);
+
+		trail.addEmitter(trailEmitter);
 	}
 
-	private void spawnParticle(int x, int y) {
-		int minI = 0;
-		double minTime = particleTime[0];
-		for (int i = 1; i < Constants.MAX_BULLET_FIRE_PARTICLES; i++) {
-			if (particleTime[i] < minTime) {
-				minTime = particleTime[i];
-				minI = i;
-			}
-		}
-		
-		particleTime[minI] = Constants.BULLET_FIRE_PARTICLE_LIFETIME;
-		particleX[minI] = x;
-		particleY[minI] = y;
-	}
-	
 	@Override
 	public void update(double dt) {
-		time += dt;
-		if (time > Constants.BULLET_FIRE_PARTICLE_SPAWN_INTERVAL) {
-			time = 0.0;
-			spawnParticle((int)bullet.getPosition().getdX() + (int)(Math.random() * 10.0 - 5) - bulletSprite.getWidth()/2, (int)bullet.getPosition().getdY());
-		}
-		
-		for (int i = 0; i < Constants.MAX_BULLET_FIRE_PARTICLES; i++) {
-			particleTime[i] -= dt; 
-		}
+		trailEmitter.setPosition(bullet.getPosition());
+		trail.update(dt);
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
-		g.drawImage(bulletSprite,
-				(int)(bullet.getPosition().getdX() - bulletSprite.getWidth() / 2),
-				(int)(bullet.getPosition().getdY() + bulletSprite.getHeight() / 2), null);
+		//trail.draw(g);
+		Composite old = g.getComposite();
+		g.setComposite(AdditiveComposite.getInstance(254));
 		
-		//g.setComposite(BlendComposite.Add);
-		for (int i = 0; i < Constants.MAX_BULLET_FIRE_PARTICLES; i++) {
-			if (particleTime[i] > 0) {
-				g.drawImage(particleSprite, particleX[i], particleY[i], null);
-			}
-		}
+		int w = bulletSprite.getWidth(),
+				h = bulletSprite.getHeight();
+		
+		int x = (int)(bullet.getPosition().getdX()) - w / 2,
+				y = (int)(bullet.getPosition().getdY()) - h / 2;
+		
+		g.drawImage(bulletSprite, x, y, null);
+		g.setComposite(old);
 	}
 }

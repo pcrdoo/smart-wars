@@ -36,4 +36,8 @@ public class Model {
 	public void addUpdatable(Updatable updatable) {
 		this.updatables.add(updatable);
 	}
+	
+	public void removeUpdatable(Updatable updatable) {
+		this.updatables.remove(updatable);
+	}
 }

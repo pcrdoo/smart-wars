@@ -35,19 +35,6 @@ public class MainView extends GameFrame {
 		this.model = new Model();
 		this.controller = new MainController(this, this.model);
 		
-		PlayerView bottomPlayerView = new PlayerView(model.getBottomPlayer(), false);
-		drawables.add(bottomPlayerView);
-		updatables.add(bottomPlayerView);
-
-		Bullet b = new Bullet(new Vector2D(200,0), new Vector2D(0, 50));
-		BulletView bv = new BulletView(b);
-		this.b=b;
-		PlayerView topPlayerView = new PlayerView(model.getTopPlayer(), true);
-		drawables.add(topPlayerView);
-		updatables.add(topPlayerView);
-		drawables.add(bv);
-		updatables.add(bv);
-		
 		setUpdateRate(60);
 		startThread();
 	}
@@ -60,8 +47,12 @@ public class MainView extends GameFrame {
 		drawables.remove(d);
 	}
 
-	public void addUpdatable(BulletView bv) {
-		this.updatables.add(bv);
+	public void addUpdatable(Updatable u) {
+		updatables.add(u);
+	}
+	
+	public void removeUpdatable(Updatable u) {
+		updatables.remove(u);
 	}
 	
 	@Override
@@ -78,8 +69,10 @@ public class MainView extends GameFrame {
 
 	@Override
 	public void render(Graphics2D g, int sw, int sh) {
-		for (Drawable d : drawables) {
-			d.draw(g);
+		synchronized(this) {
+			for (Drawable d : drawables) {
+				d.draw(g);
+			}
 		}
 	}
 
@@ -88,14 +81,16 @@ public class MainView extends GameFrame {
 		long currentTime = System.nanoTime();
 		double dt = (currentTime - lastUpdateTime) / 1000000000.0;
 		
-		b.update(dt);
-		model.update(dt);
-		controller.update();
-		for (Updatable u : updatables) {
-			u.update(dt);
+		synchronized(this) {
+			for (Updatable u : updatables) {
+				u.update(dt);
+			}
+			
+			model.update(dt);
+			controller.update();
 		}
 		
-		lastUpdateTime = currentTime;
+		lastUpdateTime = System.nanoTime();
 	}
 
 	@Override

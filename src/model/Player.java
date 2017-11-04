@@ -20,7 +20,7 @@ public class Player extends RoundEntity {
 		super(startPosition, Constants.PLAYER_RADIUS);
 		this.health = this.maxHealth = Constants.PLAYER_HEALTH;
 		this.speed = Constants.PLAYER_SPEED;
-		this.shoot = new Shoot();
+		this.shoot = new Shoot(this);
 		this.updatables = new ArrayList<Updatable>();
 		this.updatables.add(shoot);
 	}
