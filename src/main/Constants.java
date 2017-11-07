@@ -11,13 +11,13 @@ public class Constants {
 	
 	public static final int PLAYER_ANIMATION_FPS = 24;
 	
-	public static final int BULLET_CULLING_X = 20;
-	public static final int BULLET_CULLING_Y = 100;
+	public static final int BULLET_CULLING_X = 100;
+	public static final int BULLET_CULLING_Y = 20;
 	
 	// OGI
 	// Player
-	public static Vector2D TOP_PLAYER_START_POS = new Vector2D(WINDOW_WIDTH / 2, 30);
-	public static Vector2D BOTTOM_PLAYER_START_POS = new Vector2D(WINDOW_WIDTH / 2, WINDOW_HEIGHT - 30);
+	public static Vector2D LEFT_PLAYER_START_POS = new Vector2D(30, WINDOW_HEIGHT / 2);
+	public static Vector2D RIGHT_PLAYER_START_POS = new Vector2D(WINDOW_WIDTH - 30, WINDOW_HEIGHT / 2);
 	public static double PLAYER_SPEED = 300;
 	public static double PLAYER_RADIUS = 20;
 	public static int PLAYER_HEALTH = 10;
