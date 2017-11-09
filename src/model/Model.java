@@ -7,24 +7,24 @@ import view.Updatable;
 
 public class Model {
 	
-	private Player topPlayer;
-	private Player bottomPlayer;
+	private Player leftPlayer;
+	private Player rightPlayer;
 	private ArrayList<Updatable> updatables;
 	
 	public Model() {
-		this.topPlayer = new Player(Constants.TOP_PLAYER_START_POS);
-		this.bottomPlayer = new Player(Constants.BOTTOM_PLAYER_START_POS);
+		this.leftPlayer = new Player(PlayerSide.LEFT_PLAYER);
+		this.rightPlayer = new Player(PlayerSide.RIGHT_PLAYER);
 		this.updatables = new ArrayList<Updatable>();
-		this.updatables.add(topPlayer);
-		this.updatables.add(bottomPlayer);
+		this.updatables.add(leftPlayer);
+		this.updatables.add(rightPlayer);
 	}
 	
-	public Player getTopPlayer() {
-		return topPlayer;
+	public Player getLeftPlayer() {
+		return leftPlayer;
 	}
 
-	public Player getBottomPlayer() {
-		return bottomPlayer;
+	public Player getRightPlayer() {
+		return rightPlayer;
 	}
 	
 	public void update(double dt) {

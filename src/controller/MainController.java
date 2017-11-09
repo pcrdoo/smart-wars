@@ -5,6 +5,8 @@ import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import javax.swing.plaf.synth.SynthSliderUI;
+
 import main.Constants;
 import model.Bullet;
 import model.Model;
@@ -32,28 +34,28 @@ public class MainController {
 		
 		this.initKeyboardState();
 		
-		PlayerView bottomPlayerView = new PlayerView(model.getBottomPlayer(), false);
+		PlayerView bottomPlayerView = new PlayerView(model.getRightPlayer());
 		view.addDrawable(bottomPlayerView);
 		view.addUpdatable(bottomPlayerView);
 
-		PlayerView topPlayerView = new PlayerView(model.getTopPlayer(), true);
+		PlayerView topPlayerView = new PlayerView(model.getLeftPlayer());
 		view.addDrawable(topPlayerView);
 		view.addUpdatable(topPlayerView);
 		
 		playerViewMap = new HashMap<>();
-		playerViewMap.put(model.getTopPlayer(), topPlayerView);
-		playerViewMap.put(model.getBottomPlayer(), bottomPlayerView);
+		playerViewMap.put(model.getLeftPlayer(), topPlayerView);
+		playerViewMap.put(model.getRightPlayer(), bottomPlayerView);
 	}
 	
 	private void initKeyboardState() {
 		this.keyboardState = new HashMap<Integer, Boolean>();
-		keyboardState.put(KeyEvent.VK_NUMPAD8, false);
-		keyboardState.put(KeyEvent.VK_NUMPAD4, false);
-		keyboardState.put(KeyEvent.VK_NUMPAD6, false);
-		
 		keyboardState.put(KeyEvent.VK_W, false);
-		keyboardState.put(KeyEvent.VK_A, false);
+		keyboardState.put(KeyEvent.VK_S, false);
 		keyboardState.put(KeyEvent.VK_D, false);
+		
+		keyboardState.put(KeyEvent.VK_I, false);
+		keyboardState.put(KeyEvent.VK_K, false);
+		keyboardState.put(KeyEvent.VK_J, false);
 	}
 	
 	private void cullBullets(ArrayList<Bullet> toCull) {
@@ -87,11 +89,11 @@ public class MainController {
 	private void checkBulletCollisions() {
 		ArrayList<Bullet> impactedBullets = new ArrayList<>();
 		for (Bullet b : bullets) {
-			if (b.getOwner() ==  model.getBottomPlayer() && model.getTopPlayer().hitTest(b.getPosition())) {
-				handlePlayerHit(model.getTopPlayer());
+			if (b.getOwner() ==  model.getRightPlayer() && model.getLeftPlayer().hitTest(b.getPosition())) {
+				handlePlayerHit(model.getLeftPlayer());
 				impactedBullets.add(b);
-			} else if (b.getOwner() ==  model.getTopPlayer() && model.getBottomPlayer().hitTest(b.getPosition())) {
-				handlePlayerHit(model.getBottomPlayer());
+			} else if (b.getOwner() ==  model.getLeftPlayer() && model.getRightPlayer().hitTest(b.getPosition())) {
+				handlePlayerHit(model.getRightPlayer());
 				impactedBullets.add(b);
 			}
 		}
@@ -107,27 +109,27 @@ public class MainController {
 	public void update() {		
 		checkBulletCollisions();
 		
-		if (keyboardState.get(KeyEvent.VK_NUMPAD8))
-			this.doShoot(this.model.getBottomPlayer());
-		if (keyboardState.get(KeyEvent.VK_NUMPAD4))
-			model.getBottomPlayer().moveLeft();
-		if (keyboardState.get(KeyEvent.VK_NUMPAD6))
-			model.getBottomPlayer().moveRight();
-		if (keyboardState.get(KeyEvent.VK_NUMPAD4) && keyboardState.get(KeyEvent.VK_NUMPAD6))
-			model.getBottomPlayer().stopMoving();
-		if (!keyboardState.get(KeyEvent.VK_NUMPAD4) && !keyboardState.get(KeyEvent.VK_NUMPAD6))
-			model.getBottomPlayer().stopMoving();
+		if (keyboardState.get(KeyEvent.VK_J))
+			this.doShoot(this.model.getRightPlayer());
+		if (keyboardState.get(KeyEvent.VK_I))
+			model.getRightPlayer().moveUp();
+		if (keyboardState.get(KeyEvent.VK_K))
+			model.getRightPlayer().moveDown();
+		if (keyboardState.get(KeyEvent.VK_I) && keyboardState.get(KeyEvent.VK_K))
+			model.getRightPlayer().stopMoving();
+		if (!keyboardState.get(KeyEvent.VK_I) && !keyboardState.get(KeyEvent.VK_K))
+			model.getRightPlayer().stopMoving();
 		
-		if (keyboardState.get(KeyEvent.VK_W))
-			this.doShoot(this.model.getTopPlayer());
-		if (keyboardState.get(KeyEvent.VK_A))
-			model.getTopPlayer().moveLeft();
 		if (keyboardState.get(KeyEvent.VK_D))
-			model.getTopPlayer().moveRight();
-		if (keyboardState.get(KeyEvent.VK_A) && keyboardState.get(KeyEvent.VK_D))
-			model.getTopPlayer().stopMoving();
-		if (!keyboardState.get(KeyEvent.VK_A) && !keyboardState.get(KeyEvent.VK_D))
-			model.getTopPlayer().stopMoving();
+			this.doShoot(this.model.getLeftPlayer());
+		if (keyboardState.get(KeyEvent.VK_W))
+			model.getLeftPlayer().moveUp();
+		if (keyboardState.get(KeyEvent.VK_S))
+			model.getLeftPlayer().moveDown();
+		if (keyboardState.get(KeyEvent.VK_W) && keyboardState.get(KeyEvent.VK_S))
+			model.getLeftPlayer().stopMoving();
+		if (!keyboardState.get(KeyEvent.VK_W) && !keyboardState.get(KeyEvent.VK_S))
+			model.getLeftPlayer().stopMoving();
 	}
 
 	private void doShoot(Player player) {

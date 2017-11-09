@@ -10,7 +10,7 @@ import util.ImageCache;
 
 public class BackdropView implements Drawable, Updatable {
 	private BufferedImage background, stars;
-	private double backgroundAlpha = 0.f, starsAlpha = 0.0;
+	private double backgroundAlpha = 0.0, starsAlpha = 0.0;
 	
 	public BackdropView() {
 		background = ImageCache.getInstance().get("assets/background.png");
@@ -31,13 +31,13 @@ public class BackdropView implements Drawable, Updatable {
 	}
 	
 	public void draw(Graphics2D g) {
-		int backgroundX = (int)(backgroundAlpha * background.getWidth()),
-			starsX = (int)(starsAlpha * stars.getWidth());
+		int backgroundY = (int)(backgroundAlpha * background.getHeight()),
+			starsY = (int)(starsAlpha * stars.getHeight());
 		
-		g.drawImage(background, backgroundX, 0, null);
-		g.drawImage(background, backgroundX - background.getWidth(), 0, null);
+		g.drawImage(background, 0, backgroundY, null);
+		g.drawImage(background, 0, backgroundY - background.getHeight(), null);
 		
-		g.drawImage(stars, starsX, 0, null);
-		g.drawImage(stars, starsX - stars.getWidth(), 0, null);
+		g.drawImage(stars, 0, starsY, null);
+		g.drawImage(stars, 0, starsY - stars.getHeight(), null);
 	}
 }
