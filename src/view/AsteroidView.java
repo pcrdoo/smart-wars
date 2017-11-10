@@ -48,13 +48,16 @@ public class AsteroidView extends EntityView {
 	}
 
 	public boolean isDisintegrated() {
-		return disintegrating && disintegrationTime <= 0.0;
+		return disintegrating && disintegrationTime == 0.0;
 	}
 	
 	@Override
 	public void update(double dt) {
-		if (disintegrating && disintegrationTime >= dt) {
+		if (disintegrating) {
 			disintegrationTime -= dt;
+			if(disintegrationTime < 0) {
+				disintegrationTime = 0;
+			}
 		}
 		
 		ArrayList<Sparks> finishedSparks = new ArrayList<>();

@@ -39,6 +39,7 @@ public class MainController {
 	private HashMap<Entity, EntityView> viewMap;
 
 	private double timeToNextAsteroidSpawn;
+	private double timeToNextBlackHoleSpawn;
 	private Random asteroidRandom;
 
 	public MainController(GameStarter gameStarter, MainView view, Model model) {
@@ -75,6 +76,7 @@ public class MainController {
 		viewMap.put(model.getRightPlayer(), rightPlayerView);
 
 		timeToNextAsteroidSpawn = 1;
+		timeToNextBlackHoleSpawn = 1;
 		asteroidRandom = new Random();
 	}
 
@@ -124,7 +126,7 @@ public class MainController {
 						impactedBullets.add(bullet);
 					}
 				}
-				if(impactedBullets.contains(bullet)) {
+				if (impactedBullets.contains(bullet)) {
 					continue;
 				}
 				// Mirror collision
@@ -137,22 +139,32 @@ public class MainController {
 		}
 		cullBullets(impactedBullets);
 	}
-	
+
 	private void checkAsteroidPlayerCollisions() {
+		ArrayList<Asteroid> toDisintegrate = new ArrayList<>();
 		for (Asteroid asteroid : model.getAsteroids()) {
 			if (asteroid.hitTest(model.getLeftPlayer())) {
 				handlePlayerAsteroidHit(model.getLeftPlayer(), asteroid);
+				toDisintegrate.add(asteroid);
 			} else if (asteroid.hitTest(model.getRightPlayer())) {
 				handlePlayerAsteroidHit(model.getRightPlayer(), asteroid);
+				toDisintegrate.add(asteroid);
 			}
 		}
+		for (Asteroid asteroid : toDisintegrate) {
+			// Delete asteroid, keep just the view for the animation.
+			model.removeEntity(asteroid);
+			model.removeAsteroid(asteroid);
+			AsteroidView asteroidView = (AsteroidView) viewMap.get(asteroid);
+			viewMap.remove(asteroid);
+			disintegratingAsteroids.add(asteroidView);
+			asteroidView.onAsteroidDisintegrated();
+		}
+
 	}
 
 	private void handlePlayerAsteroidHit(Player player, Asteroid asteroid) {
-		asteroid.disintegrate();
-		AsteroidView av = (AsteroidView) viewMap.get(asteroid);
-		av.onAsteroidDisintegrated();
-		disintegratingAsteroids.add(av);
+		// Hurt the player.
 		player.receiveDamage(Constants.ASTEROID_PLAYER_DAMAGE);
 		((PlayerView) viewMap.get(player)).onPlayerHit();
 	}
@@ -178,16 +190,16 @@ public class MainController {
 
 	private void checkDisintegratingAsteroids() {
 		ArrayList<AsteroidView> finished = new ArrayList<>();
-		for (AsteroidView av : disintegratingAsteroids) {
-			if (av.isDisintegrated()) {
-				finished.add(av);
+		for (AsteroidView asteroidView : disintegratingAsteroids) {
+			if (asteroidView.isDisintegrated()) {
+				// Done!
+				finished.add(asteroidView);
+				view.removeUpdatable(asteroidView);
+				view.removeDrawable(asteroidView);
 			}
 		}
-
-		for (AsteroidView av : finished) {
-			finished.remove(av);
-			view.removeUpdatable(av);
-			view.removeDrawable(av);
+		for (AsteroidView asteroidView : finished) {
+			disintegratingAsteroids.remove(asteroidView);
 		}
 	}
 
@@ -217,6 +229,34 @@ public class MainController {
 		}
 	}
 
+	private void maybeSpawnBlackHoles(double dt) {
+		timeToNextBlackHoleSpawn -= dt;
+		if (timeToNextBlackHoleSpawn <= 0) {
+			if (asteroidRandom.nextDouble() <= Constants.BLACK_HOLE_SPAWN_PROBABILITY
+					&& model.getAsteroids().size() >= 2) {
+
+				int type = asteroidRandom.nextInt(Constants.ASTEROID_TYPE_COUNT) + 1;
+				int frame = asteroidRandom.nextInt(Constants.ASTEROID_SPRITES_X * Constants.ASTEROID_SPRITES_Y);
+				double spawnXRange = Constants.ASTEROID_SPAWN_X_MAX - Constants.ASTEROID_SPAWN_X_MIN;
+				double spawnX = asteroidRandom.nextDouble() * spawnXRange + Constants.ASTEROID_SPAWN_X_MIN;
+				Vector2D location = new Vector2D(spawnX, Constants.ASTEROID_SPAWN_Y);
+				Vector2D velocity = new Vector2D(
+						(Math.random() > 0.5 ? -1 : 1) * Constants.ASTEROID_X_VELOCITY
+								+ (Math.random() * 2.0 - 1.0) * Constants.ASTEROID_X_VELOCITY_JITTER,
+						Constants.ASTEROID_Y_VELOCITY
+								+ (Math.random() * 2.0 - 1.0) * Constants.ASTEROID_Y_VELOCITY_JITTER);
+				Asteroid asteroid = new Asteroid(location, velocity, type, frame);
+				model.addEntity(asteroid);
+				model.addAsteroid(asteroid);
+				AsteroidView asteroidView = new AsteroidView(asteroid);
+				viewMap.put(asteroid, asteroidView);
+				view.addDrawable(asteroidView, Constants.Z_ASTEROID);
+				view.addUpdatable(asteroidView);
+			}
+			timeToNextBlackHoleSpawn = 1;
+		}
+	}
+
 	private ArrayList<Entity> getEntitiesToCull() {
 		ArrayList<Entity> toCull = new ArrayList<Entity>();
 		for (Entity entity : model.getEntities()) {
@@ -233,21 +273,10 @@ public class MainController {
 			if (entity instanceof Bullet) {
 				model.removeBullet((Bullet) entity);
 			}
-
 			if (entity instanceof Asteroid) {
 				model.removeAsteroid((Asteroid) entity);
-
-				// Asteroids' views should be culled only if they haven't been disintegrated;
-				// otherwise,
-				// they need to be left alone to finish their animation
-				if (!((Asteroid) entity).isDisintegrated()) {
-					deleteView(entity);
-				} else {
-					viewMap.remove(entity);
-				}
-			} else {
-				deleteView(entity);
 			}
+			deleteView(entity);
 		}
 	}
 
@@ -280,6 +309,7 @@ public class MainController {
 
 		checkDisintegratingAsteroids();
 
+		maybeSpawnBlackHoles(dt);
 		maybeSpawnAsteroids(dt);
 		cullEntities(getEntitiesToCull());
 		checkGameOver();
@@ -303,7 +333,7 @@ public class MainController {
 
 	private void doMirrorMagic(MirrorMagic mirrorMagic) {
 		if (mirrorMagic.getMirror() == null) {
-			if(!mirrorMagic.launchMirror()) {
+			if (!mirrorMagic.launchMirror()) {
 				return;
 			}
 			Mirror mirror = mirrorMagic.getMirror();
@@ -333,7 +363,7 @@ public class MainController {
 			}
 		}
 	}
-	
+
 	private void handleMirrorHit(Mirror mirror, Bullet bullet) {
 		bullet.bounce(mirror);
 		((MirrorView) viewMap.get(mirror)).onMirrorHit();
@@ -350,16 +380,16 @@ public class MainController {
 
 	public void handleKeyDown(int keyCode) {
 		keyboardState.put(keyCode, true);
-		if(keyCode == leftPlayerControls.get(Controls.SHORT_MIRROR_MAGIC)) {
+		if (keyCode == leftPlayerControls.get(Controls.SHORT_MIRROR_MAGIC)) {
 			doMirrorMagic(model.getLeftPlayer().getShortMirrorMagic());
 		}
-		if(keyCode == leftPlayerControls.get(Controls.LONG_MIRROR_MAGIC)) {
+		if (keyCode == leftPlayerControls.get(Controls.LONG_MIRROR_MAGIC)) {
 			doMirrorMagic(model.getLeftPlayer().getLongMirrorMagic());
 		}
-		if(keyCode == rightPlayerControls.get(Controls.SHORT_MIRROR_MAGIC)) {
+		if (keyCode == rightPlayerControls.get(Controls.SHORT_MIRROR_MAGIC)) {
 			doMirrorMagic(model.getRightPlayer().getShortMirrorMagic());
 		}
-		if(keyCode == rightPlayerControls.get(Controls.LONG_MIRROR_MAGIC)) {
+		if (keyCode == rightPlayerControls.get(Controls.LONG_MIRROR_MAGIC)) {
 			doMirrorMagic(model.getRightPlayer().getLongMirrorMagic());
 		}
 	}
