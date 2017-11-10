@@ -26,18 +26,21 @@ public class MirrorView extends EntityView {
 	public void draw(Graphics2D g) {
 		int w = mirrorSprite.getWidth(), h = mirrorSprite.getHeight();
 
-		int x = (int) (mirror.getPosition().getdX()) - w / 2, y = (int) (mirror.getPosition().getdY()) - h / 2;
+		int x = (int) (mirror.getPosition().getdX()), y = (int) (mirror.getPosition().getdY());
+		AffineTransform cache = g.getTransform();
 		
 		g.setTransform(new AffineTransform());
+
+		g.scale(cache.getScaleX(), cache.getScaleY());
 		g.translate(x, y);
 		g.rotate(mirror.getAngle());
 		g.translate(-w/2, -h/2);
-		
+
 		g.drawImage(mirrorSprite, 0, 0, null);
 
-		g.setTransform(new AffineTransform());
-		g.setColor(Color.RED);
-		g.fillOval(x, y, 10, 10);
+		g.setTransform(cache);
+		//g.setColor(Color.RED);
+		//g.fillOval(x-5, y-5, 10, 10);
 	}
 
 	public void onMirrorHit() {

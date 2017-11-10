@@ -60,7 +60,5 @@ public class BulletView extends EntityView {
 				y = (int)(bullet.getPosition().getdY()) - h / 2;
 		
 		g.drawImage(bulletSprite, x, y, null);
-		g.setColor(Color.RED);
-		g.fillOval(x, y, 10, 10);
 	}
 }

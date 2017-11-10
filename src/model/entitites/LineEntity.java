@@ -24,8 +24,6 @@ public class LineEntity extends Entity {
 		Vector2D ab = getLineVector();
 		Vector2D ac = point.sub(ab.scale(0.5)).sub(position);
 		double pointDistance = Math.abs(ab.crossProductIntensity(ac) / ab.length());
-		if (pointDistance < 100)
-			System.out.println(pointDistance +"," + position.sub(point).length() + "," + length/2 +"," + ab.crossProductIntensity(ac));
 		if(position.sub(point).length() < length / 2 && pointDistance < Constants.MIRROR_DIST_EPS) {
 			return true;
 		}
