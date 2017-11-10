@@ -36,6 +36,8 @@ public class MirrorView extends EntityView {
 		g.drawImage(mirrorSprite, 0, 0, null);
 
 		g.setTransform(new AffineTransform());
+		g.setColor(Color.RED);
+		g.fillOval(x, y, 10, 10);
 	}
 
 	public void onMirrorHit() {

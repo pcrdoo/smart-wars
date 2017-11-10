@@ -54,9 +54,9 @@ public class GameWindow extends GameFrame implements GameStarter {
 		double dt = (double) (currentTime - lastUpdateTime) / 1e9;
 
 		synchronized (this) {
+			controller.update(dt);
 			model.update(dt);
 			view.update(dt);
-			controller.update(dt);
 		}
 
 		lastUpdateTime = System.nanoTime();

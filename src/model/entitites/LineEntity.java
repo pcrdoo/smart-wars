@@ -16,14 +16,16 @@ public class LineEntity extends Entity {
 		this.angle = Math.PI / 2;
 	}
 	
-	private Vector2D getLineVector() {
+	public Vector2D getLineVector() {
 		 return new Vector2D(length * Math.cos(angle), length * Math.sin(angle));
 	}
 
 	public boolean hitTest(Vector2D point) {
 		Vector2D ab = getLineVector();
-		Vector2D ac = position.sub(ab.scale(0.5)).sub(point);
+		Vector2D ac = point.sub(ab.scale(0.5)).sub(position);
 		double pointDistance = Math.abs(ab.crossProductIntensity(ac) / ab.length());
+		if (pointDistance < 100)
+			System.out.println(pointDistance +"," + position.sub(point).length() + "," + length/2 +"," + ab.crossProductIntensity(ac));
 		if(position.sub(point).length() < length / 2 && pointDistance < Constants.MIRROR_DIST_EPS) {
 			return true;
 		}

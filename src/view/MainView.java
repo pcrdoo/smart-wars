@@ -60,6 +60,7 @@ public class MainView {
 
 	public void draw(Graphics2D g) {
 		synchronized (this) {
+			//TODO:Concurrent comodification
 			for (Map.Entry<Integer, ArrayList<Drawable>> dr : drawables.entrySet()) {
 				for (Drawable d : dr.getValue()) {
 					d.draw(g);

@@ -137,7 +137,7 @@ public class MainController {
 		}
 		cullBullets(impactedBullets);
 	}
-
+	
 	private void checkAsteroidPlayerCollisions() {
 		for (Asteroid asteroid : model.getAsteroids()) {
 			if (asteroid.hitTest(model.getLeftPlayer())) {

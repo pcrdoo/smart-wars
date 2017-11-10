@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -59,5 +60,7 @@ public class BulletView extends EntityView {
 				y = (int)(bullet.getPosition().getdY()) - h / 2;
 		
 		g.drawImage(bulletSprite, x, y, null);
+		g.setColor(Color.RED);
+		g.fillOval(x, y, 10, 10);
 	}
 }
