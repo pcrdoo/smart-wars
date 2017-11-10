@@ -2,10 +2,10 @@ package view;
 
 import java.awt.Color;
 import java.awt.Composite;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import view.gfx.ParticleSystem;
 import main.Constants;
 import model.Player;
 import model.PlayerSide;
@@ -13,6 +13,7 @@ import util.ImageCache;
 import util.Vector2D;
 import view.gfx.AdditiveComposite;
 import view.gfx.Explosion;
+import view.gfx.ParticleSystem;
 import view.gfx.PointParticleEmitter;
 
 public class PlayerView implements Drawable, Updatable {
@@ -105,5 +106,12 @@ public class PlayerView implements Drawable, Updatable {
 		if (explosion != null) {
 			explosion.draw(g);
 		}
+
+		// draw health
+		// TODO: sprite
+		g.setColor(Color.WHITE);
+		g.setFont(new Font("default", Font.BOLD, 16));
+		g.drawString(Integer.toString(player.getCurrHealth()), (int) player.getPosition().getdX() - 15,
+				(int) player.getPosition().getdY() + 40);
 	}
 }

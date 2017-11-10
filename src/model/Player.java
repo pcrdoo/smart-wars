@@ -28,10 +28,6 @@ public class Player extends RoundEntity {
 		abilities.add(gun);
 	}
 
-	public boolean isAlive() {
-		return currHealth > 0;
-	}
-
 	public void moveUp() {
 		setVelocity(new Vector2D(0, -speed));
 	}
@@ -61,5 +57,20 @@ public class Player extends RoundEntity {
 
 	public PlayerSide getPlayerSide() {
 		return playerSide;
+	}
+	
+	public boolean isAlive() {
+		return currHealth > 0;
+	}
+
+	public void receiveDamage(double damage) {
+		currHealth -= damage;
+		if (currHealth < 0) {
+			currHealth = 0;
+		}
+	}
+	
+	public int getCurrHealth() {
+		return currHealth;
 	}
 }

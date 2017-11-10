@@ -8,7 +8,7 @@ import rafgfxlib.GameFrame;
 import view.MainView;
 
 @SuppressWarnings("serial")
-public class GameWindow extends GameFrame {
+public class GameWindow extends GameFrame implements GameStarter {
 	private long lastUpdateTime;
 
 	private Model model;
@@ -17,15 +17,23 @@ public class GameWindow extends GameFrame {
 
 	public GameWindow() {
 		super("Smart Wars", Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
-		model = new Model();
-		view = new MainView();
-		controller = new MainController(view, model);
-
-		lastUpdateTime = System.nanoTime();
+		
+		// Run game thread
 		setUpdateRate(60);
 		startThread();
+		
+		// Start the war
+		startGame();
 	}
 
+	@Override
+	public void startGame() {
+		model = new Model();
+		view = new MainView();
+		controller = new MainController(this, view, model);
+		lastUpdateTime = System.nanoTime();
+	}
+	
 	@Override
 	public void handleWindowInit() {
 	}
