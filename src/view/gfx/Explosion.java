@@ -24,13 +24,10 @@ public class Explosion implements Drawable, Updatable {
 		particle = ImageCache.getInstance().get("assets/debris-particle.png");
 		this.duration = this.time = duration;
 		debris = new ParticleSystem(particle, 100, 0.7);
-		debrisEmitter = new PointParticleEmitter(200.0, 0.7, 0.0, position, new Vector2D(2, 2), 150.0, 10.0, 0, 2 * Math.PI);
+		debrisEmitter = new PointParticleEmitter(500.0, 0.7, 0.0, position, new Vector2D(2, 2), 150.0, 10.0, 0, 2 * Math.PI);
 		this.debrisDuration = debrisDuration;
 		debris.addEmitter(debrisEmitter);
 		debris.addAffector(new ParticleAffectorDeceleration(150));
-		debris.update(0.1);
-
-		debrisEmitter.setSpawnsPerSecond(0.0);
 	}
 
 	public boolean isDone() {
@@ -46,6 +43,7 @@ public class Explosion implements Drawable, Updatable {
 		}
 		
 		if (time < duration - debrisDuration) {
+			debrisEmitter.setSpawnsPerSecond(0.0);
 		}
 		
 		debris.update(dt);
@@ -58,7 +56,7 @@ public class Explosion implements Drawable, Updatable {
 		g.setComposite(AdditiveComposite.getInstance((int)(255 * time / duration)));
 		int x = (int)position.getdX(), y = (int)position.getdY(), w = flare.getWidth(), h = flare.getHeight();
 		
-		g.drawImage(flare, x - w / 2, y - h /2, x + w / 2, y + h / 2, 0, 0, w, h, null);
+		g.drawImage(flare, x - w / 2, y - h / 2, null);
 		g.setComposite(old);
 		
 		debris.draw(g);

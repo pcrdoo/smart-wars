@@ -81,7 +81,7 @@ public class PlayerView implements Drawable, Updatable {
 	}
 
 	public void onHit() {
-		explosion = new Explosion(player.getPosition(), 1.5, 0.1);
+		explosion = new Explosion(player.getPosition(), 1.5, 0.15);
 	}
 
 	public void draw(Graphics2D g) {
