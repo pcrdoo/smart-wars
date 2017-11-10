@@ -4,6 +4,7 @@ import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
 import main.Constants;
+import model.entitites.BitmapEntity;
 import util.ImageCache;
 import util.Vector2D;
 

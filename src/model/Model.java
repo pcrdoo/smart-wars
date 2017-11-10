@@ -2,6 +2,9 @@ package model;
 
 import java.util.ArrayList;
 
+import main.GameState;
+import model.entitites.Entity;
+
 public class Model {
 
 	private Player leftPlayer;

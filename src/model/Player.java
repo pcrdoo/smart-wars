@@ -4,6 +4,8 @@ import java.util.ArrayList;
 
 import main.Constants;
 import model.abilities.Ability;
+import model.abilities.MirrorMagic;
+import model.entitites.RoundEntity;
 import model.abilities.Gun;
 import util.Vector2D;
 import view.Updatable;
@@ -16,6 +18,8 @@ public class Player extends RoundEntity {
 
 	private ArrayList<Ability> abilities;
 	private Gun gun;
+	private MirrorMagic shortMirrorMagic;
+	private MirrorMagic longMirrorMagic;
 
 	public Player(PlayerSide playerSide) {
 		super(playerSide == PlayerSide.LEFT_PLAYER ? Constants.LEFT_PLAYER_START_POS : Constants.RIGHT_PLAYER_START_POS,
@@ -24,6 +28,8 @@ public class Player extends RoundEntity {
 		currHealth = maxHealth = Constants.PLAYER_HEALTH;
 		speed = Constants.PLAYER_SPEED;
 		gun = new Gun(this);
+		shortMirrorMagic = new MirrorMagic(this, Constants.SHORT_MIRROR_LENGTH);
+		longMirrorMagic = new MirrorMagic(this, Constants.LONG_MIRROR_LENGTH);
 		abilities = new ArrayList<Ability>();
 		abilities.add(gun);
 	}
@@ -46,6 +52,10 @@ public class Player extends RoundEntity {
 						: new Vector2D(-Constants.BULLET_SPEED, 0));
 	}
 
+	public Mirror fireMirror() {
+		return null;
+	}
+
 	@Override
 	public void update(double dt) {
 		super.update(dt);
@@ -58,7 +68,7 @@ public class Player extends RoundEntity {
 	public PlayerSide getPlayerSide() {
 		return playerSide;
 	}
-	
+
 	public boolean isAlive() {
 		return currHealth > 0;
 	}
@@ -69,7 +79,7 @@ public class Player extends RoundEntity {
 			currHealth = 0;
 		}
 	}
-	
+
 	public int getCurrHealth() {
 		return currHealth;
 	}

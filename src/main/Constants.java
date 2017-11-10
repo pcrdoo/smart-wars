@@ -20,7 +20,7 @@ public class Constants {
 
 	// Bullet
 	public static final double BULLET_SPEED = 500;
-	public static final Vector2D BULLET_SIZE = new Vector2D(3, 3);
+	public static final Vector2D BULLET_SIZE = new Vector2D(8, 8);
 	public static final double BULLET_COOLDOWN = 0.1;
 	public static final double BULLET_DAMAGE = 10;
 	
@@ -31,14 +31,16 @@ public class Constants {
 	public static final int ASTEROID_SPRITES_Y = 4;
 	public static final int ASTEROID_SPAWN_X_MIN = (int) (LEFT_PLAYER_START_POS.getdX() + 80);
 	public static final int ASTEROID_SPAWN_X_MAX = (int) (RIGHT_PLAYER_START_POS.getdX() - 80);
-	
 	public static final int ASTEROID_SPAWN_Y = -50;
-	
 	public static final int ASTEROID_Y_VELOCITY = 100;
 	public static final int ASTEROID_Y_VELOCITY_JITTER = 20;
 	public static final int ASTEROID_X_VELOCITY = 20;
 	public static final int ASTEROID_X_VELOCITY_JITTER = 7;
-	
 	public static final int ASTEROID_FPS = 5;
+	
+	// Mirror
+	public static final double MIRROR_MAGIC_COOLDOWN = 10;
+	public static final double SHORT_MIRROR_LENGTH = 20;
+	public static final double LONG_MIRROR_LENGTH = 100;
 }
 

@@ -1,4 +1,4 @@
-package model;
+package model.entitites;
 
 import java.awt.Rectangle;
 
@@ -22,7 +22,7 @@ public abstract class RectEntity extends Entity {
 	@Override
 	public Rectangle getBoundingBox() {
 		return new Rectangle((int) (position.getdX() - size.getdX() / 2), (int) (position.getdY() - size.getdY() / 2),
-				(int) (position.getdX() + size.getdX() / 2), (int) (position.getdY() + size.getdY() / 2));
+				(int) size.getdX(), (int) size.getdY());
 	}
 
 }

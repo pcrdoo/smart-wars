@@ -3,6 +3,7 @@ package model;
 import java.awt.Rectangle;
 
 import main.Constants;
+import model.entitites.RectEntity;
 import util.Vector2D;
 
 public class Bullet extends RectEntity {

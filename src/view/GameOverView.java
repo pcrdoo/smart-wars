@@ -5,7 +5,7 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 
 import main.Constants;
-import model.GameState;
+import main.GameState;
 
 public class GameOverView implements Drawable {
 	

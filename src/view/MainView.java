@@ -3,7 +3,7 @@ package view;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
-import model.GameState;
+import main.GameState;
 
 public class MainView {
 	private BackdropView backdrop;

@@ -1,4 +1,4 @@
-package model;
+package model.entitites;
 
 import java.awt.Rectangle;
 
@@ -15,10 +15,10 @@ public abstract class RoundEntity extends Entity {
 	public boolean hitTest(Vector2D point) {
 		return position.sub(point).length() < radius;
 	}
-	
+
 	@Override
 	public Rectangle getBoundingBox() {
-		return new Rectangle((int) (position.getdX() - radius), (int) (position.getdY() - radius),
-				(int) (position.getdX() + radius), (int) (position.getdY() + radius));
+		return new Rectangle((int) (position.getdX() - radius), (int) (position.getdY() - radius), (int) (2 * radius),
+				(int) (2 * radius));
 	}
 }

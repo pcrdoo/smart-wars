@@ -8,12 +8,12 @@ import java.util.Random;
 
 import main.Constants;
 import main.GameStarter;
+import main.GameState;
 import model.Asteroid;
 import model.Bullet;
-import model.Entity;
-import model.GameState;
 import model.Model;
 import model.Player;
+import model.entitites.Entity;
 import util.Vector2D;
 import view.AsteroidView;
 import view.BulletView;
@@ -148,7 +148,6 @@ public class MainController {
 				Vector2D location = new Vector2D(spawnX, Constants.ASTEROID_SPAWN_Y);
 				Vector2D velocity = new Vector2D((Math.random() > 0.5 ? -1 : 1) * Constants.ASTEROID_X_VELOCITY + (Math.random() * 2.0 - 1.0) * Constants.ASTEROID_X_VELOCITY_JITTER,
 						Constants.ASTEROID_Y_VELOCITY + (Math.random() * 2.0 - 1.0) * Constants.ASTEROID_Y_VELOCITY_JITTER);
-				// TODO: Spawn asteroid logic with this hitMap
 				Asteroid asteroid = new Asteroid(location, velocity, type);
 				model.addEntity(asteroid);
 				model.addAsteroid(asteroid);
@@ -211,7 +210,6 @@ public class MainController {
 		maybeSpawnAsteroids(dt);
 		cullEntities(getEntitiesToCull());
 		checkGameOver();
-		System.out.println(model.getEntities().size());
 	}
 
 	private void fireBullet(Player player) {

@@ -1,4 +1,4 @@
-package model;
+package model.entitites;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
