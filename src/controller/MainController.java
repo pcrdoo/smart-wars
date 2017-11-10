@@ -1,11 +1,8 @@
 package controller;
 
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import javax.swing.plaf.synth.SynthSliderUI;
 
 import main.Constants;
 import model.Bullet;
@@ -17,23 +14,21 @@ import view.MainView;
 import view.PlayerView;
 
 public class MainController {
-	
-	private MainView view;
+
 	private Model model;
+	private MainView view;
 	private HashMap<Integer, Boolean> keyboardState;
-	private HashMap<Bullet, BulletView> bulletViewMap;
-	private ArrayList<Bullet> bullets;
 	private HashMap<Player, PlayerView> playerViewMap;
-	
+	private HashMap<Bullet, BulletView> bulletViewMap;
+
 	public MainController(MainView view, Model model) {
 		this.view = view;
 		this.model = model;
-		
+
 		bulletViewMap = new HashMap<>();
-		bullets = new ArrayList<>();
-		
-		this.initKeyboardState();
-		
+
+		initKeyboardState();
+
 		PlayerView rightPlayerView = new PlayerView(model.getRightPlayer());
 		view.addDrawable(rightPlayerView);
 		view.addUpdatable(rightPlayerView);
@@ -41,78 +36,77 @@ public class MainController {
 		PlayerView leftPlayerView = new PlayerView(model.getLeftPlayer());
 		view.addDrawable(leftPlayerView);
 		view.addUpdatable(leftPlayerView);
-		
+
 		playerViewMap = new HashMap<>();
 		playerViewMap.put(model.getLeftPlayer(), leftPlayerView);
 		playerViewMap.put(model.getRightPlayer(), rightPlayerView);
 	}
-	
+
 	private void initKeyboardState() {
-		this.keyboardState = new HashMap<Integer, Boolean>();
+		keyboardState = new HashMap<Integer, Boolean>();
 		keyboardState.put(KeyEvent.VK_W, false);
 		keyboardState.put(KeyEvent.VK_S, false);
 		keyboardState.put(KeyEvent.VK_D, false);
-		
+
 		keyboardState.put(KeyEvent.VK_I, false);
 		keyboardState.put(KeyEvent.VK_K, false);
 		keyboardState.put(KeyEvent.VK_J, false);
 	}
-	
+
 	private void cullBullets(ArrayList<Bullet> toCull) {
 		ArrayList<Bullet> bulletsToCull;
 		if (toCull != null) {
 			bulletsToCull = toCull;
 		} else {
 			bulletsToCull = new ArrayList<>();
-			for (Bullet b : bullets) {
-				Vector2D p = b.getPosition();
-				if (p.getdX() < -Constants.BULLET_CULLING_X || p.getdX() > Constants.WINDOW_WIDTH + Constants.BULLET_CULLING_X ||
-						p.getdY() < -Constants.BULLET_CULLING_Y || p.getdY() > Constants.WINDOW_HEIGHT + Constants.BULLET_CULLING_Y) {
-					bulletsToCull.add(b);
+			for (Bullet bullet : model.getBullets()) {
+				Vector2D p = bullet.getPosition();
+				if (p.getdX() < -Constants.BULLET_CULLING_X
+						|| p.getdX() > Constants.WINDOW_WIDTH + Constants.BULLET_CULLING_X
+						|| p.getdY() < -Constants.BULLET_CULLING_Y
+						|| p.getdY() > Constants.WINDOW_HEIGHT + Constants.BULLET_CULLING_Y) {
+					bulletsToCull.add(bullet);
 				}
 			}
 		}
-		
-		for (Bullet b : bulletsToCull) {
-			bullets.remove(b);
-			// todo: move bullets to model 
-			model.removeUpdatable(b);
-			
-			BulletView v = bulletViewMap.get(b);
-			if (v != null) {
-				//todo: safe remove both
-				view.removeUpdatable(v);
-				view.removeDrawable(v);
-				bulletViewMap.remove(b);
+
+		for (Bullet bullet : bulletsToCull) {
+			model.removeBullet(bullet);
+			model.removeEntity(bullet);
+
+			BulletView bulletView = bulletViewMap.get(bullet);
+			if (bulletView != null) {
+				view.removeUpdatable(bulletView);
+				view.removeDrawable(bulletView);
+				bulletViewMap.remove(bullet);
 			}
 		}
 	}
-	
+
 	private void checkBulletCollisions() {
 		ArrayList<Bullet> impactedBullets = new ArrayList<>();
-		for (Bullet b : bullets) {
-			if (b.getOwner() ==  model.getRightPlayer() && model.getLeftPlayer().hitTest(b.getPosition())) {
+		for (Bullet bullet : model.getBullets()) {
+			if (bullet.getOwner() == model.getRightPlayer() && model.getLeftPlayer().hitTest(bullet.getPosition())) {
 				handlePlayerHit(model.getLeftPlayer());
-				impactedBullets.add(b);
-			} else if (b.getOwner() ==  model.getLeftPlayer() && model.getRightPlayer().hitTest(b.getPosition())) {
+				impactedBullets.add(bullet);
+			} else if (bullet.getOwner() == model.getLeftPlayer()
+					&& model.getRightPlayer().hitTest(bullet.getPosition())) {
 				handlePlayerHit(model.getRightPlayer());
-				impactedBullets.add(b);
+				impactedBullets.add(bullet);
 			}
 		}
-		
 		cullBullets(impactedBullets);
 	}
-	
+
 	public void handlePlayerHit(Player player) {
-		playerViewMap.get(player).onHit();
-		// TODO: Update health
+		playerViewMap.get(player).onPlayerHit();
 	}
-	
-	public void update() {		
+
+	public void update() {
 		checkBulletCollisions();
-		
+
 		if (keyboardState.get(KeyEvent.VK_J))
-			this.doShoot(this.model.getRightPlayer());
+			fireBullet(model.getRightPlayer());
 		if (keyboardState.get(KeyEvent.VK_I))
 			model.getRightPlayer().moveUp();
 		if (keyboardState.get(KeyEvent.VK_K))
@@ -121,9 +115,9 @@ public class MainController {
 			model.getRightPlayer().stopMoving();
 		if (!keyboardState.get(KeyEvent.VK_I) && !keyboardState.get(KeyEvent.VK_K))
 			model.getRightPlayer().stopMoving();
-		
+
 		if (keyboardState.get(KeyEvent.VK_D))
-			this.doShoot(this.model.getLeftPlayer());
+			fireBullet(model.getLeftPlayer());
 		if (keyboardState.get(KeyEvent.VK_W))
 			model.getLeftPlayer().moveUp();
 		if (keyboardState.get(KeyEvent.VK_S))
@@ -134,30 +128,29 @@ public class MainController {
 			model.getLeftPlayer().stopMoving();
 	}
 
-	private void doShoot(Player player) {
+	private void fireBullet(Player player) {
 		cullBullets(null);
-		
-		Bullet b = player.shoot();
-		if(b == null) {
+
+		Bullet bullet = player.fireBullet();
+		if (bullet == null) {
 			return;
 		}
-		model.addUpdatable(b);
-		bullets.add(b);
-		playerViewMap.get(player).onShoot();
-		
-		BulletView bv = new BulletView(b);
-		bulletViewMap.put(b, bv);
-		
-		view.addDrawable(bv);
-		view.addUpdatable(bv);
+		model.addEntity(bullet);
+		model.addBullet(bullet);
+		playerViewMap.get(player).onBulletFired();
+
+		BulletView bulletView = new BulletView(bullet);
+		bulletViewMap.put(bullet, bulletView);
+
+		view.addDrawable(bulletView);
+		view.addUpdatable(bulletView);
 	}
 
 	public void handleKeyDown(int keyCode) {
-		this.keyboardState.put(keyCode, true);
+		keyboardState.put(keyCode, true);
 	}
 
 	public void handleKeyUp(int keyCode) {
-		this.keyboardState.put(keyCode, false);
+		keyboardState.put(keyCode, false);
 	}
 }
-

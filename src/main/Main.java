@@ -6,7 +6,7 @@ public class Main {
 		System.setProperty("sun.java2d.opengl", "false");
 		System.setProperty("sun.java2d.transaccel", "false");
 		System.setProperty("sun.java2d.ddforcevram", "false");
-		new view.MainView().initGameWindow();
+		new GameWindow().initGameWindow();
 	}
 
 }

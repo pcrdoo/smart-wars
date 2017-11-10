@@ -76,11 +76,11 @@ public class PlayerView implements Drawable, Updatable {
 		}
 	}
 
-	public void onShoot() {
+	public void onBulletFired() {
 		flareOpacity = 1.0;
 	}
 
-	public void onHit() {
+	public void onPlayerHit() {
 		explosion = new Explosion(player.getPosition(), 1.5, 0.15);
 	}
 

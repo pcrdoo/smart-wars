@@ -5,16 +5,16 @@ import model.Bullet;
 import model.Player;
 import util.Vector2D;
 
-public class Shoot extends Ability {
+public class Gun extends Ability {
 	private Player player;
-	
-	public Shoot(Player player) {
+
+	public Gun(Player player) {
 		super(Constants.BULLET_COOLDOWN);
 		this.player = player;
 	}
-	
-	public Bullet fire(Vector2D position, Vector2D velocity) {
-		if (!super.fire()) {
+
+	public Bullet fireBullet(Vector2D position, Vector2D velocity) {
+		if (!execute()) {
 			return null;
 		}
 		return new Bullet(position, velocity, player);

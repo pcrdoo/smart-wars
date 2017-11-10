@@ -4,60 +4,59 @@ import java.util.ArrayList;
 
 import main.Constants;
 import model.abilities.Ability;
-import model.abilities.Shoot;
+import model.abilities.Gun;
 import util.Vector2D;
 import view.Updatable;
 
 public class Player extends RoundEntity {
 	private PlayerSide playerSide;
-	private int health;
 	private int maxHealth;
-	private double speed;
+	private int currHealth;
+	private double speed; // pixels per second
 
-	private ArrayList<Updatable> updatables;
-	private Shoot shoot;
+	private ArrayList<Ability> abilities;
+	private Gun gun;
 
 	public Player(PlayerSide playerSide) {
 		super(playerSide == PlayerSide.LEFT_PLAYER ? Constants.LEFT_PLAYER_START_POS : Constants.RIGHT_PLAYER_START_POS,
 				Constants.PLAYER_RADIUS);
 		this.playerSide = playerSide;
-		this.health = this.maxHealth = Constants.PLAYER_HEALTH;
-		this.speed = Constants.PLAYER_SPEED;
-		this.shoot = new Shoot(this);
-		this.updatables = new ArrayList<Updatable>();
-		this.updatables.add(shoot);
+		currHealth = maxHealth = Constants.PLAYER_HEALTH;
+		speed = Constants.PLAYER_SPEED;
+		gun = new Gun(this);
+		abilities = new ArrayList<Ability>();
+		abilities.add(gun);
 	}
 
 	public boolean isAlive() {
-		return this.health > 0;
+		return currHealth > 0;
 	}
 
-
 	public void moveUp() {
-		this.setVelocity(new Vector2D(0, -speed));
+		setVelocity(new Vector2D(0, -speed));
 	}
 
 	public void moveDown() {
-		this.setVelocity(new Vector2D(0, +speed));
+		setVelocity(new Vector2D(0, speed));
 	}
 
 	public void stopMoving() {
-		this.setVelocity(new Vector2D(0, 0));
+		setVelocity(new Vector2D(0, 0));
 	}
 
-	public Bullet shoot() {
-		return this.shoot.fire(this.position,
+	public Bullet fireBullet() {
+		return gun.fireBullet(position,
 				this.playerSide == PlayerSide.LEFT_PLAYER ? new Vector2D(Constants.BULLET_SPEED, 0)
 						: new Vector2D(-Constants.BULLET_SPEED, 0));
 	}
 
 	public void update(double dt) {
 		super.update(dt);
-		for (Updatable updatable : updatables) {
-			updatable.update(dt);
+		for (Ability ability : abilities) {
+			ability.update(dt);
 		}
 	}
-	
+
 	public PlayerSide getPlayerSide() {
 		return playerSide;
 	}

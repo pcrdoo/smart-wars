@@ -9,14 +9,17 @@ public class Model {
 	
 	private Player leftPlayer;
 	private Player rightPlayer;
-	private ArrayList<Updatable> updatables;
+	private ArrayList<Entity> entities;
+	private ArrayList<Bullet> bullets; // separate bullets for culling
 	
 	public Model() {
-		this.leftPlayer = new Player(PlayerSide.LEFT_PLAYER);
-		this.rightPlayer = new Player(PlayerSide.RIGHT_PLAYER);
-		this.updatables = new ArrayList<Updatable>();
-		this.updatables.add(leftPlayer);
-		this.updatables.add(rightPlayer);
+		leftPlayer = new Player(PlayerSide.LEFT_PLAYER);
+		rightPlayer = new Player(PlayerSide.RIGHT_PLAYER);
+		bullets = new ArrayList<Bullet>();
+		
+		entities = new ArrayList<Entity>();
+		entities.add(leftPlayer);
+		entities.add(rightPlayer);
 	}
 	
 	public Player getLeftPlayer() {
@@ -27,19 +30,29 @@ public class Model {
 		return rightPlayer;
 	}
 	
-	// zasto se ovde referencira Updatble iz v iew?!TODO
-	
 	public void update(double dt) {
-		for (Updatable updatable : updatables) {
-			updatable.update(dt);
+		for (Entity entity : entities) {
+			entity.update(dt);
 		}
 	}
 	
-	public void addUpdatable(Updatable updatable) {
-		this.updatables.add(updatable);
+	public void addEntity(Entity entity) {
+		entities.add(entity);
 	}
 	
-	public void removeUpdatable(Updatable updatable) {
-		this.updatables.remove(updatable);
+	public void removeEntity(Entity entity) {
+		entities.remove(entity);
+	}
+	
+	public void addBullet(Bullet bullet) {
+		bullets.add(bullet);
+	}
+	
+	public void removeBullet(Bullet bullet) {
+		bullets.remove(bullet);
+	}
+
+	public ArrayList<Bullet> getBullets() {
+		return bullets;
 	}
 }
