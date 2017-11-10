@@ -8,7 +8,7 @@ public class Bullet extends RectEntity {
 	private double damage;
 	
 	public Bullet(Vector2D position, Vector2D velocity, Player owner) {
-		super(position, velocity);
+		super(position, velocity, Constants.BULLET_SIZE);
 		this.owner = owner;
 		this.damage = Constants.BULLET_DAMAGE;
 	}

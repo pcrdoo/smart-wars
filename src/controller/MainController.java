@@ -1,5 +1,6 @@
 package controller;
 
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,11 +8,12 @@ import java.util.HashMap;
 import main.Constants;
 import main.GameStarter;
 import model.Bullet;
+import model.Entity;
 import model.GameState;
 import model.Model;
 import model.Player;
-import util.Vector2D;
 import view.BulletView;
+import view.EntityView;
 import view.MainView;
 import view.PlayerView;
 
@@ -20,69 +22,89 @@ public class MainController {
 	private Model model;
 	private MainView view;
 	private GameStarter gameStarter;
+	private HashMap<Controls, Integer> leftPlayerControls;
+	private HashMap<Controls, Integer> rightPlayerControls;
 	private HashMap<Integer, Boolean> keyboardState;
-	private HashMap<Player, PlayerView> playerViewMap;
-	private HashMap<Bullet, BulletView> bulletViewMap;
+
+	// View-related dependencies for each entity.
+	private HashMap<Entity, EntityView> viewMap;
 
 	public MainController(GameStarter gameStarter, MainView view, Model model) {
 		this.view = view;
 		this.model = model;
 		this.gameStarter = gameStarter;
 
-		bulletViewMap = new HashMap<>();
-
-		initKeyboardState();
-
-		PlayerView rightPlayerView = new PlayerView(model.getRightPlayer());
-		view.addDrawable(rightPlayerView);
-		view.addUpdatable(rightPlayerView);
+		viewMap = new HashMap<>();
 
 		PlayerView leftPlayerView = new PlayerView(model.getLeftPlayer());
 		view.addDrawable(leftPlayerView);
 		view.addUpdatable(leftPlayerView);
+		leftPlayerControls = new HashMap<Controls, Integer>();
+		leftPlayerControls.put(Controls.MOVE_UP, KeyEvent.VK_W);
+		leftPlayerControls.put(Controls.MOVE_DOWN, KeyEvent.VK_S);
+		leftPlayerControls.put(Controls.FIRE_GUN, KeyEvent.VK_D);
 
-		playerViewMap = new HashMap<>();
-		playerViewMap.put(model.getLeftPlayer(), leftPlayerView);
-		playerViewMap.put(model.getRightPlayer(), rightPlayerView);
+		PlayerView rightPlayerView = new PlayerView(model.getRightPlayer());
+		view.addDrawable(rightPlayerView);
+		view.addUpdatable(rightPlayerView);
+		rightPlayerControls = new HashMap<Controls, Integer>();
+		rightPlayerControls.put(Controls.MOVE_UP, KeyEvent.VK_I);
+		rightPlayerControls.put(Controls.MOVE_DOWN, KeyEvent.VK_K);
+		rightPlayerControls.put(Controls.FIRE_GUN, KeyEvent.VK_J);
+		
+		initKeyboardState();
+
+		viewMap.put(model.getLeftPlayer(), leftPlayerView);
+		viewMap.put(model.getRightPlayer(), rightPlayerView);
 	}
 
 	private void initKeyboardState() {
 		keyboardState = new HashMap<Integer, Boolean>();
-		keyboardState.put(KeyEvent.VK_W, false);
-		keyboardState.put(KeyEvent.VK_S, false);
-		keyboardState.put(KeyEvent.VK_D, false);
-
-		keyboardState.put(KeyEvent.VK_I, false);
-		keyboardState.put(KeyEvent.VK_K, false);
-		keyboardState.put(KeyEvent.VK_J, false);
-
+		for(HashMap.Entry<Controls, Integer> entry : leftPlayerControls.entrySet()) {
+			keyboardState.put((Integer) entry.getValue(), false);
+		}
+		for(HashMap.Entry<Controls, Integer> entry : rightPlayerControls.entrySet()) {
+			keyboardState.put((Integer) entry.getValue(), false);
+		}
 		keyboardState.put(KeyEvent.VK_ENTER, false);
 	}
 
-	private void cullBullets(ArrayList<Bullet> toCull) {
-		ArrayList<Bullet> bulletsToCull = new ArrayList<>();
-		bulletsToCull.addAll(toCull);
-
-		for (Bullet bullet : model.getBullets()) {
-			Vector2D p = bullet.getPosition();
-			if (p.getdX() < -Constants.BULLET_CULLING_X
-					|| p.getdX() > Constants.WINDOW_WIDTH + Constants.BULLET_CULLING_X
-					|| p.getdY() < -Constants.BULLET_CULLING_Y
-					|| p.getdY() > Constants.WINDOW_HEIGHT + Constants.BULLET_CULLING_Y) {
-				bulletsToCull.add(bullet);
+	private ArrayList<Entity> findEntitiesOutOfBounds() {
+		ArrayList<Entity> outOfBounds = new ArrayList<Entity>();
+		for (Entity entity : model.getEntities()) {
+			Rectangle boundingBox = entity.getBoundingBox();
+			if (boundingBox.getMaxX() < 0 || boundingBox.getMinX() > Constants.WINDOW_WIDTH || boundingBox.getMaxY() < 0
+					|| boundingBox.getMinY() > Constants.WINDOW_HEIGHT) {
+				outOfBounds.add(entity);
 			}
 		}
+		return outOfBounds;
+	}
 
-		for (Bullet bullet : bulletsToCull) {
-			model.removeBullet(bullet);
-			model.removeEntity(bullet);
-
-			BulletView bulletView = bulletViewMap.get(bullet);
-			if (bulletView != null) {
-				view.removeUpdatable(bulletView);
-				view.removeDrawable(bulletView);
-				bulletViewMap.remove(bullet);
+	private void cullEntities(ArrayList<Entity> toCull) {
+		for (Entity entity : toCull) {
+			model.removeEntity(entity);
+			if (entity instanceof Bullet) {
+				model.removeBullet((Bullet) entity);
 			}
+			deleteView(entity);
+		}
+	}
+
+	private void deleteView(Entity entity) {
+		EntityView entityView = viewMap.get(entity);
+		if (entityView != null) {
+			view.removeUpdatable(entityView);
+			view.removeDrawable(entityView);
+			viewMap.remove(entity);
+		}
+	}
+
+	private void cullBullets(ArrayList<Bullet> toCull) {
+		for (Bullet bullet : toCull) {
+			model.removeEntity(bullet);
+			model.removeBullet(bullet);
+			deleteView(bullet);
 		}
 	}
 
@@ -116,7 +138,7 @@ public class MainController {
 
 	public void handlePlayerHit(Player player, Bullet bullet) {
 		player.receiveDamage(bullet.getDamage());
-		playerViewMap.get(player).onPlayerHit();
+		((PlayerView) viewMap.get(player)).onPlayerHit();
 	}
 
 	public void update() {
@@ -126,6 +148,7 @@ public class MainController {
 			}
 			return;
 		}
+		
 		checkBulletCollisions();
 
 		if (keyboardState.get(KeyEvent.VK_J))
@@ -151,6 +174,7 @@ public class MainController {
 			model.getLeftPlayer().stopMoving();
 
 		checkGameOver();
+		cullEntities(findEntitiesOutOfBounds());
 	}
 
 	private void fireBullet(Player player) {
@@ -160,10 +184,10 @@ public class MainController {
 		}
 		model.addEntity(bullet);
 		model.addBullet(bullet);
-		playerViewMap.get(player).onBulletFired();
+		((PlayerView) viewMap.get(player)).onBulletFired();
 
 		BulletView bulletView = new BulletView(bullet);
-		bulletViewMap.put(bullet, bulletView);
+		viewMap.put(bullet, bulletView);
 
 		view.addDrawable(bulletView);
 		view.addUpdatable(bulletView);

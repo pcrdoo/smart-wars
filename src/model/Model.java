@@ -2,9 +2,6 @@ package model;
 
 import java.util.ArrayList;
 
-import main.Constants;
-import view.Updatable;
-
 public class Model {
 
 	private Player leftPlayer;
@@ -59,6 +56,10 @@ public class Model {
 
 	public ArrayList<Bullet> getBullets() {
 		return bullets;
+	}
+	
+	public ArrayList<Entity> getEntities() {
+		return entities;
 	}
 
 	public void setGameState(GameState gameState) {

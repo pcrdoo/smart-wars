@@ -11,9 +11,6 @@ public class Constants {
 
 	public static final int PLAYER_ANIMATION_FPS = 24;
 
-	public static final int BULLET_CULLING_X = 100;
-	public static final int BULLET_CULLING_Y = 20;
-
 	// Player
 	public static final Vector2D LEFT_PLAYER_START_POS = new Vector2D(60, WINDOW_HEIGHT / 2);
 	public static final Vector2D RIGHT_PLAYER_START_POS = new Vector2D(WINDOW_WIDTH - 60, WINDOW_HEIGHT / 2);
@@ -24,7 +21,7 @@ public class Constants {
 	// Bullet
 	public static final double BULLET_SPEED = 500;
 	public static final Vector2D BULLET_SIZE = new Vector2D(3, 3);
-	public static final double BULLET_COOLDOWN = 0.2;
+	public static final double BULLET_COOLDOWN = 0.1;
 	public static final double BULLET_DAMAGE = 10;
 
 	// Mirror

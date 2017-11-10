@@ -19,7 +19,7 @@ import view.gfx.particles.ParticleSystem;
 import view.gfx.particles.PointParticleEmitter;
 import view.gfx.particles.SpriteParticleRenderer;
 
-public class PlayerView implements Drawable, Updatable {
+public class PlayerView extends EntityView {
 	private final static int FRAME_COUNT = 6;
 	private final static int HEALTHBAR_X_OFFSET = 40;
 	private final static double FLARE_DURATION = 0.2;
