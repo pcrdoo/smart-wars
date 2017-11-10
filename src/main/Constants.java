@@ -15,8 +15,8 @@ public class Constants {
 	public static final int BULLET_CULLING_Y = 20;
 
 	// Player
-	public static final Vector2D LEFT_PLAYER_START_POS = new Vector2D(30, WINDOW_HEIGHT / 2);
-	public static final Vector2D RIGHT_PLAYER_START_POS = new Vector2D(WINDOW_WIDTH - 30, WINDOW_HEIGHT / 2);
+	public static final Vector2D LEFT_PLAYER_START_POS = new Vector2D(60, WINDOW_HEIGHT / 2);
+	public static final Vector2D RIGHT_PLAYER_START_POS = new Vector2D(WINDOW_WIDTH - 60, WINDOW_HEIGHT / 2);
 	public static final double PLAYER_SPEED = 300;
 	public static final double PLAYER_RADIUS = 20;
 	public static final int PLAYER_HEALTH = 100;

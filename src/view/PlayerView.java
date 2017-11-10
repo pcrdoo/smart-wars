@@ -19,10 +19,12 @@ import view.gfx.PointParticleEmitter;
 
 public class PlayerView implements Drawable, Updatable {
 	private final static int FRAME_COUNT = 6;
+	private final static int HEALTHBAR_X_OFFSET = 40;
 	private final static double FLARE_DURATION = 0.2;
 
 	private BufferedImage sprite;
 	private BufferedImage flare;
+	private BufferedImage healthbar;
 	private Player player;
 	private int frame = 0;
 	private int spriteWidth, spriteHeight, flareWidth, flareHeight;
@@ -36,6 +38,7 @@ public class PlayerView implements Drawable, Updatable {
 		sprite = ImageCache.getInstance()
 				.get(player.getPlayerSide() == PlayerSide.LEFT_PLAYER ? "assets/player1.png" : "assets/player2.png");
 		flare = ImageCache.getInstance().get("assets/player-flare.png");
+		healthbar = ImageCache.getInstance().get("assets/healthbar.png");
 		spriteWidth = sprite.getWidth();
 		spriteHeight = sprite.getHeight() / FRAME_COUNT;
 		flareWidth = flare.getWidth();
@@ -112,10 +115,12 @@ public class PlayerView implements Drawable, Updatable {
 		}
 
 		// draw health
-		// TODO: sprite
-		g.setColor(Color.WHITE);
-		g.setFont(new Font("default", Font.BOLD, 16));
-		g.drawString(Integer.toString(player.getCurrHealth()), (int) player.getPosition().getdX() - 15,
-				(int) player.getPosition().getdY() + 40);
+		int sign = player.getPlayerSide() == PlayerSide.LEFT_PLAYER ? -1 : 1;
+		int hbw = healthbar.getWidth() / 2, hbh = healthbar.getHeight();
+		int hbx = (int)player.getPosition().getdX() - hbw / 2 + sign * HEALTHBAR_X_OFFSET, hby = (int)player.getPosition().getdY() - hbh / 2;
+		g.drawImage(healthbar, hbx, hby, hbx + hbw, hby + hbh, 0, 0, hbw, hbh, null);
+		
+		int health_height = (int)(hbh * (double)player.getCurrHealth() / Constants.PLAYER_HEALTH);
+		g.drawImage(healthbar, hbx, hby + hbh - health_height, hbx + hbw, hby + hbh, hbw, hbh - health_height, 2 * hbw, hbh, null);
 	}
 }
