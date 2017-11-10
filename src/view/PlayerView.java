@@ -12,6 +12,7 @@ import model.Player;
 import model.PlayerSide;
 import util.ImageCache;
 import util.Vector2D;
+import view.gfx.AnimatedSprite;
 import view.gfx.Explosion;
 import view.gfx.Sparks;
 import view.gfx.particles.ParticleAffectorDecay;
@@ -24,25 +25,26 @@ public class PlayerView extends EntityView {
 	private final static int HEALTHBAR_X_OFFSET = 40;
 	private final static double FLARE_DURATION = 0.2;
 
-	private BufferedImage sprite;
+	private AnimatedSprite sprite;
 	private BufferedImage flare;
 	private BufferedImage healthbar;
 	private Player player;
 	private int frame = 0;
-	private int spriteWidth, spriteHeight, flareWidth, flareHeight;
-	private double time = 0.0;
+	private int flareWidth, flareHeight;
 	private double flareOpacity = 0.0;
 	private ParticleSystem trail;
 	private PointParticleEmitter trailEmitter;
 	private Explosion explosion;
 
 	public PlayerView(Player player) {
-		sprite = ImageCache.getInstance()
-				.get(player.getPlayerSide() == PlayerSide.LEFT_PLAYER ? "assets/player1.png" : "assets/player2.png");
+		sprite = new AnimatedSprite(ImageCache.getInstance()
+				.get(player.getPlayerSide() == PlayerSide.LEFT_PLAYER ? "assets/player1.png" : "assets/player2.png"),
+				1,
+				FRAME_COUNT,
+				Constants.PLAYER_ANIMATION_FPS);
+		
 		flare = ImageCache.getInstance().get("assets/player-flare.png");
 		healthbar = ImageCache.getInstance().get("assets/healthbar.png");
-		spriteWidth = sprite.getWidth();
-		spriteHeight = sprite.getHeight() / FRAME_COUNT;
 		flareWidth = flare.getWidth();
 		flareHeight = flare.getHeight();
 
@@ -56,16 +58,8 @@ public class PlayerView extends EntityView {
 	}
 
 	public void update(double dt) {
-		time += dt;
-
-		double frameTime = 1.0 / Constants.PLAYER_ANIMATION_FPS;
-		while (time > frameTime) {
-			time -= frameTime;
-			frame++;
-		}
-
-		frame %= FRAME_COUNT;
-
+		sprite.update(dt);
+		
 		flareOpacity -= dt * 1.0 / FLARE_DURATION;
 		if (flareOpacity < 0.0) {
 			flareOpacity = 0.0;
@@ -94,11 +88,7 @@ public class PlayerView extends EntityView {
 
 	public void draw(Graphics2D g) {
 		trail.draw(g);
-		int x = (int) player.getPosition().getdX() - spriteWidth / 2;
-		int y = (int) player.getPosition().getdY() - spriteHeight / 2;
-
-		g.drawImage(sprite, x, y, x + spriteWidth, y + spriteHeight, 0, frame * spriteHeight, spriteWidth - 1,
-				(frame + 1) * spriteHeight - 1, null);
+		sprite.draw(g, (int)player.getPosition().getdX(), (int)player.getPosition().getdY());
 
 		if (flareOpacity > 0.0) {
 			int fx = (int) player.getPosition().getdX() - flareWidth / 2;

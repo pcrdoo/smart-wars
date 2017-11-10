@@ -146,7 +146,8 @@ public class MainController {
 				double spawnXRange = Constants.ASTEROID_SPAWN_X_MAX - Constants.ASTEROID_SPAWN_X_MIN;
 				double spawnX = asteroidRandom.nextDouble() * spawnXRange + Constants.ASTEROID_SPAWN_X_MIN;
 				Vector2D location = new Vector2D(spawnX, Constants.ASTEROID_SPAWN_Y);
-				Vector2D velocity = new Vector2D(0, Constants.ASTEROID_VELOCITY);
+				Vector2D velocity = new Vector2D((Math.random() > 0.5 ? -1 : 1) * Constants.ASTEROID_X_VELOCITY + (Math.random() * 2.0 - 1.0) * Constants.ASTEROID_X_VELOCITY_JITTER,
+						Constants.ASTEROID_Y_VELOCITY + (Math.random() * 2.0 - 1.0) * Constants.ASTEROID_Y_VELOCITY_JITTER);
 				// TODO: Spawn asteroid logic with this hitMap
 				Asteroid asteroid = new Asteroid(location, velocity, type);
 				model.addEntity(asteroid);
@@ -230,7 +231,7 @@ public class MainController {
 	}
 
 	private void handleAsteroidHit(Asteroid asteroid, Bullet bullet) {
-		((AsteroidView) viewMap.get(asteroid)).onAsteroidHit();
+		((AsteroidView) viewMap.get(asteroid)).onAsteroidHit(bullet.getPosition());
 	}
 
 	private void handlePlayerHit(Player player, Bullet bullet) {
