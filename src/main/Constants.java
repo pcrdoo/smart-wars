@@ -31,6 +31,7 @@ public class Constants {
 	public static final Vector2D BULLET_SIZE = new Vector2D(8, 8);
 	public static final double BULLET_COOLDOWN = 0.1;
 	public static final double BULLET_DAMAGE = 10;
+	public static final int MAX_BULLET_BOUNCES = 10;
 	
 	// Asteroid
 	public static final double ASTEROID_SPAWN_PROBABILITY = 1; // per second

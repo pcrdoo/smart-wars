@@ -9,11 +9,13 @@ import util.Vector2D;
 public class Bullet extends RectEntity {
 	private Player owner;
 	private double damage;
-
+	private int bounces;
+	
 	public Bullet(Vector2D position, Vector2D velocity, Player owner) {
 		super(position, velocity, Constants.BULLET_SIZE);
 		this.owner = owner;
 		this.damage = Constants.BULLET_DAMAGE;
+		this.bounces = 0;
 	}
 
 	public Player getOwner() {
@@ -32,6 +34,10 @@ public class Bullet extends RectEntity {
 	
 	@Override
 	public boolean shouldCull() {
+		if (bounces > Constants.MAX_BULLET_BOUNCES) {
+			return true;
+		}
+		
 		Rectangle boundingBox = getBoundingBox();
 		if (owner.getPlayerSide() == PlayerSide.LEFT_PLAYER && boundingBox.getMinX() > Constants.WINDOW_WIDTH) {
 			return true;
@@ -41,8 +47,12 @@ public class Bullet extends RectEntity {
 		return false;
 	}
 
+	public int getBounces() {
+		return bounces;
+	}
+	
 	public void bounce(Mirror mirror) {
 		setVelocity(reflect(getVelocity(), mirror.getLineVector()));
-		System.out.println("reflekty");
+		bounces++;
 	}
 }

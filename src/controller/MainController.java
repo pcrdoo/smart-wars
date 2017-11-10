@@ -111,10 +111,10 @@ public class MainController {
 	private void checkBulletCollisions() {
 		ArrayList<Bullet> impactedBullets = new ArrayList<>();
 		for (Bullet bullet : model.getBullets()) {
-			if (bullet.getOwner() == model.getRightPlayer() && model.getLeftPlayer().hitTest(bullet.getPosition())) {
+			if ((bullet.getBounces() > 0 || bullet.getOwner() == model.getRightPlayer()) && model.getLeftPlayer().hitTest(bullet.getPosition())) {
 				handlePlayerHit(model.getLeftPlayer(), bullet);
 				impactedBullets.add(bullet);
-			} else if (bullet.getOwner() == model.getLeftPlayer()
+			} else if ((bullet.getBounces() > 0 || bullet.getOwner() == model.getLeftPlayer())
 					&& model.getRightPlayer().hitTest(bullet.getPosition())) {
 				handlePlayerHit(model.getRightPlayer(), bullet);
 				impactedBullets.add(bullet);
