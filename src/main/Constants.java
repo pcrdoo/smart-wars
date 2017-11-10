@@ -49,6 +49,7 @@ public class Constants {
 	public static final int ASTEROID_X_VELOCITY = 20;
 	public static final int ASTEROID_X_VELOCITY_JITTER = 7;
 	public static final int ASTEROID_FPS = 5;
+	public static final double ASTEROID_STOLEN_VELOCITY_INTENSITY = 0.5;
 	
 	// Mirror
 	public static final double MIRROR_MAGIC_COOLDOWN = 1; // TODO: 10

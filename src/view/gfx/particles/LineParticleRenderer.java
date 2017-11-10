@@ -42,7 +42,7 @@ public class LineParticleRenderer implements ParticleRenderer {
 			}
 			
 			double length = lengthFactor * (maxLength - minLength) + minLength;
-			Vector2D endPoint = pos.add(vel.scale(1.0 / vel.length()).scale(length));
+			Vector2D endPoint = pos.add(vel.normalize().scale(length));
 			
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)particles.getAlpha(i)));
 			

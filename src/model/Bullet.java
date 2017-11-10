@@ -25,7 +25,7 @@ public class Bullet extends RectEntity {
 	}
 
 	private Vector2D reflect(Vector2D velocity, Vector2D line) {
-		Vector2D dir = line.scale(1.0 / line.length());
+		Vector2D dir = line.normalize();
 		Vector2D perp = new Vector2D(-dir.getdY(), dir.getdX());
 		return velocity.sub(perp.scale(2.0 * perp.dotProduct(velocity)));
 	}

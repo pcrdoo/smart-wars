@@ -370,6 +370,7 @@ public class MainController {
 	}
 
 	private void handleAsteroidHit(Asteroid asteroid, Bullet bullet) {
+		asteroid.stealMomentum(bullet.getVelocity());
 		((AsteroidView) viewMap.get(asteroid)).onAsteroidHit(bullet.getPosition());
 	}
 

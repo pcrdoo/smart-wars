@@ -3,7 +3,7 @@ package util;
 import java.lang.Math;
 
 public class Vector2D {
-	
+
 	protected double dX;
 	protected double dY;
 
@@ -55,13 +55,10 @@ public class Vector2D {
 
 	public Vector2D normalize() {
 		Vector2D v2 = new Vector2D();
-
-		double length = Math.sqrt(this.dX * this.dX + this.dY * this.dY);
-		if (length != 0) {
-			v2.dX = this.dX / length;
-			v2.dY = this.dY / length;
+		double len = length();
+		if (len != 0) {
+			v2 = this.scale(1 / len);
 		}
-
 		return v2;
 	}
 
@@ -70,13 +67,13 @@ public class Vector2D {
 	public double dotProduct(Vector2D v1) {
 		return this.dX * v1.dX + this.dY * v1.dY;
 	}
-	
+
 	public double crossProductIntensity(Vector2D v1) {
-		return this.dX*v1.dY - this.dY*v1.dX;
+		return this.dX * v1.dY - this.dY * v1.dX;
 	}
-	
+
 	// Clamp coordinates...
-	
+
 	public void clampdX(double mindX, double maxdX) {
 		if (this.dX < mindX) {
 			this.dX = mindX;
@@ -85,7 +82,7 @@ public class Vector2D {
 			this.dX = maxdX;
 		}
 	}
-	
+
 	public void clampdY(double mindY, double maxdY) {
 		if (this.dY < mindY) {
 			this.dY = mindY;

@@ -3,7 +3,6 @@ package view;
 import java.awt.AlphaComposite;
 import java.awt.Composite;
 import java.awt.Graphics2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import main.Constants;
@@ -12,10 +11,8 @@ import util.ImageCache;
 import util.Vector2D;
 import view.gfx.AnimatedSprite;
 import view.gfx.Sparks;
-import view.gfx.particles.ParticleAffectorDecay;
 import view.gfx.particles.ParticleSystem;
 import view.gfx.particles.PointParticleEmitter;
-import view.gfx.particles.SpriteParticleRenderer;
 
 public class AsteroidView extends EntityView {
 	private Asteroid asteroid;
@@ -61,7 +58,6 @@ public class AsteroidView extends EntityView {
 		}
 		
 		ArrayList<Sparks> finishedSparks = new ArrayList<>();
-		
 		for (Sparks s : sparks) {
 			s.update(dt);
 

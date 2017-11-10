@@ -56,4 +56,8 @@ public class Asteroid extends BitmapEntity {
 	public int getType() {
 		return type;
 	}
+
+	public void stealMomentum(Vector2D velocity) {
+		this.velocity = this.velocity.add(velocity.normalize().scale(Constants.ASTEROID_STOLEN_VELOCITY_INTENSITY));
+	}
 }
