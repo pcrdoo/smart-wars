@@ -56,7 +56,7 @@ public class GameWindow extends GameFrame implements GameStarter {
 		synchronized (this) {
 			model.update(dt);
 			view.update(dt);
-			controller.update();
+			controller.update(dt);
 		}
 
 		lastUpdateTime = System.nanoTime();

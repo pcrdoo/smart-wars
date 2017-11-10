@@ -63,7 +63,7 @@ public class AsteroidView extends EntityView {
 
 	@Override
 	public void draw(Graphics2D g) {
-		trail.draw(g);
+		//trail.draw(g);
 
 		int w = asteroidSprite.getWidth(), h = asteroidSprite.getHeight();
 

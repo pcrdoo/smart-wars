@@ -23,8 +23,12 @@ public class Constants {
 	public static final Vector2D BULLET_SIZE = new Vector2D(3, 3);
 	public static final double BULLET_COOLDOWN = 0.1;
 	public static final double BULLET_DAMAGE = 10;
-
-	// Mirror
-	public static final double MIRROR_SPEED = 0;
-	public static final double MIRROR_RADIUS = 50;
+	
+	// Asteroid
+	public static final double ASTEROID_SPAWN_PROBABILITY = 1; // per second
+	public static final int ASTEROID_TYPE_COUNT = 6;
+	public static final int ASTEROID_SPRITES_X = 4;
+	public static final int ASTEROID_SPRITES_Y = 4;
+	public static final int ASTEROID_SPAWN_Y = 10;
+	public static final int ASTEROID_VELOCITY = 100;
 }

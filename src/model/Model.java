@@ -8,6 +8,7 @@ public class Model {
 	private Player rightPlayer;
 	private ArrayList<Entity> entities;
 	private ArrayList<Bullet> bullets; // separate bullets for culling
+	private ArrayList<Asteroid> asteroids; // separate asteroids for culling
 
 	private GameState gameState;
 
@@ -15,7 +16,8 @@ public class Model {
 		gameState = GameState.RUNNING;
 		leftPlayer = new Player(PlayerSide.LEFT_PLAYER);
 		rightPlayer = new Player(PlayerSide.RIGHT_PLAYER);
-		bullets = new ArrayList<Bullet>();
+		bullets = new ArrayList<>();
+		asteroids = new ArrayList<>();
 
 		entities = new ArrayList<Entity>();
 		entities.add(leftPlayer);
@@ -56,6 +58,18 @@ public class Model {
 
 	public ArrayList<Bullet> getBullets() {
 		return bullets;
+	}
+	
+	public void addAsteroid(Asteroid asteroid) {
+		asteroids.add(asteroid);
+	}
+
+	public void removeAsteroid(Asteroid asteroid) {
+		asteroids.remove(asteroid);
+	}
+
+	public ArrayList<Asteroid> getAsteroids() {
+		return asteroids;
 	}
 	
 	public ArrayList<Entity> getEntities() {

@@ -4,14 +4,18 @@ import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import main.Constants;
 import main.GameStarter;
+import model.Asteroid;
 import model.Bullet;
 import model.Entity;
 import model.GameState;
 import model.Model;
 import model.Player;
+import util.Vector2D;
+import view.AsteroidView;
 import view.BulletView;
 import view.EntityView;
 import view.MainView;
@@ -28,6 +32,9 @@ public class MainController {
 
 	// View-related dependencies for each entity.
 	private HashMap<Entity, EntityView> viewMap;
+	
+	private double timeToNextAsteroidSpawn;
+	private Random asteroidRandom;
 
 	public MainController(GameStarter gameStarter, MainView view, Model model) {
 		this.view = view;
@@ -51,44 +58,25 @@ public class MainController {
 		rightPlayerControls.put(Controls.MOVE_UP, KeyEvent.VK_I);
 		rightPlayerControls.put(Controls.MOVE_DOWN, KeyEvent.VK_K);
 		rightPlayerControls.put(Controls.FIRE_GUN, KeyEvent.VK_J);
-		
+
 		initKeyboardState();
 
 		viewMap.put(model.getLeftPlayer(), leftPlayerView);
 		viewMap.put(model.getRightPlayer(), rightPlayerView);
+		
+		timeToNextAsteroidSpawn = 1;
+		asteroidRandom = new Random();
 	}
 
 	private void initKeyboardState() {
 		keyboardState = new HashMap<Integer, Boolean>();
-		for(HashMap.Entry<Controls, Integer> entry : leftPlayerControls.entrySet()) {
+		for (HashMap.Entry<Controls, Integer> entry : leftPlayerControls.entrySet()) {
 			keyboardState.put((Integer) entry.getValue(), false);
 		}
-		for(HashMap.Entry<Controls, Integer> entry : rightPlayerControls.entrySet()) {
+		for (HashMap.Entry<Controls, Integer> entry : rightPlayerControls.entrySet()) {
 			keyboardState.put((Integer) entry.getValue(), false);
 		}
 		keyboardState.put(KeyEvent.VK_ENTER, false);
-	}
-
-	private ArrayList<Entity> findEntitiesOutOfBounds() {
-		ArrayList<Entity> outOfBounds = new ArrayList<Entity>();
-		for (Entity entity : model.getEntities()) {
-			Rectangle boundingBox = entity.getBoundingBox();
-			if (boundingBox.getMaxX() < 0 || boundingBox.getMinX() > Constants.WINDOW_WIDTH || boundingBox.getMaxY() < 0
-					|| boundingBox.getMinY() > Constants.WINDOW_HEIGHT) {
-				outOfBounds.add(entity);
-			}
-		}
-		return outOfBounds;
-	}
-
-	private void cullEntities(ArrayList<Entity> toCull) {
-		for (Entity entity : toCull) {
-			model.removeEntity(entity);
-			if (entity instanceof Bullet) {
-				model.removeBullet((Bullet) entity);
-			}
-			deleteView(entity);
-		}
 	}
 
 	private void deleteView(Entity entity) {
@@ -118,9 +106,83 @@ public class MainController {
 					&& model.getRightPlayer().hitTest(bullet.getPosition())) {
 				handlePlayerHit(model.getRightPlayer(), bullet);
 				impactedBullets.add(bullet);
+			} else {
+				// Asteroid collision
+				for(Asteroid asteroid : model.getAsteroids()) {
+					if(asteroid.hitTest(bullet.getPosition())) {
+						handleAsteroidHit(asteroid, bullet);
+						impactedBullets.add(bullet);
+					}
+				}
 			}
 		}
 		cullBullets(impactedBullets);
+	}
+
+	private void checkPlayerControls(Player player, HashMap<Controls, Integer> controls) {
+		if (keyboardState.get(controls.get(Controls.FIRE_GUN))) {
+			fireBullet(player);
+		}
+		if (keyboardState.get(controls.get(Controls.MOVE_UP))) {
+			player.moveUp();
+		}
+		if (keyboardState.get(controls.get(Controls.MOVE_DOWN))) {
+			player.moveDown();
+		}
+		if (keyboardState.get(controls.get(Controls.MOVE_UP)) && keyboardState.get(controls.get(Controls.MOVE_DOWN))) {
+			player.stopMoving();
+		}
+		if (!keyboardState.get(controls.get(Controls.MOVE_UP))
+				&& !keyboardState.get(controls.get(Controls.MOVE_DOWN))) {
+			player.stopMoving();
+		}
+	}
+
+	private ArrayList<Entity> findEntitiesOutOfBounds() {
+		ArrayList<Entity> outOfBounds = new ArrayList<Entity>();
+		for (Entity entity : model.getEntities()) {
+			Rectangle boundingBox = entity.getBoundingBox();
+			if (boundingBox.getMaxX() < 0 || boundingBox.getMinX() > Constants.WINDOW_WIDTH || boundingBox.getMaxY() < 0
+					|| boundingBox.getMinY() > Constants.WINDOW_HEIGHT) {
+				outOfBounds.add(entity);
+			}
+		}
+		return outOfBounds;
+	}
+	
+	private void maybeSpawnAsteroids(double dt) {
+		timeToNextAsteroidSpawn -= dt;
+		if (timeToNextAsteroidSpawn <= 0) {
+			if (asteroidRandom.nextDouble() <= Constants.ASTEROID_SPAWN_PROBABILITY) {
+				int type = asteroidRandom.nextInt(Constants.ASTEROID_TYPE_COUNT) + 1;
+				double spawnXRange = Constants.RIGHT_PLAYER_START_POS.getdX() - Constants.LEFT_PLAYER_START_POS.getdX();
+				double spawnX = asteroidRandom.nextDouble() * spawnXRange + Constants.LEFT_PLAYER_START_POS.getdX();
+				Vector2D location = new Vector2D(spawnX, Constants.ASTEROID_SPAWN_Y);
+				Vector2D velocity = new Vector2D(0, Constants.ASTEROID_VELOCITY);
+				// TODO: Spawn asteroid logic with this hitMap
+				Asteroid asteroid = new Asteroid(location, velocity, type);
+				model.addEntity(asteroid);
+				model.addAsteroid(asteroid);
+				AsteroidView asteroidView = new AsteroidView(asteroid);
+				viewMap.put(asteroid, asteroidView);
+				view.addDrawable(asteroidView);
+				view.addUpdatable(asteroidView);
+			}
+			timeToNextAsteroidSpawn = 1;
+		}
+	}
+
+	private void cullEntities(ArrayList<Entity> toCull) {
+		for (Entity entity : toCull) {
+			model.removeEntity(entity);
+			if (entity instanceof Bullet) {
+				model.removeBullet((Bullet) entity);
+			}
+			if (entity instanceof Asteroid) {
+				model.removeAsteroid((Asteroid) entity);
+			}
+			deleteView(entity);
+		}
 	}
 
 	private void checkGameOver() {
@@ -136,45 +198,20 @@ public class MainController {
 		}
 	}
 
-	public void handlePlayerHit(Player player, Bullet bullet) {
-		player.receiveDamage(bullet.getDamage());
-		((PlayerView) viewMap.get(player)).onPlayerHit();
-	}
-
-	public void update() {
+	public void update(double dt) {
 		if (model.getGameState() != GameState.RUNNING) {
 			if (keyboardState.get(KeyEvent.VK_ENTER)) {
 				gameStarter.startGame(); // start a new game
 			}
 			return;
 		}
-		
+
 		checkBulletCollisions();
-
-		if (keyboardState.get(KeyEvent.VK_J))
-			fireBullet(model.getRightPlayer());
-		if (keyboardState.get(KeyEvent.VK_I))
-			model.getRightPlayer().moveUp();
-		if (keyboardState.get(KeyEvent.VK_K))
-			model.getRightPlayer().moveDown();
-		if (keyboardState.get(KeyEvent.VK_I) && keyboardState.get(KeyEvent.VK_K))
-			model.getRightPlayer().stopMoving();
-		if (!keyboardState.get(KeyEvent.VK_I) && !keyboardState.get(KeyEvent.VK_K))
-			model.getRightPlayer().stopMoving();
-
-		if (keyboardState.get(KeyEvent.VK_D))
-			fireBullet(model.getLeftPlayer());
-		if (keyboardState.get(KeyEvent.VK_W))
-			model.getLeftPlayer().moveUp();
-		if (keyboardState.get(KeyEvent.VK_S))
-			model.getLeftPlayer().moveDown();
-		if (keyboardState.get(KeyEvent.VK_W) && keyboardState.get(KeyEvent.VK_S))
-			model.getLeftPlayer().stopMoving();
-		if (!keyboardState.get(KeyEvent.VK_W) && !keyboardState.get(KeyEvent.VK_S))
-			model.getLeftPlayer().stopMoving();
-
-		checkGameOver();
+		checkPlayerControls(model.getLeftPlayer(), leftPlayerControls);
+		checkPlayerControls(model.getRightPlayer(), rightPlayerControls);
+		maybeSpawnAsteroids(dt);
 		cullEntities(findEntitiesOutOfBounds());
+		checkGameOver();
 	}
 
 	private void fireBullet(Player player) {
@@ -191,6 +228,15 @@ public class MainController {
 
 		view.addDrawable(bulletView);
 		view.addUpdatable(bulletView);
+	}
+
+	private void handleAsteroidHit(Asteroid asteroid, Bullet bullet) {
+		((AsteroidView) viewMap.get(asteroid)).onAsteroidHit();
+	}
+	
+	private void handlePlayerHit(Player player, Bullet bullet) {
+		player.receiveDamage(bullet.getDamage());
+		((PlayerView) viewMap.get(player)).onPlayerHit();
 	}
 
 	public void handleKeyDown(int keyCode) {
