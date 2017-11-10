@@ -6,8 +6,8 @@ public class Constants {
 	public static final int WINDOW_WIDTH = 1280;
 	public static final int WINDOW_HEIGHT = 720;
 
-	public static final double BACKGROUND_ALPHA_PER_SECOND = 0.03f;
-	public static final double STARS_ALPHA_PER_SECOND = 0.07f;
+	public static final double BACKGROUND_ALPHA_PER_SECOND = 0.05f;
+	public static final double STARS_ALPHA_PER_SECOND = 0.12f;
 
 	public static final int PLAYER_ANIMATION_FPS = 24;
 
