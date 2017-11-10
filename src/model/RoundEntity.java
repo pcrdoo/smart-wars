@@ -4,7 +4,7 @@ import java.awt.Rectangle;
 
 import util.Vector2D;
 
-public class RoundEntity extends Entity {
+public abstract class RoundEntity extends Entity {
 	protected double radius;
 
 	protected RoundEntity(Vector2D position, double radius) {

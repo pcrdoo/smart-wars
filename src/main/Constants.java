@@ -29,6 +29,8 @@ public class Constants {
 	public static final int ASTEROID_TYPE_COUNT = 6;
 	public static final int ASTEROID_SPRITES_X = 4;
 	public static final int ASTEROID_SPRITES_Y = 4;
+	public static final int ASTEROID_SPAWN_X_MIN = (int) (LEFT_PLAYER_START_POS.getdX() + 80);
+	public static final int ASTEROID_SPAWN_X_MAX = (int) (RIGHT_PLAYER_START_POS.getdX() - 80);
 	public static final int ASTEROID_SPAWN_Y = 10;
 	public static final int ASTEROID_VELOCITY = 100;
 }

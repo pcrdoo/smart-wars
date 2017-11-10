@@ -32,7 +32,7 @@ public class MainController {
 
 	// View-related dependencies for each entity.
 	private HashMap<Entity, EntityView> viewMap;
-	
+
 	private double timeToNextAsteroidSpawn;
 	private Random asteroidRandom;
 
@@ -63,7 +63,7 @@ public class MainController {
 
 		viewMap.put(model.getLeftPlayer(), leftPlayerView);
 		viewMap.put(model.getRightPlayer(), rightPlayerView);
-		
+
 		timeToNextAsteroidSpawn = 1;
 		asteroidRandom = new Random();
 	}
@@ -108,8 +108,8 @@ public class MainController {
 				impactedBullets.add(bullet);
 			} else {
 				// Asteroid collision
-				for(Asteroid asteroid : model.getAsteroids()) {
-					if(asteroid.hitTest(bullet.getPosition())) {
+				for (Asteroid asteroid : model.getAsteroids()) {
+					if (asteroid.hitTest(bullet.getPosition())) {
 						handleAsteroidHit(asteroid, bullet);
 						impactedBullets.add(bullet);
 					}
@@ -138,25 +138,13 @@ public class MainController {
 		}
 	}
 
-	private ArrayList<Entity> findEntitiesOutOfBounds() {
-		ArrayList<Entity> outOfBounds = new ArrayList<Entity>();
-		for (Entity entity : model.getEntities()) {
-			Rectangle boundingBox = entity.getBoundingBox();
-			if (boundingBox.getMaxX() < 0 || boundingBox.getMinX() > Constants.WINDOW_WIDTH || boundingBox.getMaxY() < 0
-					|| boundingBox.getMinY() > Constants.WINDOW_HEIGHT) {
-				outOfBounds.add(entity);
-			}
-		}
-		return outOfBounds;
-	}
-	
 	private void maybeSpawnAsteroids(double dt) {
 		timeToNextAsteroidSpawn -= dt;
 		if (timeToNextAsteroidSpawn <= 0) {
 			if (asteroidRandom.nextDouble() <= Constants.ASTEROID_SPAWN_PROBABILITY) {
 				int type = asteroidRandom.nextInt(Constants.ASTEROID_TYPE_COUNT) + 1;
-				double spawnXRange = Constants.RIGHT_PLAYER_START_POS.getdX() - Constants.LEFT_PLAYER_START_POS.getdX();
-				double spawnX = asteroidRandom.nextDouble() * spawnXRange + Constants.LEFT_PLAYER_START_POS.getdX();
+				double spawnXRange = Constants.ASTEROID_SPAWN_X_MAX - Constants.ASTEROID_SPAWN_X_MIN;
+				double spawnX = asteroidRandom.nextDouble() * spawnXRange + Constants.ASTEROID_SPAWN_X_MIN;
 				Vector2D location = new Vector2D(spawnX, Constants.ASTEROID_SPAWN_Y);
 				Vector2D velocity = new Vector2D(0, Constants.ASTEROID_VELOCITY);
 				// TODO: Spawn asteroid logic with this hitMap
@@ -170,6 +158,16 @@ public class MainController {
 			}
 			timeToNextAsteroidSpawn = 1;
 		}
+	}
+
+	private ArrayList<Entity> getEntitiesToCull() {
+		ArrayList<Entity> toCull = new ArrayList<Entity>();
+		for (Entity entity : model.getEntities()) {
+			if (entity.shouldCull()) {
+				toCull.add(entity);
+			}
+		}
+		return toCull;
 	}
 
 	private void cullEntities(ArrayList<Entity> toCull) {
@@ -210,8 +208,9 @@ public class MainController {
 		checkPlayerControls(model.getLeftPlayer(), leftPlayerControls);
 		checkPlayerControls(model.getRightPlayer(), rightPlayerControls);
 		maybeSpawnAsteroids(dt);
-		cullEntities(findEntitiesOutOfBounds());
+		cullEntities(getEntitiesToCull());
 		checkGameOver();
+		System.out.println(model.getEntities().size());
 	}
 
 	private void fireBullet(Player player) {
@@ -233,7 +232,7 @@ public class MainController {
 	private void handleAsteroidHit(Asteroid asteroid, Bullet bullet) {
 		((AsteroidView) viewMap.get(asteroid)).onAsteroidHit();
 	}
-	
+
 	private void handlePlayerHit(Player player, Bullet bullet) {
 		player.receiveDamage(bullet.getDamage());
 		((PlayerView) viewMap.get(player)).onPlayerHit();

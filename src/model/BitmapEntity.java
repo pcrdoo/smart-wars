@@ -6,7 +6,7 @@ import java.awt.image.BufferedImage;
 import util.ImageCache;
 import util.Vector2D;
 
-public class BitmapEntity extends Entity {
+public abstract class BitmapEntity extends Entity {
 
 	protected BufferedImage collisionMask; // non-transparent pixels can be hit
 

@@ -73,4 +73,9 @@ public class Player extends RoundEntity {
 	public int getCurrHealth() {
 		return currHealth;
 	}
+
+	@Override
+	public boolean shouldCull() {
+		return false;
+	}
 }

@@ -4,7 +4,7 @@ import java.awt.Rectangle;
 
 import util.Vector2D;
 
-public class RectEntity extends Entity {
+public abstract class RectEntity extends Entity {
 
 	protected Vector2D size;
 

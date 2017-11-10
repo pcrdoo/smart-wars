@@ -41,4 +41,6 @@ public abstract class Entity {
 	public void setVelocity(Vector2D velocity) {
 		this.velocity = velocity;
 	}
+	
+	public abstract boolean shouldCull();
 }
