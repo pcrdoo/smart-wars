@@ -11,14 +11,18 @@ import main.GameStarter;
 import main.GameState;
 import model.Asteroid;
 import model.Bullet;
+import model.Mirror;
+import model.MirrorState;
 import model.Model;
 import model.Player;
+import model.abilities.MirrorMagic;
 import model.entitites.Entity;
 import util.Vector2D;
 import view.AsteroidView;
 import view.BulletView;
 import view.EntityView;
 import view.MainView;
+import view.MirrorView;
 import view.PlayerView;
 
 public class MainController {
@@ -50,6 +54,8 @@ public class MainController {
 		leftPlayerControls.put(Controls.MOVE_UP, KeyEvent.VK_W);
 		leftPlayerControls.put(Controls.MOVE_DOWN, KeyEvent.VK_S);
 		leftPlayerControls.put(Controls.FIRE_GUN, KeyEvent.VK_D);
+		leftPlayerControls.put(Controls.SHORT_MIRROR_MAGIC, KeyEvent.VK_Q);
+		leftPlayerControls.put(Controls.LONG_MIRROR_MAGIC, KeyEvent.VK_A);
 
 		PlayerView rightPlayerView = new PlayerView(model.getRightPlayer());
 		view.addDrawable(rightPlayerView);
@@ -58,6 +64,8 @@ public class MainController {
 		rightPlayerControls.put(Controls.MOVE_UP, KeyEvent.VK_I);
 		rightPlayerControls.put(Controls.MOVE_DOWN, KeyEvent.VK_K);
 		rightPlayerControls.put(Controls.FIRE_GUN, KeyEvent.VK_J);
+		rightPlayerControls.put(Controls.SHORT_MIRROR_MAGIC, KeyEvent.VK_O);
+		rightPlayerControls.put(Controls.LONG_MIRROR_MAGIC, KeyEvent.VK_L);
 
 		initKeyboardState();
 
@@ -136,6 +144,12 @@ public class MainController {
 				&& !keyboardState.get(controls.get(Controls.MOVE_DOWN))) {
 			player.stopMoving();
 		}
+		if (keyboardState.get(controls.get(Controls.SHORT_MIRROR_MAGIC))) {
+			doMirrorMagic(player.getShortMirrorMagic());
+		}
+		if (keyboardState.get(controls.get(Controls.LONG_MIRROR_MAGIC))) {
+			doMirrorMagic(player.getLongMirrorMagic());
+		}
 	}
 
 	private void maybeSpawnAsteroids(double dt) {
@@ -146,8 +160,11 @@ public class MainController {
 				double spawnXRange = Constants.ASTEROID_SPAWN_X_MAX - Constants.ASTEROID_SPAWN_X_MIN;
 				double spawnX = asteroidRandom.nextDouble() * spawnXRange + Constants.ASTEROID_SPAWN_X_MIN;
 				Vector2D location = new Vector2D(spawnX, Constants.ASTEROID_SPAWN_Y);
-				Vector2D velocity = new Vector2D((Math.random() > 0.5 ? -1 : 1) * Constants.ASTEROID_X_VELOCITY + (Math.random() * 2.0 - 1.0) * Constants.ASTEROID_X_VELOCITY_JITTER,
-						Constants.ASTEROID_Y_VELOCITY + (Math.random() * 2.0 - 1.0) * Constants.ASTEROID_Y_VELOCITY_JITTER);
+				Vector2D velocity = new Vector2D(
+						(Math.random() > 0.5 ? -1 : 1) * Constants.ASTEROID_X_VELOCITY
+								+ (Math.random() * 2.0 - 1.0) * Constants.ASTEROID_X_VELOCITY_JITTER,
+						Constants.ASTEROID_Y_VELOCITY
+								+ (Math.random() * 2.0 - 1.0) * Constants.ASTEROID_Y_VELOCITY_JITTER);
 				Asteroid asteroid = new Asteroid(location, velocity, type);
 				model.addEntity(asteroid);
 				model.addAsteroid(asteroid);
@@ -226,6 +243,36 @@ public class MainController {
 
 		view.addDrawable(bulletView);
 		view.addUpdatable(bulletView);
+	}
+
+	private void doMirrorMagic(MirrorMagic mirrorMagic) {
+		if (mirrorMagic.getMirror() == null) {
+			mirrorMagic.launchMirror();
+			Mirror mirror = mirrorMagic.getMirror();
+			model.addEntity(mirror);
+			MirrorView mirrorView = new MirrorView(mirror);
+			viewMap.put(mirror, mirrorView);
+			view.addDrawable(mirrorView);
+			view.addUpdatable(mirrorView);
+			// dodaj i sve to
+		} else {
+			switch (mirrorMagic.getMirror().getMirrorState()) {
+			case TRAVELLING:
+				mirrorMagic.getMirror().setMirrorState(MirrorState.SPINNING);
+				break;
+			case SPINNING:
+				mirrorMagic.getMirror().setMirrorState(MirrorState.STABLE);
+				break;
+			case STABLE:
+				Mirror mirror = mirrorMagic.getMirror();
+				model.removeEntity(mirror);
+				deleteView(mirror);
+				mirrorMagic.removeMirror();
+				break;
+			default:
+				break;
+			}
+		}
 	}
 
 	private void handleAsteroidHit(Asteroid asteroid, Bullet bullet) {

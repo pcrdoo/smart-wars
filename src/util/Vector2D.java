@@ -65,10 +65,14 @@ public class Vector2D {
 		return v2;
 	}
 
-	// Dot product of two vectors .....
+	// Dot and cross product of two vectors .....
 
 	public double dotProduct(Vector2D v1) {
 		return this.dX * v1.dX + this.dY * v1.dY;
+	}
+	
+	public double crossProductIntensity(Vector2D v1) {
+		return this.dX*v1.dY - this.dY*v1.dX;
 	}
 	
 	// Clamp coordinates...

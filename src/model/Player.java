@@ -52,10 +52,6 @@ public class Player extends RoundEntity {
 						: new Vector2D(-Constants.BULLET_SPEED, 0));
 	}
 
-	public Mirror fireMirror() {
-		return null;
-	}
-
 	@Override
 	public void update(double dt) {
 		super.update(dt);
@@ -87,5 +83,17 @@ public class Player extends RoundEntity {
 	@Override
 	public boolean shouldCull() {
 		return false;
+	}
+	
+	public void doMirrorMagic(MirrorMagic mirrorMagic) {
+		
+	}
+
+	public MirrorMagic getShortMirrorMagic() {
+		return shortMirrorMagic;
+	}
+
+	public MirrorMagic getLongMirrorMagic() {
+		return longMirrorMagic;
 	}
 }

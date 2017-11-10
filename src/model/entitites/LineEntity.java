@@ -2,28 +2,39 @@ package model.entitites;
 
 import java.awt.Rectangle;
 
+import main.Constants;
 import util.Vector2D;
 
 public class LineEntity extends Entity {
 
-	double length;
-	double angle; // [0, 2*PI]
-	
-	protected LineEntity(Vector2D position, double length) {
-		super(position);
+	protected double length;
+	protected double angle; // [-PI, PI]
+
+	protected LineEntity(Vector2D position, Vector2D velocity, double length) {
+		super(position, velocity);
 		this.length = length;
 		this.angle = 0;
 	}
+	
+	private Vector2D getLineVector() {
+		 return new Vector2D(length * Math.cos(angle), length * Math.sin(angle));
+	}
 
 	public boolean hitTest(Vector2D point) {
-		return true;
+		Vector2D ab = getLineVector();
+		Vector2D ac = position.sub(ab.scale(0.5)).sub(point);
+		double pointDistance = Math.abs(ab.crossProductIntensity(ac) / ab.length());
+		if(position.sub(point).length() < length / 2 && pointDistance < Constants.MIRROR_DIST_EPS) {
+			return true;
+		}
+		return false;
 	}
-	
+
 	@Override
 	public Rectangle getBoundingBox() {
-		double height = Math.sin(angle) * length;
-		double width = Math.cos(angle) * length;
-		return new Rectangle((int) (position.getdX() - width/2), (int) (position.getdY() - height/2), (int)width, (int)height);
+		Vector2D line = getLineVector();
+		return new Rectangle((int) (position.getdX() - line.getdX() / 2), (int) (position.getdY() - line.getdY() / 2), (int) line.getdX(),
+				(int) line.getdY());
 	}
 
 	@Override
