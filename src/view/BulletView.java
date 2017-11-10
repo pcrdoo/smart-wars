@@ -4,15 +4,11 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
-import org.jdesktop.swingx.graphics.BlendComposite;
-
-import view.gfx.AdditiveComposite;
-import view.gfx.ParticleSystem;
-import main.Constants;
 import model.Bullet;
 import util.ImageCache;
-import util.ImageConverter;
 import util.Vector2D;
+import view.gfx.AdditiveComposite;
+import view.gfx.ParticleSystem;
 import view.gfx.PointParticleEmitter;
 
 public class BulletView implements Drawable, Updatable {

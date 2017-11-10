@@ -3,7 +3,7 @@ package model;
 import util.Vector2D;
 import view.Updatable;
 
-public class Entity implements Updatable {
+public abstract class Entity implements Updatable {
 	protected Vector2D position;
 	protected Vector2D velocity; // pixels per second
 
@@ -23,9 +23,7 @@ public class Entity implements Updatable {
 //		System.out.println(this.position.getdX());
 	}
 	
-	public boolean hitTest(Vector2D point) {
-		return false;
-	}
+	public abstract boolean hitTest(Vector2D point);
 	
 	public Vector2D getPosition() {
 		return position;

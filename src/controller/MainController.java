@@ -34,17 +34,17 @@ public class MainController {
 		
 		this.initKeyboardState();
 		
-		PlayerView bottomPlayerView = new PlayerView(model.getRightPlayer());
-		view.addDrawable(bottomPlayerView);
-		view.addUpdatable(bottomPlayerView);
+		PlayerView rightPlayerView = new PlayerView(model.getRightPlayer());
+		view.addDrawable(rightPlayerView);
+		view.addUpdatable(rightPlayerView);
 
-		PlayerView topPlayerView = new PlayerView(model.getLeftPlayer());
-		view.addDrawable(topPlayerView);
-		view.addUpdatable(topPlayerView);
+		PlayerView leftPlayerView = new PlayerView(model.getLeftPlayer());
+		view.addDrawable(leftPlayerView);
+		view.addUpdatable(leftPlayerView);
 		
 		playerViewMap = new HashMap<>();
-		playerViewMap.put(model.getLeftPlayer(), topPlayerView);
-		playerViewMap.put(model.getRightPlayer(), bottomPlayerView);
+		playerViewMap.put(model.getLeftPlayer(), leftPlayerView);
+		playerViewMap.put(model.getRightPlayer(), rightPlayerView);
 	}
 	
 	private void initKeyboardState() {
@@ -75,10 +75,12 @@ public class MainController {
 		
 		for (Bullet b : bulletsToCull) {
 			bullets.remove(b);
+			// todo: move bullets to model 
 			model.removeUpdatable(b);
 			
 			BulletView v = bulletViewMap.get(b);
 			if (v != null) {
+				//todo: safe remove both
 				view.removeUpdatable(v);
 				view.removeDrawable(v);
 				bulletViewMap.remove(b);

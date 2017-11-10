@@ -17,7 +17,6 @@ public class Shoot extends Ability {
 		if (!super.fire()) {
 			return null;
 		}
-		System.out.println(velocity);
 		return new Bullet(position, velocity, player);
 	}
 }
