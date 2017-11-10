@@ -13,6 +13,7 @@ public class Model {
 	private ArrayList<Bullet> bullets; // separate bullets for culling
 	private ArrayList<Asteroid> asteroids; // separate asteroids for culling
 	private ArrayList<Mirror> mirrors; // separate mirrors for culling
+	private ArrayList<Wormhole> wormholes; // separate wormholes for culling
 
 	private GameState gameState;
 
@@ -23,6 +24,7 @@ public class Model {
 		bullets = new ArrayList<>();
 		asteroids = new ArrayList<>();
 		mirrors = new ArrayList<>();
+		wormholes = new ArrayList<>();
 
 		entities = new ArrayList<Entity>();
 		entities.add(leftPlayer);
@@ -64,7 +66,7 @@ public class Model {
 	public ArrayList<Bullet> getBullets() {
 		return bullets;
 	}
-	
+
 	public void addAsteroid(Asteroid asteroid) {
 		asteroids.add(asteroid);
 	}
@@ -76,7 +78,7 @@ public class Model {
 	public ArrayList<Asteroid> getAsteroids() {
 		return asteroids;
 	}
-	
+
 	public void addMirror(Mirror mirror) {
 		mirrors.add(mirror);
 	}
@@ -88,7 +90,19 @@ public class Model {
 	public ArrayList<Mirror> getMirrors() {
 		return mirrors;
 	}
-	
+
+	public void addWormhole(Wormhole wormhole) {
+		wormholes.add(wormhole);
+	}
+
+	public void removeWormhole(Wormhole wormhole) {
+		wormholes.remove(wormhole);
+	}
+
+	public ArrayList<Wormhole> getWormholes() {
+		return wormholes;
+	}
+
 	public ArrayList<Entity> getEntities() {
 		return entities;
 	}

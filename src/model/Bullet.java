@@ -9,11 +9,13 @@ import util.Vector2D;
 public class Bullet extends RectEntity {
 	private Player owner;
 	private double damage;
+	private double teleportCooldown;
 
 	public Bullet(Vector2D position, Vector2D velocity, Player owner) {
 		super(position, velocity, Constants.BULLET_SIZE);
 		this.owner = owner;
-		this.damage = Constants.BULLET_DAMAGE;
+		damage = Constants.BULLET_DAMAGE;
+		teleportCooldown = 0;
 	}
 
 	public Player getOwner() {
@@ -29,7 +31,16 @@ public class Bullet extends RectEntity {
 		Vector2D perp = new Vector2D(-dir.getdY(), dir.getdX());
 		return velocity.sub(perp.scale(2.0 * perp.dotProduct(velocity)));
 	}
-	
+
+	@Override
+	public void update(double dt) {
+		super.update(dt);
+		teleportCooldown -= dt;
+		if (teleportCooldown < 0) {
+			teleportCooldown = 0;
+		}
+	}
+
 	@Override
 	public boolean shouldCull() {
 		Rectangle boundingBox = getBoundingBox();
@@ -44,5 +55,16 @@ public class Bullet extends RectEntity {
 	public void bounce(Mirror mirror) {
 		setVelocity(reflect(getVelocity(), mirror.getLineVector()));
 		System.out.println("reflekty");
+	}
+
+	public void teleport(Wormhole inWormhole, Wormhole outWormhole) {
+		if (teleportCooldown == 0) {
+			System.out.println(inWormhole.getPosition());
+			System.out.println("TO");
+			System.out.println(outWormhole.getPosition());
+			Vector2D toCenter = inWormhole.getPosition().sub(position);
+			position = outWormhole.getPosition().add(toCenter);
+			teleportCooldown = Constants.BULLET_TELEPORT_COOLDOWN;
+		}
 	}
 }
