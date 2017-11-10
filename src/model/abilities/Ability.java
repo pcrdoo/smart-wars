@@ -2,14 +2,14 @@ package model.abilities;
 
 import view.Updatable;
 
-public class Ability implements Updatable {
+public abstract class Ability implements Updatable {
 	protected double maxCooldown;
 	protected double cooldown;
 	
 	public Ability(double cooldown) {
 		this.maxCooldown = this.cooldown = cooldown;
 	}
-	
+	//TODO:terminologija
 	public void update(double dt) {
 		this.cooldown -= dt;
 		this.cooldown = Math.max(this.cooldown, 0);

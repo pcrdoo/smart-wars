@@ -19,8 +19,6 @@ public class MainView extends GameFrame {
 	private Model model;
 	private MainController controller;
 	
-	private Bullet b;
-	
 	public MainView() {
 		super("Smart Wars", Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
 

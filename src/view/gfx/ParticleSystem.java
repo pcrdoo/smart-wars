@@ -11,7 +11,7 @@ import view.Updatable;
 
 public class ParticleSystem implements Drawable, Updatable {
 	private double[] particleX, particleY, particleVX, particleVY, particleTime;
-	private double decayStartTime;
+	private double decayStartTime; // particleAlpha pa affector TODO 
 	private int partWidth, partHeight;
 	private BufferedImage sprite;
 	private ArrayList<ParticleEmitter> emitters;

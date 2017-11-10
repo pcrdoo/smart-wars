@@ -27,6 +27,8 @@ public class Model {
 		return rightPlayer;
 	}
 	
+	// zasto se ovde referencira Updatble iz v iew?!TODO
+	
 	public void update(double dt) {
 		for (Updatable updatable : updatables) {
 			updatable.update(dt);
