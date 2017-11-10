@@ -6,11 +6,13 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import main.Constants;
 import view.Drawable;
 import view.Updatable;
 
 public class ParticleSystem implements Drawable, Updatable {
-	private double[] particleX, particleY, particleVX, particleVY, particleTime;
+	private ParticleCompositor compositor;
+	private Particles particles;
 	private double decayStartTime; // particleAlpha pa affector TODO 
 	private int partWidth, partHeight;
 	private BufferedImage sprite;
@@ -19,6 +21,8 @@ public class ParticleSystem implements Drawable, Updatable {
 	private int maxParticles;
 	
 	public ParticleSystem(BufferedImage sprite, int maxParticles, double decayStartTime) {
+		particles = new Particles(maxParticles);
+		
 		emitters = new ArrayList<>();
 		affectors = new ArrayList<>();
 		
@@ -28,11 +32,7 @@ public class ParticleSystem implements Drawable, Updatable {
 		this.partWidth = sprite.getWidth();
 		this.partHeight = sprite.getHeight();
 		
-		particleX = new double[maxParticles];
-		particleY = new double[maxParticles];
-		particleVX = new double[maxParticles];
-		particleVY = new double[maxParticles];
-		particleTime = new double[maxParticles];
+		compositor = new ParticleCompositor(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
 	}
 	
 	public void addEmitter(ParticleEmitter emitter) {
@@ -55,41 +55,26 @@ public class ParticleSystem implements Drawable, Updatable {
 	public void update(double dt) {
 		// Emit new particles
 		for (ParticleEmitter e : emitters) {
-			e.updateAndEmit(dt, particleX, particleY, particleVX, particleVY, particleTime);
+			e.updateAndEmit(dt, particles);
 		}
 		
 		// Affect existing particles
 		for (ParticleAffector a : affectors) {
-			a.updateAndAffect(dt, particleX, particleY, particleVX, particleVY, particleTime);
+			a.updateAndAffect(dt, particles);
 		}
 		
 		// Time-step the particles
 		for (int i = 0; i < maxParticles; i++) {
-			if (particleTime[i] > 0.0) {
-				particleX[i] += particleVX[i] * dt;
-				particleY[i] += particleVY[i] * dt;
-				particleTime[i] -= dt;
+			if (particles.getTime(i) > 0.0) {
+				particles.setPosition(i, particles.getPosition(i).add(particles.getVelocity(i).scale(dt)));
+				particles.setTime(i, particles.getTime(i) - dt);
 			}
 		}
 	}
 
 	@Override
 	public void draw(Graphics2D g) {
-		Composite old = g.getComposite();
-		for (int i = 0; i < maxParticles; i++) {
-			if (particleTime[i] > 0.0) {
-				int intensity = 255;
-				if (particleTime[i] < decayStartTime) {
-					intensity = Math.max(0, (int)(255.0 * particleTime[i] / decayStartTime));
-				}
-				
-				g.setComposite(AdditiveComposite.getInstance(intensity));
-				
-				g.drawImage(sprite, (int)particleX[i] - partWidth / 2, (int)particleY[i] - partHeight / 2,
-						(int)particleX[i] + partWidth / 2, (int)particleY[i] + partHeight / 2, 0, 0, partWidth, partHeight, null);
-			}
-		}
-		g.setComposite(old);
+		compositor.compose(g, particles, sprite);
 	}
 	
 }

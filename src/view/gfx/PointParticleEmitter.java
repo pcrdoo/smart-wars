@@ -34,44 +34,22 @@ public class PointParticleEmitter implements ParticleEmitter {
 		emitInterval = 1 / spawnsPerSecond;
 	}
 	
-	private void spawnAt(int i, double[] particleX, double[] particleY, double[] particleVX, double[] particleVY,
-			double[] particleTime) {
-		double x = position.getdX() + (2.0 * Math.random() - 1.0) * positionJitter.getdX(),
-				y = position.getdY() + (2.0 * Math.random() - 1.0) * positionJitter.getdY();
+	private void spawn(Particles particles) {
+		Vector2D newPosition = position.add(positionJitter.scale(2.0 * Math.random() - 1.0));
 		
 		double angle = Math.random() * (maxAngle - minAngle) + minAngle;
-		Vector2D v = new Vector2D(Math.sin(angle), Math.cos(angle)).scale(velocity + (2.0 * Math.random() - 1.0) * velocityJitter);
+		Vector2D newVelocity = new Vector2D(Math.sin(angle), Math.cos(angle)).scale(velocity + (2.0 * Math.random() - 1.0) * velocityJitter);
 		double t = lifetime + (2.0 * Math.random() - 1.0) * lifetimeJitter;
 		
-		particleX[i] = x;
-		particleY[i] = y;
-		particleVX[i] = v.getdX();
-		particleVY[i] = v.getdY();
-		particleTime[i] = t;
-	}
-	
-	private void spawn(double[] particleX, double[] particleY, double[] particleVX, double[] particleVY,
-			double[] particleTime) {
-		double minTime = 1.0;
-		int minI = 0;
-		for (int i = 1; i < particleX.length; i++) {
-			if (particleTime[i] < minTime) {
-				minTime = particleTime[i];
-				minI = i;
-			}
-		}
-
-		// Spawn the new particle instead of the one with the minimal time
-		spawnAt(minI, particleX, particleY, particleVX, particleVY, particleTime);
+		particles.add(newPosition, newVelocity, t);
 	}
 
 	@Override
-	public void updateAndEmit(double dt, double[] particleX, double[] particleY, double[] particleVX,
-			double[] particleVY, double[] particleTime) {
+	public void updateAndEmit(double dt, Particles particles) {
 		accumulTime += dt;
 		while (accumulTime >= emitInterval) {
 			accumulTime -= emitInterval;
-			spawn(particleX, particleY, particleVX, particleVY, particleTime);
+			spawn(particles);
 		}
 	}
 

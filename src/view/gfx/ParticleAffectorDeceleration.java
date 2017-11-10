@@ -7,16 +7,13 @@ public class ParticleAffectorDeceleration implements ParticleAffector {
 	}
 	
 	@Override
-	public void updateAndAffect(double dt, double[] particleX, double[] particleY, double[] particleVX,
-			double[] particleVY, double[] particleTime) {
-		for (int i = 0; i < particleX.length; i++) {
-			double len = Math.sqrt(particleVX[i] * particleVX[i] + particleVY[i] * particleVY[i]);
+	public void updateAndAffect(double dt, Particles particles) {
+		for (int i = 0; i < particles.size(); i++) {
+			double len = particles.getVelocity(i).length();
 			double newLen = Math.max(0, len - decelFactor * dt);
 			double lenFactor = newLen / len;
 			
-			particleVX[i] *= lenFactor;
-			particleVY[i] *= lenFactor;
+			particles.setVelocity(i, particles.getVelocity(i).scale(lenFactor));
 		}
 	}
-
 }
