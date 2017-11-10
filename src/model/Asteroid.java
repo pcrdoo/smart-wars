@@ -35,7 +35,7 @@ public class Asteroid extends BitmapEntity {
 		return collisionMasks;
 	}
 	
-	public Asteroid(Vector2D position, Vector2D velocity, int type) {
+	public Asteroid(Vector2D position, Vector2D velocity, int type, int frame) {
 		super(position, velocity);
 
 		this.type = type;
@@ -48,19 +48,7 @@ public class Asteroid extends BitmapEntity {
 			collisionMasks = createCollisionMasks(spritesheet);
 		}
 		
-		collisionMask = collisionMasks[0];
-		frame = 0;
-	}
-
-	@Override
-	public void update(double dt) {
-		super.update(dt);
-		time += dt;
-		while (time > frameTime) {
-			time -= frameTime;
-			frame = (frame + 1) % (FRAMES_PER_X + FRAMES_PER_Y);
-		}
-		frame=0;
+		this.frame = frame;
 		collisionMask = collisionMasks[frame];
 	}
 	
