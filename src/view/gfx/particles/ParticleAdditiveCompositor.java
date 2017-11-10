@@ -1,4 +1,4 @@
-package view.gfx;
+package view.gfx.particles;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -10,11 +10,11 @@ import java.awt.image.WritableRaster;
 
 import util.Vector2D;
 
-public class ParticleCompositor {
+public class ParticleAdditiveCompositor {
 	private BufferedImage canvas;
 	private int width, height, minX, minY, maxX, maxY;
 	
-	public ParticleCompositor(int width, int height) {
+	public ParticleAdditiveCompositor(int width, int height) {
 		GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 	    canvas = gd.getDefaultConfiguration().createCompatibleImage(width, height, Transparency.TRANSLUCENT);
 	    

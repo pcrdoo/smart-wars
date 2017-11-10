@@ -1,4 +1,4 @@
-package view.gfx;
+package view.gfx.particles;
 
 import util.Vector2D;
 

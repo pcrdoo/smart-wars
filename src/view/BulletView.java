@@ -7,9 +7,10 @@ import java.awt.image.BufferedImage;
 import model.Bullet;
 import util.ImageCache;
 import util.Vector2D;
-import view.gfx.ParticleAffectorDecay;
-import view.gfx.ParticleSystem;
-import view.gfx.PointParticleEmitter;
+import view.gfx.particles.ParticleAffectorDecay;
+import view.gfx.particles.ParticleSystem;
+import view.gfx.particles.PointParticleEmitter;
+import view.gfx.particles.SpriteParticleRenderer;
 
 public class BulletView implements Drawable, Updatable {
 	private Bullet bullet;
@@ -32,7 +33,7 @@ public class BulletView implements Drawable, Updatable {
 
 		particleSprite = ImageCache.getInstance().get("assets/fire.png");
 		bulletSprite = ImageCache.getInstance().get("assets/bullet.png");
-		trail = new ParticleSystem(particleSprite, MAX_PARTICLES, PARTICLE_DECAY_TIME);
+		trail = new ParticleSystem(new SpriteParticleRenderer(particleSprite), MAX_PARTICLES);
 		trailEmitter = new PointParticleEmitter(PARTICLES_PER_SECOND, PARTICLE_LIFETIME, 0.0, bullet.getPosition(),
 				new Vector2D(PARTICLE_POSITION_JITTER, 0), PARTICLE_VELOCITY, PARTICLE_VELOCITY_JITTER,
 				PARTICLE_MIN_EMIT_ANGLE, PARTICLE_MAX_EMIT_ANGLE);

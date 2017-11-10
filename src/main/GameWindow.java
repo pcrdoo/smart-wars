@@ -21,6 +21,7 @@ public class GameWindow extends GameFrame implements GameStarter {
 		// Run game thread
 		setUpdateRate(60);
 		startThread();
+		setHighQuality(true);
 		
 		// Start the war
 		startGame();

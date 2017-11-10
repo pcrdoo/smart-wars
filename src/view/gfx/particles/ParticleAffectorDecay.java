@@ -1,4 +1,4 @@
-package view.gfx;
+package view.gfx.particles;
 
 public class ParticleAffectorDecay implements ParticleAffector {
 	private double decayStartTime;

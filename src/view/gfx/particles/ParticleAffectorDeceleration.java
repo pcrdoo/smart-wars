@@ -1,4 +1,4 @@
-package view.gfx;
+package view.gfx.particles;
 
 public class ParticleAffectorDeceleration implements ParticleAffector {
 	private double decelFactor;

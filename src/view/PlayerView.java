@@ -13,9 +13,11 @@ import model.PlayerSide;
 import util.ImageCache;
 import util.Vector2D;
 import view.gfx.Explosion;
-import view.gfx.ParticleAffectorDecay;
-import view.gfx.ParticleSystem;
-import view.gfx.PointParticleEmitter;
+import view.gfx.Sparks;
+import view.gfx.particles.ParticleAffectorDecay;
+import view.gfx.particles.ParticleSystem;
+import view.gfx.particles.PointParticleEmitter;
+import view.gfx.particles.SpriteParticleRenderer;
 
 public class PlayerView implements Drawable, Updatable {
 	private final static int FRAME_COUNT = 6;
@@ -45,7 +47,7 @@ public class PlayerView implements Drawable, Updatable {
 		flareHeight = flare.getHeight();
 
 		this.player = player;
-		trail = new ParticleSystem(ImageCache.getInstance().get("assets/player-trail.png"), 50, 0.4);
+		trail = new ParticleSystem(new SpriteParticleRenderer(ImageCache.getInstance().get("assets/player-trail.png")), 50);
 		trailEmitter = new PointParticleEmitter(0.0, 0.4, 0.0, player.getPosition(), new Vector2D(2.0, 5.0), 30.0, 0.0,
 				0, 2 * Math.PI);
 
@@ -87,7 +89,7 @@ public class PlayerView implements Drawable, Updatable {
 	}
 
 	public void onPlayerHit() {
-		explosion = new Explosion(player.getPosition(), 1.5, 0.15);
+		explosion = new Explosion(player.getPosition(), 1.5, 0.1);
 	}
 
 	public void draw(Graphics2D g) {

@@ -1,7 +1,5 @@
-package view.gfx;
+package view.gfx.particles;
 
-import java.awt.Color;
-import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -11,28 +9,20 @@ import view.Drawable;
 import view.Updatable;
 
 public class ParticleSystem implements Drawable, Updatable {
-	private ParticleCompositor compositor;
 	private Particles particles;
-	private double decayStartTime; // particleAlpha pa affector TODO 
-	private int partWidth, partHeight;
-	private BufferedImage sprite;
 	private ArrayList<ParticleEmitter> emitters;
 	private ArrayList<ParticleAffector> affectors;
 	private int maxParticles;
+	private ParticleRenderer renderer;
 	
-	public ParticleSystem(BufferedImage sprite, int maxParticles, double decayStartTime) {
+	public ParticleSystem(ParticleRenderer renderer, int maxParticles) {
 		particles = new Particles(maxParticles);
 		
 		emitters = new ArrayList<>();
 		affectors = new ArrayList<>();
 		
 		this.maxParticles = maxParticles;
-		this.decayStartTime = decayStartTime;
-		this.sprite = sprite;
-		this.partWidth = sprite.getWidth();
-		this.partHeight = sprite.getHeight();
-		
-		compositor = new ParticleCompositor(Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
+		this.renderer = renderer;
 	}
 	
 	public void addEmitter(ParticleEmitter emitter) {
@@ -74,7 +64,7 @@ public class ParticleSystem implements Drawable, Updatable {
 
 	@Override
 	public void draw(Graphics2D g) {
-		compositor.compose(g, particles, sprite);
+		renderer.render(g, particles);
 	}
 	
 }

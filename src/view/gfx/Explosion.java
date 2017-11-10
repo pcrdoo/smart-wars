@@ -9,40 +9,37 @@ import util.ImageCache;
 import util.Vector2D;
 import view.Drawable;
 import view.Updatable;
+import view.gfx.particles.ParticleAffectorDecay;
+import view.gfx.particles.ParticleAffectorDeceleration;
+import view.gfx.particles.ParticleSystem;
+import view.gfx.particles.PointParticleEmitter;
+import view.gfx.particles.SpriteParticleRenderer;
 
-public class Explosion implements Drawable, Updatable {
+public class Explosion extends TimedGfx implements Drawable, Updatable {
 	private Vector2D position;
 	private BufferedImage flare, particle;
 	private ParticleSystem debris;
 	private PointParticleEmitter debrisEmitter;
-	private double time;
-	private double duration;
 	private double debrisDuration;
 	
 	public Explosion(Vector2D position, double duration, double debrisDuration) {
+		super(duration);
+		
 		this.position = position;
 		flare = ImageCache.getInstance().get("assets/explosion-flare.png");
 		particle = ImageCache.getInstance().get("assets/debris-particle.png");
-		this.duration = this.time = duration;
-		debris = new ParticleSystem(particle, 100, 0.7);
+		debris = new ParticleSystem(new SpriteParticleRenderer(particle), 100);
 		debrisEmitter = new PointParticleEmitter(500.0, 0.7, 0.0, position, new Vector2D(2, 2), 150.0, 10.0, 0, 2 * Math.PI);
 		this.debrisDuration = debrisDuration;
 		debris.addEmitter(debrisEmitter);
 		debris.addAffector(new ParticleAffectorDeceleration(150));
 		debris.addAffector(new ParticleAffectorDecay(0.7));
-	}
-
-	public boolean isDone() {
-		return time <= 0.0;
+		debris.update(0.1);
 	}
 	
 	@Override
 	public void update(double dt) {
-		time -= dt;
-		if (time < 0.0) {
-			time = 0.0;
-			return;
-		}
+		super.update(dt);
 		
 		if (time < duration - debrisDuration) {
 			debrisEmitter.setSpawnsPerSecond(0.0);
