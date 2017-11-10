@@ -1,5 +1,6 @@
 package view;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -25,6 +26,7 @@ public class MirrorView extends EntityView {
 
 		int x = (int) (mirror.getPosition().getdX()) - w / 2, y = (int) (mirror.getPosition().getdY()) - h / 2;
 
+		g.setColor(Color.white);
 		g.drawImage(mirrorSprite, x, y, null);
 		g.drawString(mirror.getMirrorState().toString(), 200, 200);
 	}

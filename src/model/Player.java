@@ -32,6 +32,8 @@ public class Player extends RoundEntity {
 		longMirrorMagic = new MirrorMagic(this, Constants.LONG_MIRROR_LENGTH);
 		abilities = new ArrayList<Ability>();
 		abilities.add(gun);
+		abilities.add(shortMirrorMagic);
+		abilities.add(longMirrorMagic);
 	}
 
 	public void moveUp() {

@@ -25,11 +25,11 @@ public class MirrorMagic extends Ability {
 			Vector2D mirrorPosition = null;
 			Vector2D mirrorVelocity = null;
 			if(player.getPlayerSide() == PlayerSide.LEFT_PLAYER) {
-				mirrorPosition = new Vector2D(player.getPosition().getdX() + 20, player.getPosition().getdY());
-				mirrorVelocity = new Vector2D(30, 0);
+				mirrorPosition = new Vector2D(Constants.MIRROR_X_LAUNCH_LEFT, player.getPosition().getdY());
+				mirrorVelocity = new Vector2D(Constants.MIRROR_VELOCITY, 0);
 			} else {
-				mirrorPosition = new Vector2D(player.getPosition().getdX() - 20, player.getPosition().getdY());
-				mirrorVelocity = new Vector2D(-30, 0);
+				mirrorPosition = new Vector2D(Constants.MIRROR_X_LAUNCH_RIGHT, player.getPosition().getdY());
+				mirrorVelocity = new Vector2D(-Constants.MIRROR_VELOCITY, 0);
 			}
 			mirror = new Mirror(mirrorPosition, mirrorVelocity, mirrorLength);
 			return true;

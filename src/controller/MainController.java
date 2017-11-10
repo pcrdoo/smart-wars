@@ -174,12 +174,6 @@ public class MainController {
 				&& !keyboardState.get(controls.get(Controls.MOVE_DOWN))) {
 			player.stopMoving();
 		}
-		if (keyboardState.get(controls.get(Controls.SHORT_MIRROR_MAGIC))) {
-			doMirrorMagic(player.getShortMirrorMagic());
-		}
-		if (keyboardState.get(controls.get(Controls.LONG_MIRROR_MAGIC))) {
-			doMirrorMagic(player.getLongMirrorMagic());
-		}
 	}
 
 	private void checkDisintegratingAsteroids() {
@@ -356,6 +350,18 @@ public class MainController {
 
 	public void handleKeyDown(int keyCode) {
 		keyboardState.put(keyCode, true);
+		if(keyCode == leftPlayerControls.get(Controls.SHORT_MIRROR_MAGIC)) {
+			doMirrorMagic(model.getLeftPlayer().getShortMirrorMagic());
+		}
+		if(keyCode == leftPlayerControls.get(Controls.LONG_MIRROR_MAGIC)) {
+			doMirrorMagic(model.getLeftPlayer().getLongMirrorMagic());
+		}
+		if(keyCode == rightPlayerControls.get(Controls.SHORT_MIRROR_MAGIC)) {
+			doMirrorMagic(model.getRightPlayer().getShortMirrorMagic());
+		}
+		if(keyCode == rightPlayerControls.get(Controls.LONG_MIRROR_MAGIC)) {
+			doMirrorMagic(model.getRightPlayer().getLongMirrorMagic());
+		}
 	}
 
 	public void handleKeyUp(int keyCode) {
