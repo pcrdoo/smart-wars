@@ -29,6 +29,7 @@ public class MainController {
 	private HashMap<Controls, Integer> leftPlayerControls;
 	private HashMap<Controls, Integer> rightPlayerControls;
 	private HashMap<Integer, Boolean> keyboardState;
+	private ArrayList<AsteroidView> disintegratingAsteroids;
 
 	// View-related dependencies for each entity.
 	private HashMap<Entity, EntityView> viewMap;
@@ -42,9 +43,10 @@ public class MainController {
 		this.gameStarter = gameStarter;
 
 		viewMap = new HashMap<>();
+		disintegratingAsteroids = new ArrayList<>();
 
 		PlayerView leftPlayerView = new PlayerView(model.getLeftPlayer());
-		view.addDrawable(leftPlayerView);
+		view.addDrawable(leftPlayerView, Constants.Z_PLAYER);
 		view.addUpdatable(leftPlayerView);
 		leftPlayerControls = new HashMap<Controls, Integer>();
 		leftPlayerControls.put(Controls.MOVE_UP, KeyEvent.VK_W);
@@ -52,7 +54,7 @@ public class MainController {
 		leftPlayerControls.put(Controls.FIRE_GUN, KeyEvent.VK_D);
 
 		PlayerView rightPlayerView = new PlayerView(model.getRightPlayer());
-		view.addDrawable(rightPlayerView);
+		view.addDrawable(rightPlayerView, Constants.Z_PLAYER);
 		view.addUpdatable(rightPlayerView);
 		rightPlayerControls = new HashMap<Controls, Integer>();
 		rightPlayerControls.put(Controls.MOVE_UP, KeyEvent.VK_I);
@@ -118,7 +120,26 @@ public class MainController {
 		}
 		cullBullets(impactedBullets);
 	}
+	
+	private void checkAsteroidPlayerCollisions() {
+		for (Asteroid asteroid : model.getAsteroids()) {
+			if (asteroid.hitTest(model.getLeftPlayer())) {
+				handlePlayerAsteroidHit(model.getLeftPlayer(), asteroid);
+			} else if (asteroid.hitTest(model.getRightPlayer())) {
+				handlePlayerAsteroidHit(model.getRightPlayer(), asteroid);
+			}
+		}
+	}
 
+	private void handlePlayerAsteroidHit(Player player, Asteroid asteroid) {
+		asteroid.disintegrate();
+		AsteroidView av = (AsteroidView)viewMap.get(asteroid);
+		av.onAsteroidDisintegrated();
+		disintegratingAsteroids.add(av);
+		player.receiveDamage(Constants.ASTEROID_PLAYER_DAMAGE);
+		((PlayerView)viewMap.get(player)).onPlayerHit();
+	}
+	
 	private void checkPlayerControls(Player player, HashMap<Controls, Integer> controls) {
 		if (keyboardState.get(controls.get(Controls.FIRE_GUN))) {
 			fireBullet(player);
@@ -138,6 +159,21 @@ public class MainController {
 		}
 	}
 
+	private void checkDisintegratingAsteroids() {
+		ArrayList<AsteroidView> finished = new ArrayList<>();
+		for (AsteroidView av : disintegratingAsteroids) {
+			if (av.isDisintegrated()) {
+				finished.add(av);
+			}
+		}
+		
+		for (AsteroidView av: finished) {
+			finished.remove(av);
+			view.removeUpdatable(av);
+			view.removeDrawable(av);
+		}
+	}
+	
 	private void maybeSpawnAsteroids(double dt) {
 		timeToNextAsteroidSpawn -= dt;
 		if (timeToNextAsteroidSpawn <= 0) {
@@ -153,7 +189,7 @@ public class MainController {
 				model.addAsteroid(asteroid);
 				AsteroidView asteroidView = new AsteroidView(asteroid);
 				viewMap.put(asteroid, asteroidView);
-				view.addDrawable(asteroidView);
+				view.addDrawable(asteroidView, Constants.Z_ASTEROID);
 				view.addUpdatable(asteroidView);
 			}
 			timeToNextAsteroidSpawn = 1;
@@ -176,10 +212,20 @@ public class MainController {
 			if (entity instanceof Bullet) {
 				model.removeBullet((Bullet) entity);
 			}
+			
 			if (entity instanceof Asteroid) {
 				model.removeAsteroid((Asteroid) entity);
+				
+				// Asteroids' views should be culled only if they haven't been disintegrated; otherwise,
+				// they need to be left alone to finish their animation
+				if (!((Asteroid)entity).isDisintegrated()) {
+					deleteView(entity);
+				} else {
+					viewMap.remove(entity);
+				}
+			} else {
+				deleteView(entity);
 			}
-			deleteView(entity);
 		}
 	}
 
@@ -205,8 +251,13 @@ public class MainController {
 		}
 
 		checkBulletCollisions();
+		checkAsteroidPlayerCollisions();
+		
 		checkPlayerControls(model.getLeftPlayer(), leftPlayerControls);
 		checkPlayerControls(model.getRightPlayer(), rightPlayerControls);
+
+		checkDisintegratingAsteroids();
+		
 		maybeSpawnAsteroids(dt);
 		cullEntities(getEntitiesToCull());
 		checkGameOver();
@@ -224,7 +275,7 @@ public class MainController {
 		BulletView bulletView = new BulletView(bullet);
 		viewMap.put(bullet, bulletView);
 
-		view.addDrawable(bulletView);
+		view.addDrawable(bulletView, Constants.Z_BULLETS);
 		view.addUpdatable(bulletView);
 	}
 

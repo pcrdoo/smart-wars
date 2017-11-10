@@ -11,6 +11,13 @@ public class Constants {
 
 	public static final int PLAYER_ANIMATION_FPS = 24;
 
+	// Z-index
+	public static final int Z_BACKDROP = 0;
+	public static final int Z_BULLETS = 1;
+	public static final int Z_ASTEROID = 2;
+	public static final int Z_PLAYER = 3;
+	public static final int Z_OVERLAY = 4;
+
 	// Player
 	public static final Vector2D LEFT_PLAYER_START_POS = new Vector2D(60, WINDOW_HEIGHT / 2);
 	public static final Vector2D RIGHT_PLAYER_START_POS = new Vector2D(WINDOW_WIDTH - 60, WINDOW_HEIGHT / 2);
@@ -32,6 +39,10 @@ public class Constants {
 	public static final int ASTEROID_SPAWN_X_MIN = (int) (LEFT_PLAYER_START_POS.getdX() + 80);
 	public static final int ASTEROID_SPAWN_X_MAX = (int) (RIGHT_PLAYER_START_POS.getdX() - 80);
 	public static final int ASTEROID_SPAWN_Y = -50;
+	public static final double ASTEROID_DISINTEGRATION_TIME = 0.4;
+	
+	public static final int ASTEROID_PLAYER_DAMAGE = 25;
+	
 	public static final int ASTEROID_Y_VELOCITY = 100;
 	public static final int ASTEROID_Y_VELOCITY_JITTER = 20;
 	public static final int ASTEROID_X_VELOCITY = 20;

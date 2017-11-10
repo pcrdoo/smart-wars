@@ -1,5 +1,7 @@
 package view;
 
+import java.awt.AlphaComposite;
+import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
@@ -21,6 +23,8 @@ public class AsteroidView extends EntityView {
 	private ParticleSystem trail;
 	private PointParticleEmitter trailEmitter;
 	private ArrayList<Sparks> sparks;
+	private boolean disintegrating;
+	private double disintegrationTime;
 
 	public AsteroidView(Asteroid asteroid) {
 		this.asteroid = asteroid;
@@ -29,14 +33,30 @@ public class AsteroidView extends EntityView {
 				Constants.ASTEROID_SPRITES_X, Constants.ASTEROID_SPRITES_Y, 0);
 		
 		sparks = new ArrayList<>();
+		
+		disintegrating = false;
+		disintegrationTime = 0.0;
 	}
 
 	public void onAsteroidHit(Vector2D position) {
 		sparks.add(new Sparks(position, 1.5, 0.15));
 	}
+	
+	public void onAsteroidDisintegrated() {
+		disintegrating = true;
+		disintegrationTime = Constants.ASTEROID_DISINTEGRATION_TIME;
+	}
 
+	public boolean isDisintegrated() {
+		return disintegrating && disintegrationTime <= 0.0;
+	}
+	
 	@Override
 	public void update(double dt) {
+		if (disintegrating && disintegrationTime >= dt) {
+			disintegrationTime -= dt;
+		}
+		
 		ArrayList<Sparks> finishedSparks = new ArrayList<>();
 		
 		for (Sparks s : sparks) {
@@ -55,7 +75,15 @@ public class AsteroidView extends EntityView {
 	@Override
 	public void draw(Graphics2D g) {
 		sprite.setFrame(asteroid.getFrame());
-		sprite.draw(g, (int)asteroid.getPosition().getdX(), (int)asteroid.getPosition().getdY());
+		if (disintegrating) {
+			Composite old = g.getComposite();
+
+			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)(disintegrationTime / Constants.ASTEROID_DISINTEGRATION_TIME)));
+			sprite.draw(g, (int)asteroid.getPosition().getdX(), (int)asteroid.getPosition().getdY());
+			g.setComposite(old);
+		} else {
+			sprite.draw(g, (int)asteroid.getPosition().getdX(), (int)asteroid.getPosition().getdY());	
+		}
 
 		for (Sparks s : sparks) {
 			s.draw(g);

@@ -2,30 +2,44 @@ package view;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import main.GameState;
+import main.Constants;
 
 public class MainView {
 	private BackdropView backdrop;
 
-	private ArrayList<Drawable> drawables;
+	private TreeMap<Integer, ArrayList<Drawable>> drawables;
 	private ArrayList<Updatable> updatables;
 
 	public MainView() {
-		drawables = new ArrayList<>();
+		drawables = new TreeMap<>();
 		updatables = new ArrayList<>();
 
 		backdrop = new BackdropView();
-		drawables.add(backdrop);
+		addDrawable(backdrop, Constants.Z_BACKDROP);
 		updatables.add(backdrop);
 	}
 
-	public void addDrawable(Drawable d) {
-		drawables.add(d);
+	public void addDrawable(Drawable d, int zIndex) {
+		ArrayList<Drawable> drawablesInZIndex;
+		if (!drawables.containsKey(zIndex)) {
+			drawablesInZIndex = new ArrayList<>();
+			drawables.put(zIndex, drawablesInZIndex);
+			
+		} else {
+			drawablesInZIndex = drawables.get(zIndex);
+		}
+		
+		drawablesInZIndex.add(d);
 	}
 
 	public void removeDrawable(Drawable d) {
-		drawables.remove(d);
+		for (Map.Entry<Integer, ArrayList<Drawable>> dr : drawables.entrySet()) {
+			dr.getValue().remove(d);
+		}
 	}
 
 	public void addUpdatable(Updatable u) {
@@ -46,8 +60,10 @@ public class MainView {
 
 	public void draw(Graphics2D g) {
 		synchronized (this) {
-			for (Drawable d : drawables) {
-				d.draw(g);
+			for (Map.Entry<Integer, ArrayList<Drawable>> dr : drawables.entrySet()) {
+				for (Drawable d : dr.getValue()) {
+					d.draw(g);
+				}
 			}
 		}
 	}
@@ -55,8 +71,8 @@ public class MainView {
 	public void onGameOver(GameState gameState) {
 		drawables.clear();
 		updatables.clear();
-		drawables.add(backdrop);
+		addDrawable(backdrop, Constants.Z_BACKDROP);
 		updatables.add(backdrop);
-		drawables.add(new GameOverView(gameState));
+		addDrawable(new GameOverView(gameState), Constants.Z_OVERLAY);
 	}
 }
