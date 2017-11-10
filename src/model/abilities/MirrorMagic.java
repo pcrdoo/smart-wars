@@ -20,7 +20,7 @@ public class MirrorMagic extends Ability {
 		mirror = null;
 	}
 
-	public void launchMirror() {
+	public boolean launchMirror() {
 		if (execute()) {
 			Vector2D mirrorPosition = null;
 			Vector2D mirrorVelocity = null;
@@ -32,7 +32,9 @@ public class MirrorMagic extends Ability {
 				mirrorVelocity = new Vector2D(-30, 0);
 			}
 			mirror = new Mirror(mirrorPosition, mirrorVelocity, mirrorLength);
+			return true;
 		}
+		return false;
 	}
 	
 	public void removeMirror() {

@@ -34,4 +34,8 @@ public class Bullet extends RectEntity {
 		}
 		return false;
 	}
+
+	public void bounce(Mirror mirror) {
+		// TODO bounce
+	}
 }

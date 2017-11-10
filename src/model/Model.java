@@ -12,6 +12,7 @@ public class Model {
 	private ArrayList<Entity> entities;
 	private ArrayList<Bullet> bullets; // separate bullets for culling
 	private ArrayList<Asteroid> asteroids; // separate asteroids for culling
+	private ArrayList<Mirror> mirrors; // separate mirrors for culling
 
 	private GameState gameState;
 
@@ -21,6 +22,7 @@ public class Model {
 		rightPlayer = new Player(PlayerSide.RIGHT_PLAYER);
 		bullets = new ArrayList<>();
 		asteroids = new ArrayList<>();
+		mirrors = new ArrayList<>();
 
 		entities = new ArrayList<Entity>();
 		entities.add(leftPlayer);
@@ -73,6 +75,18 @@ public class Model {
 
 	public ArrayList<Asteroid> getAsteroids() {
 		return asteroids;
+	}
+	
+	public void addMirror(Mirror mirror) {
+		mirrors.add(mirror);
+	}
+
+	public void removeMirror(Mirror mirror) {
+		mirrors.remove(mirror);
+	}
+
+	public ArrayList<Mirror> getMirrors() {
+		return mirrors;
 	}
 	
 	public ArrayList<Entity> getEntities() {

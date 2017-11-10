@@ -28,4 +28,8 @@ public class MirrorView extends EntityView {
 		g.drawImage(mirrorSprite, x, y, null);
 		g.drawString(mirror.getMirrorState().toString(), 200, 200);
 	}
+
+	public void onMirrorHit() {
+		// TODO sparkle
+	}
 }

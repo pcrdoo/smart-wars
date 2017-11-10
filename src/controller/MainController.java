@@ -124,6 +124,15 @@ public class MainController {
 						impactedBullets.add(bullet);
 					}
 				}
+				if(impactedBullets.contains(bullet)) {
+					continue;
+				}
+				// Mirror collision
+				for (Mirror mirror : model.getMirrors()) {
+					if (mirror.hitTest(bullet.getPosition())) {
+						handleMirrorHit(mirror, bullet);
+					}
+				}
 			}
 		}
 		cullBullets(impactedBullets);
@@ -300,14 +309,16 @@ public class MainController {
 
 	private void doMirrorMagic(MirrorMagic mirrorMagic) {
 		if (mirrorMagic.getMirror() == null) {
-			mirrorMagic.launchMirror();
+			if(!mirrorMagic.launchMirror()) {
+				return;
+			}
 			Mirror mirror = mirrorMagic.getMirror();
 			model.addEntity(mirror);
+			model.addMirror(mirror);
 			MirrorView mirrorView = new MirrorView(mirror);
 			viewMap.put(mirror, mirrorView);
 			view.addDrawable(mirrorView, Constants.Z_MIRROR);
 			view.addUpdatable(mirrorView);
-			// dodaj i sve to
 		} else {
 			switch (mirrorMagic.getMirror().getMirrorState()) {
 			case TRAVELLING:
@@ -319,6 +330,7 @@ public class MainController {
 			case STABLE:
 				Mirror mirror = mirrorMagic.getMirror();
 				model.removeEntity(mirror);
+				model.removeMirror(mirror);
 				deleteView(mirror);
 				mirrorMagic.removeMirror();
 				break;
@@ -326,6 +338,11 @@ public class MainController {
 				break;
 			}
 		}
+	}
+	
+	private void handleMirrorHit(Mirror mirror, Bullet bullet) {
+		bullet.bounce(mirror);
+		((MirrorView) viewMap.get(mirror)).onMirrorHit();
 	}
 
 	private void handleAsteroidHit(Asteroid asteroid, Bullet bullet) {
