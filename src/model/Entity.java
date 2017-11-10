@@ -1,5 +1,7 @@
 package model;
 
+import java.awt.Rectangle;
+
 import util.Vector2D;
 
 public abstract class Entity {
@@ -21,6 +23,8 @@ public abstract class Entity {
 	}
 
 	public abstract boolean hitTest(Vector2D point);
+	
+	public abstract Rectangle getBoundingBox();
 
 	public Vector2D getPosition() {
 		return position;

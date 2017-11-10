@@ -1,5 +1,6 @@
 package controller;
 
+import java.awt.Rectangle;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,13 +8,17 @@ import java.util.HashMap;
 import main.Constants;
 import main.GameStarter;
 import model.Bullet;
+import model.Entity;
 import model.GameState;
 import model.Model;
 import model.Player;
 import util.Vector2D;
 import view.BulletView;
+import view.Drawable;
+import view.EntityView;
 import view.MainView;
 import view.PlayerView;
+import view.Updatable;
 
 public class MainController {
 
@@ -21,15 +26,16 @@ public class MainController {
 	private MainView view;
 	private GameStarter gameStarter;
 	private HashMap<Integer, Boolean> keyboardState;
-	private HashMap<Player, PlayerView> playerViewMap;
-	private HashMap<Bullet, BulletView> bulletViewMap;
+
+	// View-related dependencies for each entity.
+	private HashMap<Entity, EntityView> viewMap;
 
 	public MainController(GameStarter gameStarter, MainView view, Model model) {
 		this.view = view;
 		this.model = model;
 		this.gameStarter = gameStarter;
 
-		bulletViewMap = new HashMap<>();
+		viewMap = new HashMap<>();
 
 		initKeyboardState();
 
@@ -41,9 +47,8 @@ public class MainController {
 		view.addDrawable(leftPlayerView);
 		view.addUpdatable(leftPlayerView);
 
-		playerViewMap = new HashMap<>();
-		playerViewMap.put(model.getLeftPlayer(), leftPlayerView);
-		playerViewMap.put(model.getRightPlayer(), rightPlayerView);
+		viewMap.put(model.getLeftPlayer(), leftPlayerView);
+		viewMap.put(model.getRightPlayer(), rightPlayerView);
 	}
 
 	private void initKeyboardState() {
@@ -59,30 +64,43 @@ public class MainController {
 		keyboardState.put(KeyEvent.VK_ENTER, false);
 	}
 
-	private void cullBullets(ArrayList<Bullet> toCull) {
-		ArrayList<Bullet> bulletsToCull = new ArrayList<>();
-		bulletsToCull.addAll(toCull);
-
-		for (Bullet bullet : model.getBullets()) {
-			Vector2D p = bullet.getPosition();
-			if (p.getdX() < -Constants.BULLET_CULLING_X
-					|| p.getdX() > Constants.WINDOW_WIDTH + Constants.BULLET_CULLING_X
-					|| p.getdY() < -Constants.BULLET_CULLING_Y
-					|| p.getdY() > Constants.WINDOW_HEIGHT + Constants.BULLET_CULLING_Y) {
-				bulletsToCull.add(bullet);
+	private ArrayList<Entity> findEntitiesOutOfBounds() {
+		ArrayList<Entity> outOfBounds = new ArrayList<Entity>();
+		for (Entity entity : model.getEntities()) {
+			Rectangle boundingBox = entity.getBoundingBox();
+			Vector2D position = entity.getPosition();
+			if (boundingBox.getMaxX() < 0 || boundingBox.getMinX() > Constants.WINDOW_WIDTH || boundingBox.getMaxY() < 0
+					|| boundingBox.getMinY() > Constants.WINDOW_HEIGHT) {
+				outOfBounds.add(entity);
 			}
 		}
+		return outOfBounds;
+	}
 
-		for (Bullet bullet : bulletsToCull) {
-			model.removeBullet(bullet);
-			model.removeEntity(bullet);
-
-			BulletView bulletView = bulletViewMap.get(bullet);
-			if (bulletView != null) {
-				view.removeUpdatable(bulletView);
-				view.removeDrawable(bulletView);
-				bulletViewMap.remove(bullet);
+	private void cullEntities(ArrayList<Entity> toCull) {
+		for (Entity entity : toCull) {
+			model.removeEntity(entity);
+			if (entity instanceof Bullet) {
+				model.removeBullet((Bullet) entity);
 			}
+			deleteView(entity);
+		}
+	}
+
+	private void deleteView(Entity entity) {
+		EntityView entityView = viewMap.get(entity);
+		if (entityView != null) {
+			view.removeUpdatable(entityView);
+			view.removeDrawable(entityView);
+			viewMap.remove(entity);
+		}
+	}
+
+	private void cullBullets(ArrayList<Bullet> toCull) {
+		for (Bullet bullet : toCull) {
+			model.removeEntity(bullet);
+			model.removeBullet(bullet);
+			deleteView(bullet);
 		}
 	}
 
@@ -116,7 +134,7 @@ public class MainController {
 
 	public void handlePlayerHit(Player player, Bullet bullet) {
 		player.receiveDamage(bullet.getDamage());
-		playerViewMap.get(player).onPlayerHit();
+		((PlayerView) viewMap.get(player)).onPlayerHit();
 	}
 
 	public void update() {
@@ -151,6 +169,7 @@ public class MainController {
 			model.getLeftPlayer().stopMoving();
 
 		checkGameOver();
+		cullEntities(findEntitiesOutOfBounds());
 	}
 
 	private void fireBullet(Player player) {
@@ -160,10 +179,10 @@ public class MainController {
 		}
 		model.addEntity(bullet);
 		model.addBullet(bullet);
-		playerViewMap.get(player).onBulletFired();
+		((PlayerView) viewMap.get(player)).onBulletFired();
 
 		BulletView bulletView = new BulletView(bullet);
-		bulletViewMap.put(bullet, bulletView);
+		viewMap.put(bullet, bulletView);
 
 		view.addDrawable(bulletView);
 		view.addUpdatable(bulletView);
