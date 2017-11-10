@@ -48,4 +48,8 @@ public class Mirror extends LineEntity {
 		return false;
 	}
 
+	public double getAngle() {
+		return angle;
+	}
+
 }

@@ -60,6 +60,6 @@ public class Constants {
 	public static final int MIRROR_X_MAX = (int) (RIGHT_PLAYER_START_POS.getdX() - 80);
 	public static final int MIRROR_X_LAUNCH_LEFT = MIRROR_X_MIN + 10;
 	public static final int MIRROR_X_LAUNCH_RIGHT = MIRROR_X_MAX - 10;
-	public static final double MIRROR_ANGULAR_VELOCITY = 0.01;
+	public static final double MIRROR_ANGULAR_VELOCITY = Math.PI;
 }
 

@@ -2,6 +2,7 @@ package view;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
 import model.Mirror;
@@ -13,7 +14,8 @@ public class MirrorView extends EntityView {
 
 	public MirrorView(Mirror mirror) {
 		this.mirror = mirror;
-		mirrorSprite = ImageCache.getInstance().get("assets/bullet.png");
+		mirrorSprite = ImageCache.getInstance().get("assets/mirror_long.png");
+		// TODO: Short mirrors
 	}
 
 	@Override
@@ -25,10 +27,15 @@ public class MirrorView extends EntityView {
 		int w = mirrorSprite.getWidth(), h = mirrorSprite.getHeight();
 
 		int x = (int) (mirror.getPosition().getdX()) - w / 2, y = (int) (mirror.getPosition().getdY()) - h / 2;
+		
+		g.setTransform(new AffineTransform());
+		g.translate(x, y);
+		g.rotate(mirror.getAngle());
+		g.translate(-w/2, -h/2);
+		
+		g.drawImage(mirrorSprite, 0, 0, null);
 
-		g.setColor(Color.white);
-		g.drawImage(mirrorSprite, x, y, null);
-		g.drawString(mirror.getMirrorState().toString(), 200, 200);
+		g.setTransform(new AffineTransform());
 	}
 
 	public void onMirrorHit() {

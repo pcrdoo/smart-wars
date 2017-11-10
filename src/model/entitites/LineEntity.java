@@ -13,7 +13,7 @@ public class LineEntity extends Entity {
 	protected LineEntity(Vector2D position, Vector2D velocity, double length) {
 		super(position, velocity);
 		this.length = length;
-		this.angle = 0;
+		this.angle = Math.PI / 2;
 	}
 	
 	private Vector2D getLineVector() {
