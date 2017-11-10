@@ -36,6 +36,7 @@ public class Bullet extends RectEntity {
 	}
 
 	public void bounce(Mirror mirror) {
+		System.out.println("A bullet just bounced ayyyy");
 		// TODO bounce
 	}
 }
