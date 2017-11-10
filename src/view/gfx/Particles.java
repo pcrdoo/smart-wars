@@ -3,7 +3,7 @@ package view.gfx;
 import util.Vector2D;
 
 public class Particles {
-	private double[] particleX, particleY, particleVX, particleVY, particleTime;
+	private double[] particleX, particleY, particleVX, particleVY, particleTime, particleAlpha;
 	
 	public Particles(int count) {
 		particleX = new double[count];
@@ -11,6 +11,7 @@ public class Particles {
 		particleVX = new double[count];
 		particleVY = new double[count];
 		particleTime = new double[count];
+		particleAlpha = new double[count];
 	}
 	
 	public Vector2D getPosition(int i) {
@@ -23,6 +24,10 @@ public class Particles {
 	
 	public double getTime(int i) {
 		return particleTime[i];
+	}
+
+	public double getAlpha(int i) {
+		return particleAlpha[i];
 	}
 	
 	public void setPosition(int i, Vector2D position) {
@@ -39,11 +44,15 @@ public class Particles {
 		particleTime[i] = time;
 	}
 	
+	public void setAlpha(int i, double alpha) {
+		particleAlpha[i] = alpha;
+	}
+	
 	public int size() {
 		return particleX.length;
 	}
 	
-	public void add(Vector2D position, Vector2D velocity, double time) {
+	public void add(Vector2D position, Vector2D velocity, double time, double alpha) {
 		double minTime = particleTime[0];
 		int minI = 0;
 		for (int i = 1; i < particleX.length; i++) {
@@ -63,5 +72,6 @@ public class Particles {
 		particleVX[minI] = velocity.getdX();
 		particleVY[minI] = velocity.getdY();
 		particleTime[minI] = time;
+		particleAlpha[minI] = alpha;
 	}
 }

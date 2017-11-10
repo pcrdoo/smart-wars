@@ -7,7 +7,7 @@ import java.awt.image.BufferedImage;
 import model.Bullet;
 import util.ImageCache;
 import util.Vector2D;
-import view.gfx.AdditiveComposite;
+import view.gfx.ParticleAffectorDecay;
 import view.gfx.ParticleSystem;
 import view.gfx.PointParticleEmitter;
 
@@ -38,6 +38,7 @@ public class BulletView implements Drawable, Updatable {
 				PARTICLE_MIN_EMIT_ANGLE, PARTICLE_MAX_EMIT_ANGLE);
 
 		trail.addEmitter(trailEmitter);
+		trail.addAffector(new ParticleAffectorDecay(PARTICLE_DECAY_TIME));
 	}
 
 	@Override
@@ -49,8 +50,6 @@ public class BulletView implements Drawable, Updatable {
 	@Override
 	public void draw(Graphics2D g) {
 		//trail.draw(g);
-		Composite old = g.getComposite();
-		g.setComposite(AdditiveComposite.getInstance(254));
 		
 		int w = bulletSprite.getWidth(),
 				h = bulletSprite.getHeight();
@@ -59,6 +58,5 @@ public class BulletView implements Drawable, Updatable {
 				y = (int)(bullet.getPosition().getdY()) - h / 2;
 		
 		g.drawImage(bulletSprite, x, y, null);
-		g.setComposite(old);
 	}
 }

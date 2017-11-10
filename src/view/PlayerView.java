@@ -12,8 +12,8 @@ import model.Player;
 import model.PlayerSide;
 import util.ImageCache;
 import util.Vector2D;
-import view.gfx.AdditiveComposite;
 import view.gfx.Explosion;
+import view.gfx.ParticleAffectorDecay;
 import view.gfx.PointParticleEmitter;
 
 public class PlayerView implements Drawable, Updatable {
@@ -46,6 +46,7 @@ public class PlayerView implements Drawable, Updatable {
 				0, 2 * Math.PI);
 
 		trail.addEmitter(trailEmitter);
+		trail.addAffector(new ParticleAffectorDecay(0.4));
 	}
 
 	public void update(double dt) {

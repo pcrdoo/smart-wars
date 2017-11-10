@@ -95,6 +95,7 @@ public class ParticleCompositor {
 			}
 			
 			Vector2D pos = particles.getPosition(i);
+			double alpha = particles.getAlpha(i);
 			int px = (int)pos.getdX(), py = (int)pos.getdY();
 			
 			for (int y = 0; y < sh; y++) {
@@ -109,15 +110,15 @@ public class ParticleCompositor {
 					 
 					int res = 0;
 					for (int c = 0; c < 3; c++) {
-						int value = ((dst >> (8 * c)) & 0xff) + ((src >> (8 * c)) & 0xff);
+						int value = ((dst >> (8 * c)) & 0xff) + (int)(alpha * ((src >> (8 * c)) & 0xff));
 						if (value > 255) {
 							value = 255;
 						}
 						res |= value << (8 * c);
 						dstPixel[c] = (double)value / 255;
 					}
-					int alpha = (int)(255.0 * (.2126 * dstPixel[0] + .7152 * dstPixel[1] + .0722 * dstPixel[2]));
-					res |= alpha << 24;
+					int intensity = (int)(255.0 * (.2126 * dstPixel[0] + .7152 * dstPixel[1] + .0722 * dstPixel[2]));
+					res |= intensity << 24;
 					canvas.setRGB(dx, dy, res);
 					
 				}
@@ -128,7 +129,7 @@ public class ParticleCompositor {
 	public void compose(Graphics g, Particles particles, BufferedImage sprite) {
 		compositeOnCanvas(particles, sprite);
 		g.drawImage(canvas, minX, minY, maxX, maxY, minX, minY, maxX, maxY, null);
-		g.setColor(Color.RED);
-		g.drawRect(minX, minY, maxX-minX, maxY-minY);
+		/*g.setColor(Color.RED);
+		g.drawRect(minX, minY, maxX-minX, maxY-minY);*/
 	}
 }

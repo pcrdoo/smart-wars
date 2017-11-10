@@ -1,5 +1,6 @@
 package view.gfx;
 
+import java.awt.AlphaComposite;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
@@ -28,6 +29,7 @@ public class Explosion implements Drawable, Updatable {
 		this.debrisDuration = debrisDuration;
 		debris.addEmitter(debrisEmitter);
 		debris.addAffector(new ParticleAffectorDeceleration(150));
+		debris.addAffector(new ParticleAffectorDecay(0.7));
 	}
 
 	public boolean isDone() {
@@ -53,7 +55,7 @@ public class Explosion implements Drawable, Updatable {
 	public void draw(Graphics2D g) {
 		Composite old = g.getComposite();
 		
-		g.setComposite(AdditiveComposite.getInstance((int)(255 * time / duration)));
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)(time / duration)));
 		int x = (int)position.getdX(), y = (int)position.getdY(), w = flare.getWidth(), h = flare.getHeight();
 		
 		g.drawImage(flare, x - w / 2, y - h / 2, null);
