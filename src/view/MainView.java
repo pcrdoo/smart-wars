@@ -3,6 +3,8 @@ package view;
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 
+import model.GameState;
+
 public class MainView {
 	private BackdropView backdrop;
 
@@ -48,5 +50,13 @@ public class MainView {
 				d.draw(g);
 			}
 		}
+	}
+
+	public void onGameOver(GameState gameState) {
+		drawables.clear();
+		updatables.clear();
+		drawables.add(backdrop);
+		updatables.add(backdrop);
+		drawables.add(new GameOverView(gameState));
 	}
 }

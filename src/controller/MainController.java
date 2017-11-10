@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import main.Constants;
+import main.GameStarter;
 import model.Bullet;
+import model.GameState;
 import model.Model;
 import model.Player;
 import util.Vector2D;
@@ -17,13 +19,15 @@ public class MainController {
 
 	private Model model;
 	private MainView view;
+	private GameStarter gameStarter;
 	private HashMap<Integer, Boolean> keyboardState;
 	private HashMap<Player, PlayerView> playerViewMap;
 	private HashMap<Bullet, BulletView> bulletViewMap;
 
-	public MainController(MainView view, Model model) {
+	public MainController(GameStarter gameStarter, MainView view, Model model) {
 		this.view = view;
 		this.model = model;
+		this.gameStarter = gameStarter;
 
 		bulletViewMap = new HashMap<>();
 
@@ -51,22 +55,21 @@ public class MainController {
 		keyboardState.put(KeyEvent.VK_I, false);
 		keyboardState.put(KeyEvent.VK_K, false);
 		keyboardState.put(KeyEvent.VK_J, false);
+
+		keyboardState.put(KeyEvent.VK_ENTER, false);
 	}
 
 	private void cullBullets(ArrayList<Bullet> toCull) {
-		ArrayList<Bullet> bulletsToCull;
-		if (toCull != null) {
-			bulletsToCull = toCull;
-		} else {
-			bulletsToCull = new ArrayList<>();
-			for (Bullet bullet : model.getBullets()) {
-				Vector2D p = bullet.getPosition();
-				if (p.getdX() < -Constants.BULLET_CULLING_X
-						|| p.getdX() > Constants.WINDOW_WIDTH + Constants.BULLET_CULLING_X
-						|| p.getdY() < -Constants.BULLET_CULLING_Y
-						|| p.getdY() > Constants.WINDOW_HEIGHT + Constants.BULLET_CULLING_Y) {
-					bulletsToCull.add(bullet);
-				}
+		ArrayList<Bullet> bulletsToCull = new ArrayList<>();
+		bulletsToCull.addAll(toCull);
+
+		for (Bullet bullet : model.getBullets()) {
+			Vector2D p = bullet.getPosition();
+			if (p.getdX() < -Constants.BULLET_CULLING_X
+					|| p.getdX() > Constants.WINDOW_WIDTH + Constants.BULLET_CULLING_X
+					|| p.getdY() < -Constants.BULLET_CULLING_Y
+					|| p.getdY() > Constants.WINDOW_HEIGHT + Constants.BULLET_CULLING_Y) {
+				bulletsToCull.add(bullet);
 			}
 		}
 
@@ -87,22 +90,42 @@ public class MainController {
 		ArrayList<Bullet> impactedBullets = new ArrayList<>();
 		for (Bullet bullet : model.getBullets()) {
 			if (bullet.getOwner() == model.getRightPlayer() && model.getLeftPlayer().hitTest(bullet.getPosition())) {
-				handlePlayerHit(model.getLeftPlayer());
+				handlePlayerHit(model.getLeftPlayer(), bullet);
 				impactedBullets.add(bullet);
 			} else if (bullet.getOwner() == model.getLeftPlayer()
 					&& model.getRightPlayer().hitTest(bullet.getPosition())) {
-				handlePlayerHit(model.getRightPlayer());
+				handlePlayerHit(model.getRightPlayer(), bullet);
 				impactedBullets.add(bullet);
 			}
 		}
 		cullBullets(impactedBullets);
 	}
 
-	public void handlePlayerHit(Player player) {
+	private void checkGameOver() {
+		if (!model.getLeftPlayer().isAlive() && !model.getRightPlayer().isAlive()) {
+			model.setGameState(GameState.DRAW);
+			view.onGameOver(GameState.DRAW);
+		} else if (!model.getLeftPlayer().isAlive()) {
+			model.setGameState(GameState.RIGHT_WIN);
+			view.onGameOver(GameState.RIGHT_WIN);
+		} else if (!model.getRightPlayer().isAlive()) {
+			model.setGameState(GameState.LEFT_WIN);
+			view.onGameOver(GameState.LEFT_WIN);
+		}
+	}
+
+	public void handlePlayerHit(Player player, Bullet bullet) {
+		player.receiveDamage(bullet.getDamage());
 		playerViewMap.get(player).onPlayerHit();
 	}
 
 	public void update() {
+		if (model.getGameState() != GameState.RUNNING) {
+			if (keyboardState.get(KeyEvent.VK_ENTER)) {
+				gameStarter.startGame(); // start a new game
+			}
+			return;
+		}
 		checkBulletCollisions();
 
 		if (keyboardState.get(KeyEvent.VK_J))
@@ -126,11 +149,11 @@ public class MainController {
 			model.getLeftPlayer().stopMoving();
 		if (!keyboardState.get(KeyEvent.VK_W) && !keyboardState.get(KeyEvent.VK_S))
 			model.getLeftPlayer().stopMoving();
+
+		checkGameOver();
 	}
 
 	private void fireBullet(Player player) {
-		cullBullets(null);
-
 		Bullet bullet = player.fireBullet();
 		if (bullet == null) {
 			return;

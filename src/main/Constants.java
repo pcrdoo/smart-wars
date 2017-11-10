@@ -15,18 +15,19 @@ public class Constants {
 	public static final int BULLET_CULLING_Y = 20;
 
 	// Player
-	public static Vector2D LEFT_PLAYER_START_POS = new Vector2D(30, WINDOW_HEIGHT / 2);
-	public static Vector2D RIGHT_PLAYER_START_POS = new Vector2D(WINDOW_WIDTH - 30, WINDOW_HEIGHT / 2);
-	public static double PLAYER_SPEED = 300;
-	public static double PLAYER_RADIUS = 20;
-	public static int PLAYER_HEALTH = 10;
+	public static final Vector2D LEFT_PLAYER_START_POS = new Vector2D(30, WINDOW_HEIGHT / 2);
+	public static final Vector2D RIGHT_PLAYER_START_POS = new Vector2D(WINDOW_WIDTH - 30, WINDOW_HEIGHT / 2);
+	public static final double PLAYER_SPEED = 300;
+	public static final double PLAYER_RADIUS = 20;
+	public static final int PLAYER_HEALTH = 100;
 
 	// Bullet
-	public static double BULLET_SPEED = 500;
-	public static Vector2D BULLET_SIZE = new Vector2D(3, 3);
+	public static final double BULLET_SPEED = 500;
+	public static final Vector2D BULLET_SIZE = new Vector2D(3, 3);
 	public static final double BULLET_COOLDOWN = 0.2;
+	public static final double BULLET_DAMAGE = 10;
 
 	// Mirror
-	public static double MIRROR_SPEED = 0;
-	public static double MIRROR_RADIUS = 50;
+	public static final double MIRROR_SPEED = 0;
+	public static final double MIRROR_RADIUS = 50;
 }
