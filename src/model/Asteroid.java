@@ -16,11 +16,12 @@ public class Asteroid extends BitmapEntity {
 	
 	private int type, frame;
 	private double time, frameTime;
+	private boolean disintegrated = false;
 	
 	@Override
 	public boolean shouldCull() {
 		Rectangle boundingBox = getBoundingBox();
-		return boundingBox.getMinY() > Constants.WINDOW_HEIGHT;
+		return disintegrated || boundingBox.getMinY() > Constants.WINDOW_HEIGHT;
 	}
 
 	private static BufferedImage[] createCollisionMasks(BufferedImage spritesheet) {
@@ -34,32 +35,29 @@ public class Asteroid extends BitmapEntity {
 		return collisionMasks;
 	}
 	
-	public Asteroid(Vector2D position, Vector2D velocity, int type) {
+	public Asteroid(Vector2D position, Vector2D velocity, int type, int frame) {
 		super(position, velocity);
 
 		this.type = type;
 		
 		frameTime = 1.0 / Constants.ASTEROID_FPS;
+		disintegrated = false;
 		
 		if (collisionMasks == null) {
 			BufferedImage spritesheet = ImageCache.getInstance().get("assets/asteroid-" + Integer.toString(type) + ".png");
 			collisionMasks = createCollisionMasks(spritesheet);
 		}
 		
-		collisionMask = collisionMasks[0];
-		frame = 0;
-	}
-
-	@Override
-	public void update(double dt) {
-		super.update(dt);
-		time += dt;
-		while (time > frameTime) {
-			time -= frameTime;
-			frame = (frame + 1) % (FRAMES_PER_X + FRAMES_PER_Y);
-		}
-		frame=0;
+		this.frame = frame;
 		collisionMask = collisionMasks[frame];
+	}
+	
+	public void disintegrate() {
+		disintegrated = true;
+	}
+	
+	public boolean isDisintegrated() {
+		return disintegrated;
 	}
 	
 	public int getFrame() {
