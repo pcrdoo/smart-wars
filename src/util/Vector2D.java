@@ -70,6 +70,26 @@ public class Vector2D {
 	public double dotProduct(Vector2D v1) {
 		return this.dX * v1.dX + this.dY * v1.dY;
 	}
+	
+	// Clamp coordinates...
+	
+	public void clampdX(double mindX, double maxdX) {
+		if (this.dX < mindX) {
+			this.dX = mindX;
+		}
+		if (this.dX > maxdX) {
+			this.dX = maxdX;
+		}
+	}
+	
+	public void clampdY(double mindY, double maxdY) {
+		if (this.dY < mindY) {
+			this.dY = mindY;
+		}
+		if (this.dY > maxdY) {
+			this.dY = maxdY;
+		}
+	}
 
 	public double getdX() {
 		return dX;

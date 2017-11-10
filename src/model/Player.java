@@ -50,11 +50,13 @@ public class Player extends RoundEntity {
 						: new Vector2D(-Constants.BULLET_SPEED, 0));
 	}
 
+	@Override
 	public void update(double dt) {
 		super.update(dt);
 		for (Ability ability : abilities) {
 			ability.update(dt);
 		}
+		position.clampdY(20, Constants.WINDOW_HEIGHT - 20);
 	}
 
 	public PlayerSide getPlayerSide() {
