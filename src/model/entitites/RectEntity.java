@@ -15,14 +15,14 @@ public abstract class RectEntity extends Entity {
 
 	public boolean hitTest(Vector2D point) {
 		Rectangle boundingBox = getBoundingBox();
-		return point.getdX() > boundingBox.getMinX() && point.getdX() < boundingBox.getMaxX()
-				&& point.getdY() > boundingBox.getMinY() && point.getdY() < boundingBox.getMaxY();
+		return point.getX() > boundingBox.getMinX() && point.getX() < boundingBox.getMaxX()
+				&& point.getY() > boundingBox.getMinY() && point.getY() < boundingBox.getMaxY();
 	}
 
 	@Override
 	public Rectangle getBoundingBox() {
-		return new Rectangle((int) (position.getdX() - size.getdX() / 2), (int) (position.getdY() - size.getdY() / 2),
-				(int) size.getdX(), (int) size.getdY());
+		return new Rectangle((int) (position.getX() - size.getX() / 2), (int) (position.getY() - size.getY() / 2),
+				(int) size.getX(), (int) size.getY());
 	}
 
 }

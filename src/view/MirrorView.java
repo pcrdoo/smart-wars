@@ -50,7 +50,7 @@ public class MirrorView extends EntityView {
 	public void draw(Graphics2D g) {
 		int w = mirrorSprite.getWidth(), h = mirrorSprite.getHeight();
 
-		int x = (int) (mirror.getPosition().getdX()), y = (int) (mirror.getPosition().getdY());
+		int x = (int) (mirror.getPosition().getX()), y = (int) (mirror.getPosition().getY());
 		AffineTransform cache = g.getTransform();
 		
 		g.setTransform(new AffineTransform());

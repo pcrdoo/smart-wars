@@ -69,8 +69,8 @@ public class BulletView extends EntityView {
 		int w = bulletSprite.getWidth(),
 				h = bulletSprite.getHeight();
 		
-		int x = (int)(bullet.getPosition().getdX()) - w / 2,
-				y = (int)(bullet.getPosition().getdY()) - h / 2;
+		int x = (int)(bullet.getPosition().getX()) - w / 2,
+				y = (int)(bullet.getPosition().getY()) - h / 2;
 		
 		Composite old = g.getComposite();
 

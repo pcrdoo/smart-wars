@@ -20,8 +20,8 @@ public class ParticleAffectorRotation implements ParticleAffector {
 				double sine = Math.sin(angle), cosine = Math.cos(angle);
 				Vector2D dPos = pos.sub(center);
 				
-				double newX = dPos.getdX() * cosine - dPos.getdY() * sine,
-					   newY = dPos.getdX() * sine + dPos.getdY() * cosine;
+				double newX = dPos.getX() * cosine - dPos.getY() * sine,
+					   newY = dPos.getX() * sine + dPos.getY() * cosine;
 				
 				particles.setPosition(i, new Vector2D(newX, newY).add(center));
 			}

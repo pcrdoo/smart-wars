@@ -55,7 +55,7 @@ public class Explosion extends TimedGfx implements Drawable, Updatable {
 		Composite old = g.getComposite();
 		
 		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)(time / duration)));
-		int x = (int)position.getdX(), y = (int)position.getdY(), w = flare.getWidth(), h = flare.getHeight();
+		int x = (int)position.getX(), y = (int)position.getY(), w = flare.getWidth(), h = flare.getHeight();
 		
 		g.drawImage(flare, x - w / 2, y - h / 2, null);
 		g.setComposite(old);

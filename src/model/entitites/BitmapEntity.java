@@ -26,9 +26,9 @@ public abstract class BitmapEntity extends Entity {
 		Rectangle boundingBox = getBoundingBox();
 
 		Vector2D pointInImage = point.sub(new Vector2D(boundingBox.getMinX(), boundingBox.getMinY()));
-		Point p = new Point((int)point.getdX(), (int)point.getdY());
+		Point p = new Point((int)point.getX(), (int)point.getY());
 		
-		if (boundingBox.contains(p) && (collisionMask.getRGB((int)pointInImage.getdX(), (int)pointInImage.getdY()) >> 24) != 0x00) {
+		if (boundingBox.contains(p) && (collisionMask.getRGB((int)pointInImage.getX(), (int)pointInImage.getY()) >> 24) != 0x00) {
 			return true;
 		}
 		return false;
@@ -55,8 +55,8 @@ public abstract class BitmapEntity extends Entity {
 
 	@Override
 	public Rectangle getBoundingBox() {
-		return new Rectangle((int) (position.getdX() - collisionMask.getWidth() / 2),
-				(int) (position.getdY() - collisionMask.getHeight() / 2), collisionMask.getWidth(),
+		return new Rectangle((int) (position.getX() - collisionMask.getWidth() / 2),
+				(int) (position.getY() - collisionMask.getHeight() / 2), collisionMask.getWidth(),
 				collisionMask.getHeight());
 	}
 

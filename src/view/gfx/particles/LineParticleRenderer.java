@@ -52,7 +52,7 @@ public class LineParticleRenderer implements ParticleRenderer {
 					newB = leftColor.getBlue() * r + rightColor.getBlue() * (1.0 - r);
 			
 			g.setColor(new Color((int)newR, (int)newG, (int)newB));
-			g.drawLine((int)pos.getdX(),(int)pos.getdY(), (int)endPoint.getdX(), (int)endPoint.getdY());
+			g.drawLine((int)pos.getX(),(int)pos.getY(), (int)endPoint.getX(), (int)endPoint.getY());
 		}
 		
 		g.setComposite(old);

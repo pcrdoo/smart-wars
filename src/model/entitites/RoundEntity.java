@@ -18,7 +18,7 @@ public abstract class RoundEntity extends Entity {
 
 	@Override
 	public Rectangle getBoundingBox() {
-		return new Rectangle((int) (position.getdX() - radius), (int) (position.getdY() - radius), (int) (2 * radius),
+		return new Rectangle((int) (position.getX() - radius), (int) (position.getY() - radius), (int) (2 * radius),
 				(int) (2 * radius));
 	}
 }

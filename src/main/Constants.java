@@ -40,8 +40,8 @@ public class Constants {
 	public static final int ASTEROID_TYPE_COUNT = 6;
 	public static final int ASTEROID_SPRITES_X = 4;
 	public static final int ASTEROID_SPRITES_Y = 4;
-	public static final int ASTEROID_SPAWN_X_MIN = (int) (LEFT_PLAYER_START_POS.getdX() + 80);
-	public static final int ASTEROID_SPAWN_X_MAX = (int) (RIGHT_PLAYER_START_POS.getdX() - 80);
+	public static final int ASTEROID_SPAWN_X_MIN = (int) (LEFT_PLAYER_START_POS.getX() + 80);
+	public static final int ASTEROID_SPAWN_X_MAX = (int) (RIGHT_PLAYER_START_POS.getX() - 80);
 	public static final int ASTEROID_SPAWN_Y = -50;
 	public static final double ASTEROID_DISINTEGRATION_TIME = 0.4;
 	
@@ -61,8 +61,8 @@ public class Constants {
 	public static final double SHORT_MIRROR_LENGTH = 70;
 	public static final double LONG_MIRROR_LENGTH = 100;
 	public static final double MIRROR_DIST_EPS = 10;
-	public static final int MIRROR_X_MIN = (int) (LEFT_PLAYER_START_POS.getdX() + 20);
-	public static final int MIRROR_X_MAX = (int) (RIGHT_PLAYER_START_POS.getdX() - 20);
+	public static final int MIRROR_X_MIN = (int) (LEFT_PLAYER_START_POS.getX() + 20);
+	public static final int MIRROR_X_MAX = (int) (RIGHT_PLAYER_START_POS.getX() - 20);
 	public static final int MIRROR_X_LAUNCH_LEFT = MIRROR_X_MIN + 10;
 	public static final int MIRROR_X_LAUNCH_RIGHT = MIRROR_X_MAX - 10;
 	public static final double MIRROR_ANGULAR_VELOCITY = Math.PI;

@@ -76,7 +76,7 @@ public class WormholeView extends EntityView {
 		
 		int w = wormholeSprite.getWidth(), h = wormholeSprite.getHeight();
 		int wGlow = glowSprite.getWidth(), hGlow = glowSprite.getHeight();
-		int x = (int) (wormhole.getPosition().getdX()), y = (int) (wormhole.getPosition().getdY());
+		int x = (int) (wormhole.getPosition().getX()), y = (int) (wormhole.getPosition().getY());
 		
 		Composite old = g.getComposite();
 		if (wormholeIntensity < 1.0) {

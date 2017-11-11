@@ -74,7 +74,7 @@ public class Vector2D {
 
 	// Clamp coordinates...
 
-	public void clampdX(double mindX, double maxdX) {
+	public void clampX(double mindX, double maxdX) {
 		if (this.dX < mindX) {
 			this.dX = mindX;
 		}
@@ -83,7 +83,7 @@ public class Vector2D {
 		}
 	}
 
-	public void clampdY(double mindY, double maxdY) {
+	public void clampY(double mindY, double maxdY) {
 		if (this.dY < mindY) {
 			this.dY = mindY;
 		}
@@ -92,11 +92,11 @@ public class Vector2D {
 		}
 	}
 
-	public double getdX() {
+	public double getX() {
 		return dX;
 	}
 
-	public double getdY() {
+	public double getY() {
 		return dY;
 	}
 }

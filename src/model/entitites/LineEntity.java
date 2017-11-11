@@ -40,16 +40,16 @@ public class LineEntity extends Entity {
 	@Override
 	public Rectangle getBoundingBox() {
 		Vector2D line = getLineVector();
-		if (line.getdX() < 0) {
-			line = new Vector2D(-line.getdX(), line.getdY());
+		if (line.getX() < 0) {
+			line = new Vector2D(-line.getX(), line.getY());
 		}
 		
-		if (line.getdY() < 0) {
-			line = new Vector2D(line.getdX(), -line.getdY());
+		if (line.getY() < 0) {
+			line = new Vector2D(line.getX(), -line.getY());
 		}
 		
-		return new Rectangle((int) (position.getdX() - line.getdX() / 2), (int) (position.getdY() - line.getdY() / 2), (int) line.getdX(),
-				(int) line.getdY());
+		return new Rectangle((int) (position.getX() - line.getX() / 2), (int) (position.getY() - line.getY() / 2), (int) line.getX(),
+				(int) line.getY());
 	}
 
 	@Override

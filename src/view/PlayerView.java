@@ -93,11 +93,11 @@ public class PlayerView extends EntityView {
 		trail.draw(g);
 		ms.done();
 		
-		sprite.draw(g, (int)player.getPosition().getdX(), (int)player.getPosition().getdY());
+		sprite.draw(g, (int)player.getPosition().getX(), (int)player.getPosition().getY());
 
 		if (flareOpacity > 0.0) {
-			int fx = (int) player.getPosition().getdX() - flareWidth / 2;
-			int fy = (int) player.getPosition().getdY() - flareHeight / 2;
+			int fx = (int) player.getPosition().getX() - flareWidth / 2;
+			int fy = (int) player.getPosition().getY() - flareHeight / 2;
 
 			Composite old = g.getComposite();
 			
@@ -114,7 +114,7 @@ public class PlayerView extends EntityView {
 		// draw health
 		int sign = player.getPlayerSide() == PlayerSide.LEFT_PLAYER ? -1 : 1;
 		int hbw = healthbar.getWidth() / 2, hbh = healthbar.getHeight();
-		int hbx = (int)player.getPosition().getdX() - hbw / 2 + sign * HEALTHBAR_X_OFFSET, hby = (int)player.getPosition().getdY() - hbh / 2;
+		int hbx = (int)player.getPosition().getX() - hbw / 2 + sign * HEALTHBAR_X_OFFSET, hby = (int)player.getPosition().getY() - hbh / 2;
 		g.drawImage(healthbar, hbx, hby, hbx + hbw, hby + hbh, 0, 0, hbw, hbh, null);
 		
 		int health_height = (int)(hbh * (double)player.getCurrHealth() / Constants.PLAYER_HEALTH);

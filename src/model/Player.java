@@ -60,7 +60,7 @@ public class Player extends RoundEntity {
 		for (Ability ability : abilities) {
 			ability.update(dt);
 		}
-		position.clampdY(20, Constants.WINDOW_HEIGHT - 20);
+		position.clampY(20, Constants.WINDOW_HEIGHT - 20);
 	}
 
 	public PlayerSide getPlayerSide() {

@@ -59,10 +59,10 @@ public class ParticleAdditiveCompositor {
 			
 			Vector2D pos = particles.getPosition(i);
 			
-			int topLeftX = (int)Math.floor(pos.getdX()) - sw / 2,
-				topLeftY = (int)Math.floor(pos.getdY()) - sh / 2,
-				bottomRightX = (int)Math.ceil(pos.getdX()) + sw / 2,
-				bottomRightY = (int)Math.ceil(pos.getdY()) + sh / 2;
+			int topLeftX = (int)Math.floor(pos.getX()) - sw / 2,
+				topLeftY = (int)Math.floor(pos.getY()) - sh / 2,
+				bottomRightX = (int)Math.ceil(pos.getX()) + sw / 2,
+				bottomRightY = (int)Math.ceil(pos.getY()) + sh / 2;
 			
 			if (topLeftX < minX) {
 				minX = topLeftX;
@@ -97,7 +97,7 @@ public class ParticleAdditiveCompositor {
 			
 			Vector2D pos = particles.getPosition(i);
 			int alpha = (int)(particles.getAlpha(i) * 255.0);
-			int px = (int)pos.getdX(), py = (int)pos.getdY();
+			int px = (int)pos.getX(), py = (int)pos.getY();
 			
 			int dx = 0, dy = py - sh / 2 - minY;
 			for (int y = 0; y < sh; y++, dy++) {

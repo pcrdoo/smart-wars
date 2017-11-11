@@ -23,10 +23,10 @@ public class Mirror extends LineEntity {
 	public void update(double dt) {
 		if (mirrorState == MirrorState.TRAVELLING) {
 			super.update(dt);
-			if (position.getdX() < Constants.MIRROR_X_MIN || position.getdX() > Constants.MIRROR_X_MAX) {
-				System.out.println(position.getdX());
+			if (position.getX() < Constants.MIRROR_X_MIN || position.getX() > Constants.MIRROR_X_MAX) {
+				System.out.println(position.getX());
 				System.out.println("CLAMP");
-				position.clampdX(Constants.MIRROR_X_MIN, Constants.MIRROR_X_MAX);
+				position.clampX(Constants.MIRROR_X_MIN, Constants.MIRROR_X_MAX);
 				velocity = new Vector2D(0, 0);
 				mirrorState = MirrorState.SPINNING;
 			}

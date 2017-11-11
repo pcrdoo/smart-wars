@@ -31,13 +31,13 @@ public class Particles {
 	}
 	
 	public void setPosition(int i, Vector2D position) {
-		particleX[i] = position.getdX();
-		particleY[i] = position.getdY();
+		particleX[i] = position.getX();
+		particleY[i] = position.getY();
 	}
 	
 	public void setVelocity(int i, Vector2D velocity) {
-		particleVX[i] = velocity.getdX();
-		particleVY[i] = velocity.getdY();
+		particleVX[i] = velocity.getX();
+		particleVY[i] = velocity.getY();
 	}
 	
 	public void setTime(int i, double time) {
@@ -67,10 +67,10 @@ public class Particles {
 			}
 		}
 
-		particleX[minI] = position.getdX();
-		particleY[minI] = position.getdY();
-		particleVX[minI] = velocity.getdX();
-		particleVY[minI] = velocity.getdY();
+		particleX[minI] = position.getX();
+		particleY[minI] = position.getY();
+		particleVX[minI] = velocity.getX();
+		particleVY[minI] = velocity.getY();
 		particleTime[minI] = time;
 		particleAlpha[minI] = alpha;
 	}

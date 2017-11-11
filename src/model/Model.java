@@ -76,7 +76,7 @@ public class Model {
 				Vector2D lv = mr.getLineVector();
 				
 				Vector2D tl = pos.sub(lv.scale(0.5)), br = pos.add(lv.scale(0.5));
-				dd.addLine("MirrorLines", new Point((int)tl.getdX(), (int)tl.getdY()), new Point((int)br.getdX(), (int)br.getdY()));
+				dd.addLine("MirrorLines", new Point((int)tl.getX(), (int)tl.getY()), new Point((int)br.getX(), (int)br.getY()));
 				
 			}
 		}

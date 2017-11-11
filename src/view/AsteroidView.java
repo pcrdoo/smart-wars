@@ -78,10 +78,10 @@ public class AsteroidView extends EntityView {
 			Composite old = g.getComposite();
 
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)(disintegrationTime / Constants.ASTEROID_DISINTEGRATION_TIME)));
-			sprite.draw(g, (int)asteroid.getPosition().getdX(), (int)asteroid.getPosition().getdY());
+			sprite.draw(g, (int)asteroid.getPosition().getX(), (int)asteroid.getPosition().getY());
 			g.setComposite(old);
 		} else {
-			sprite.draw(g, (int)asteroid.getPosition().getdX(), (int)asteroid.getPosition().getdY());	
+			sprite.draw(g, (int)asteroid.getPosition().getX(), (int)asteroid.getPosition().getY());	
 		}
 
 		for (Sparks s : sparks) {
