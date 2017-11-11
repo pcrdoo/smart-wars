@@ -39,7 +39,7 @@ public class MainController {
 	private HashMap<Controls, Integer> rightPlayerControls;
 	private HashMap<Integer, Boolean> keyboardState;
 	private ArrayList<AsteroidView> disintegratingAsteroids;
-
+	
 	// View-related dependencies for each entity.
 	private HashMap<Entity, EntityView> viewMap;
 
@@ -51,7 +51,7 @@ public class MainController {
 		this.view = view;
 		this.model = model;
 		this.gameStarter = gameStarter;
-
+		
 		viewMap = new HashMap<>();
 		disintegratingAsteroids = new ArrayList<>();
 

@@ -61,7 +61,6 @@ public class DebugDisplay implements view.Drawable {
 			c = debugCategoryColors.get(category);
 		}
 		g.setColor(c);
-		System.out.println(c.getAlpha());
 	}
 	
 	private void addRectByCategory(String category, Rectangle r, HashMap<String, ArrayList<Rectangle>> byCategory) {

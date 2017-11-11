@@ -105,6 +105,8 @@ public class Main {
 			}
 		}
 		
+		com.sun.javafx.application.PlatformImpl.startup(()->{});
+
 		GameWindow gw = new GameWindow();
 		gw.usePerformanceOverlay(po);
 		gw.initGameWindow();

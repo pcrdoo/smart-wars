@@ -26,8 +26,6 @@ public class Mirror extends LineEntity {
 		if (mirrorState == MirrorState.TRAVELLING) {
 			super.update(dt);
 			if (position.getX() < Constants.MIRROR_X_MIN || position.getX() > Constants.MIRROR_X_MAX) {
-				System.out.println(position.getX());
-				System.out.println("CLAMP");
 				position.clampX(Constants.MIRROR_X_MIN, Constants.MIRROR_X_MAX);
 				velocity = new Vector2D(0, 0);
 				mirrorState = MirrorState.SPINNING;

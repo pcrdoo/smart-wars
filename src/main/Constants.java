@@ -45,7 +45,7 @@ public class Constants {
 	public static final int ASTEROID_SPAWN_Y = -50;
 	public static final double ASTEROID_DISINTEGRATION_TIME = 0.4;
 	
-	public static final int ASTEROID_PLAYER_DAMAGE = 25;
+	public static final int ASTEROID_PLAYER_DAMAGE = 20;
 	
 	public static final int ASTEROID_Y_VELOCITY = 100;
 	public static final int ASTEROID_Y_VELOCITY_JITTER = 20;
@@ -65,7 +65,7 @@ public class Constants {
 	public static final int MIRROR_X_MAX = (int) (RIGHT_PLAYER_START_POS.getX() - 20);
 	public static final int MIRROR_X_LAUNCH_LEFT = MIRROR_X_MIN + 10;
 	public static final int MIRROR_X_LAUNCH_RIGHT = MIRROR_X_MAX - 10;
-	public static final double MIRROR_ANGULAR_VELOCITY = Math.PI;
+	public static final double MIRROR_ANGULAR_VELOCITY = Math.PI / 2;
 	
 	// Black hole
 	public static final double WORMHOLE_SPAWN_PROBABILITY = 0.1;
@@ -84,7 +84,7 @@ public class Constants {
 	public static final int GLASS_SPARKS_POOL_SIZE = 50;
 	
 	// Images
-	public static final String IMAGE_FILENAME_PREFIX = "assets/";
+	public static final String IMAGE_FILENAME_PREFIX = "assets/textures/";
 	public static final String[] IMAGES_TO_PRELOAD = new String[] {
 		"asteroid-1.png",
 		"asteroid-2.png",

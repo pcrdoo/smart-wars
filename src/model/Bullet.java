@@ -78,9 +78,6 @@ public class Bullet extends RectEntity implements Poolable {
 
 	public void teleport(Wormhole inWormhole, Wormhole outWormhole) {
 		if (teleportCooldown == 0) {
-			System.out.println(inWormhole.getPosition());
-			System.out.println("TO");
-			System.out.println(outWormhole.getPosition());
 			Vector2D toCenter = inWormhole.getPosition().sub(position);
 			position = outWormhole.getPosition().add(toCenter);
 			teleportCooldown = Constants.BULLET_TELEPORT_COOLDOWN;

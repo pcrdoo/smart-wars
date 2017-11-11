@@ -33,8 +33,10 @@ public class Model {
 		wormholes = new ArrayList<>();
 
 		entities = new ArrayList<Entity>();
-		entities.add(leftPlayer);
-		entities.add(rightPlayer);
+		synchronized(entities) {
+			entities.add(leftPlayer);
+			entities.add(rightPlayer);
+		}
 	}
 
 	public Player getLeftPlayer() {
@@ -47,8 +49,10 @@ public class Model {
 
 	public void update(double dt) {
 		if (gameState == GameState.RUNNING) {
-			for (Entity entity : entities) {
-				entity.update(dt);
+			synchronized(entities) {
+				for (Entity entity : entities) {
+					entity.update(dt);
+				}
 			}
 		}
 		
@@ -84,11 +88,15 @@ public class Model {
 	}
 
 	public void addEntity(Entity entity) {
-		entities.add(entity);
+		synchronized(entities) {
+			entities.add(entity);
+		}
 	}
 
 	public void removeEntity(Entity entity) {
-		entities.remove(entity);
+		synchronized(entities) {
+			entities.remove(entity);
+		}
 	}
 
 	public void addBullet(Bullet bullet) {

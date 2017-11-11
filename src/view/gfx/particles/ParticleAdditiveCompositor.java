@@ -103,9 +103,6 @@ public class ParticleAdditiveCompositor {
 			for (int y = 0; y < sh; y++, dy++) {
 				dx = px - sw / 2 - minX;
 				for (int x = 0; x < sw; x++, dx++) {
-					if (dy*bw+dx>=bitmap.length||dy*bw+dx<0) {
-						System.out.println("dx=" + dx+",dy="+dy+",bw="+bw+",bh="+bh+",minx="+minX+",maxx="+maxX+",miny="+minY+",maxy="+maxY);
-					}
 					int dst = bitmap[dy * bw + dx];
 					int src = spritePixels[y][x];
 					

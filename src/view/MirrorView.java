@@ -87,7 +87,6 @@ public class MirrorView extends EntityView {
 		}
 		
 		timeSinceLastSparksSpawn = 0.0;
-		System.out.println(mirror.getAngle());
 		sparks.add(Pools.GLASS_SPARKS.create(b.getPosition(), mirror.getAngle(), !mirror.isPointOnBottomSide(b.getPosition()), 1.5, 0.15));
 	}
 }
