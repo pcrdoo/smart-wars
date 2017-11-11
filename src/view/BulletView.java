@@ -1,11 +1,14 @@
 package view;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import main.Constants;
 import model.Bullet;
+import model.Wormhole;
 import util.ImageCache;
 import util.Vector2D;
 import view.gfx.particles.ParticleAffectorDecay;
@@ -18,6 +21,7 @@ public class BulletView extends EntityView {
 	private BufferedImage bulletSprite, particleSprite;
 	private ParticleSystem trail;
 	private PointParticleEmitter trailEmitter;
+	private double alpha = 1.0;
 
 	private static final int MAX_PARTICLES = 30;
 	private static final double PARTICLE_LIFETIME = 0.2;
@@ -43,6 +47,15 @@ public class BulletView extends EntityView {
 		trail.addAffector(new ParticleAffectorDecay(PARTICLE_DECAY_TIME));
 	}
 
+	public void wormholeAffect(Wormhole w) {
+		double distance = bullet.getPosition().sub(w.getPosition()).length();
+		if (distance < Constants.WORMHOLE_BULLET_FADE_DISTANCE) {
+			alpha = distance / Constants.WORMHOLE_BULLET_FADE_DISTANCE;
+		} else {
+			alpha = 1.0;
+		}
+	}
+	
 	@Override
 	public void update(double dt) {
 		trailEmitter.setPosition(bullet.getPosition());
@@ -59,6 +72,10 @@ public class BulletView extends EntityView {
 		int x = (int)(bullet.getPosition().getdX()) - w / 2,
 				y = (int)(bullet.getPosition().getdY()) - h / 2;
 		
+		Composite old = g.getComposite();
+
+		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float)alpha));
 		g.drawImage(bulletSprite, x, y, null);
+		g.setComposite(old);
 	}
 }

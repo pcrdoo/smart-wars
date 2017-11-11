@@ -10,9 +10,12 @@ import util.Vector2D;
 public class Mirror extends LineEntity {
 
 	private MirrorState mirrorState;
-
-	public Mirror(Vector2D position, Vector2D velocity, double length) {
+	private boolean isLong;
+	
+	public Mirror(Vector2D position, Vector2D velocity, double length, boolean isLong) {
 		super(position, velocity, length);
+		this.isLong = isLong;
+		
 		mirrorState = MirrorState.TRAVELLING;
 	}
 
@@ -50,6 +53,10 @@ public class Mirror extends LineEntity {
 
 	public double getAngle() {
 		return angle;
+	}
+	
+	public boolean isLong() {
+		return isLong;
 	}
 
 }

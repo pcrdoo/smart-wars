@@ -3,6 +3,10 @@ package main;
 import java.awt.Graphics2D;
 
 import controller.MainController;
+import debug.DebugDisplay;
+import debug.Measurement;
+import debug.PerformanceMonitor;
+import debug.PerformanceOverlay;
 import model.Model;
 import rafgfxlib.GameFrame;
 import view.MainView;
@@ -14,9 +18,12 @@ public class GameWindow extends GameFrame implements GameStarter {
 	private Model model;
 	private MainView view;
 	private MainController controller;
+	private PerformanceOverlay po;
 
 	public GameWindow() {
 		super("Smart Wars", Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
+		
+		po = null;
 		
 		// Run game thread
 		setUpdateRate(60);
@@ -27,6 +34,10 @@ public class GameWindow extends GameFrame implements GameStarter {
 		startGame();
 	}
 
+	public void usePerformanceOverlay(PerformanceOverlay po) {
+		this.po = po;
+	}
+	
 	@Override
 	public void startGame() {
 		model = new Model();
@@ -45,18 +56,36 @@ public class GameWindow extends GameFrame implements GameStarter {
 
 	@Override
 	public void render(Graphics2D g, int sw, int sh) {
+		Measurement ms = PerformanceMonitor.getInstance().measure("DrawTotal");
 		view.draw(g);
+		ms.done();
+		
+		if (po != null) {
+			po.draw(g);
+		}
+		
+		DebugDisplay.getInstance().draw(g);
 	}
 
 	@Override
 	public void update() {
 		long currentTime = System.nanoTime();
 		double dt = (double) (currentTime - lastUpdateTime) / 1e9;
-
+		
+		Measurement ms;
+		PerformanceMonitor m = PerformanceMonitor.getInstance();
 		synchronized (this) {
+			ms = m.measure("ControllerUpdateTotal");
 			controller.update(dt);
+			ms.done();
+			
+			ms = m.measure("ModelUpdateTotal");
 			model.update(dt);
+			ms.done();
+			
+			ms = m.measure("ViewUpdateTotal");
 			view.update(dt);
+			ms.done();
 		}
 
 		lastUpdateTime = System.nanoTime();

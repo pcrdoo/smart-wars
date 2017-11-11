@@ -1,9 +1,14 @@
 package model;
 
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.util.ArrayList;
 
+import debug.DebugDisplay;
+import debug.PerformanceMonitor;
 import main.GameState;
 import model.entitites.Entity;
+import util.Vector2D;
 
 public class Model {
 
@@ -43,6 +48,36 @@ public class Model {
 		if (gameState == GameState.RUNNING) {
 			for (Entity entity : entities) {
 				entity.update(dt);
+			}
+		}
+		
+		PerformanceMonitor m = PerformanceMonitor.getInstance();
+		m.recordStatistic("CountEntities", entities.size());
+		m.recordStatistic("CountBullets", bullets.size());
+		m.recordStatistic("CountAsteroids", asteroids.size());
+		m.recordStatistic("CountMirrors", mirrors.size());
+		m.recordStatistic("CountWormholes", wormholes.size());
+		
+		DebugDisplay dd = DebugDisplay.getInstance();
+		if (dd.isEnabled()) {
+			for (Entity e : entities) {
+				dd.addRectangle("EntityBoundingBoxes", e.getBoundingBox());
+			}
+			
+			dd.addOval("PlayerCircles", leftPlayer.getBoundingBox());
+			dd.addOval("PlayerCircles", rightPlayer.getBoundingBox());
+			
+			for (Wormhole w : wormholes) {
+				dd.addOval("WormholeCircles", w.getBoundingBox());
+			}
+			
+			for (Mirror mr : mirrors) {
+				Vector2D pos = mr.getPosition();
+				Vector2D lv = mr.getLineVector();
+				
+				Vector2D tl = pos.sub(lv.scale(0.5)), br = pos.add(lv.scale(0.5));
+				dd.addLine("MirrorLines", new Point((int)tl.getdX(), (int)tl.getdY()), new Point((int)br.getdX(), (int)br.getdY()));
+				
 			}
 		}
 	}

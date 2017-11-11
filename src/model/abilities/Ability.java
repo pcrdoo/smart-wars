@@ -6,7 +6,7 @@ public abstract class Ability {
 
 	public Ability(double timeCooldown) {
 		this.timeCooldown = timeCooldown;
-		timeToWait = timeCooldown;
+		timeToWait = 0.0;
 	}
 
 	public void update(double dt) {

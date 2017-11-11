@@ -11,12 +11,14 @@ import util.Vector2D;
 public class MirrorMagic extends Ability {
 	private Player player;
 	private double mirrorLength;
+	private boolean isLong;
 	private Mirror mirror;
 
-	public MirrorMagic(Player player, double mirrorLength) {
+	public MirrorMagic(Player player, double mirrorLength, boolean isLong) {
 		super(Constants.MIRROR_MAGIC_COOLDOWN);
 		this.player = player;
 		this.mirrorLength = mirrorLength;
+		this.isLong = isLong;
 		mirror = null;
 	}
 
@@ -31,7 +33,7 @@ public class MirrorMagic extends Ability {
 				mirrorPosition = new Vector2D(Constants.MIRROR_X_LAUNCH_RIGHT, player.getPosition().getdY());
 				mirrorVelocity = new Vector2D(-Constants.MIRROR_VELOCITY, 0);
 			}
-			mirror = new Mirror(mirrorPosition, mirrorVelocity, mirrorLength);
+			mirror = new Mirror(mirrorPosition, mirrorVelocity, mirrorLength, isLong);
 			return true;
 		}
 		return false;

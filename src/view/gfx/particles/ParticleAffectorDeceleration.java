@@ -10,10 +10,12 @@ public class ParticleAffectorDeceleration implements ParticleAffector {
 	public void updateAndAffect(double dt, Particles particles) {
 		for (int i = 0; i < particles.size(); i++) {
 			double len = particles.getVelocity(i).length();
-			double newLen = Math.max(0, len - decelFactor * dt);
-			double lenFactor = newLen / len;
+			if (len > 0.0) {
+				double newLen = Math.max(0, len - decelFactor * dt);
+				double lenFactor = newLen / len;
 			
-			particles.setVelocity(i, particles.getVelocity(i).scale(lenFactor));
+				particles.setVelocity(i, particles.getVelocity(i).scale(lenFactor));
+			}
 		}
 	}
 }

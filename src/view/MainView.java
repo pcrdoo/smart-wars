@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
 
+import debug.PerformanceMonitor;
 import main.GameState;
 import main.Constants;
 
@@ -24,43 +25,63 @@ public class MainView {
 	}
 
 	public void addDrawable(Drawable d, int zIndex) {
-		ArrayList<Drawable> drawablesInZIndex;
-		if (!drawables.containsKey(zIndex)) {
-			drawablesInZIndex = new ArrayList<>();
-			drawables.put(zIndex, drawablesInZIndex);
+		synchronized(drawables) {
+			ArrayList<Drawable> drawablesInZIndex;
+			if (!drawables.containsKey(zIndex)) {
+				drawablesInZIndex = new ArrayList<>();
+				drawables.put(zIndex, drawablesInZIndex);
+				
+			} else {
+				drawablesInZIndex = drawables.get(zIndex);
+			}
 			
-		} else {
-			drawablesInZIndex = drawables.get(zIndex);
+			drawablesInZIndex.add(d);
 		}
-		
-		drawablesInZIndex.add(d);
 	}
 
 	public void removeDrawable(Drawable d) {
-		for (Map.Entry<Integer, ArrayList<Drawable>> dr : drawables.entrySet()) {
-			dr.getValue().remove(d);
-		}
-	}
-
-	public void addUpdatable(Updatable u) {
-		updatables.add(u);
-	}
-
-	public void removeUpdatable(Updatable u) {
-		updatables.remove(u);
-	}
-
-	public void update(double dt) {
-		synchronized (this) {
-			for (Updatable u : updatables) {
-				u.update(dt);
+		synchronized(drawables) {
+			for (Map.Entry<Integer, ArrayList<Drawable>> dr : drawables.entrySet()) {
+				dr.getValue().remove(d);
 			}
 		}
 	}
 
+	public void addUpdatable(Updatable u) {
+		synchronized(updatables) {
+			updatables.add(u);
+		}
+	}
+
+	public void removeUpdatable(Updatable u) {
+		synchronized(updatables) {
+			updatables.remove(u);
+		}
+	}
+
+	public void update(double dt) {
+		synchronized (updatables) {
+			for (Updatable u : updatables) {
+				u.update(dt);
+			}
+		}
+
+		PerformanceMonitor m = PerformanceMonitor.getInstance();
+		if (m.isEnabled()) {
+			m.recordStatistic("CountUpdatables", updatables.size());
+			
+			int countDr = 0;
+			synchronized(drawables) {
+				for (Map.Entry<Integer, ArrayList<Drawable>> dr : drawables.entrySet()) {
+					countDr += dr.getValue().size();
+				}
+			}
+			m.recordStatistic("CountDrawables", countDr);
+		}
+	}
+
 	public void draw(Graphics2D g) {
-		synchronized (this) {
-			//TODO:Concurrent comodification
+		synchronized (drawables) {
 			for (Map.Entry<Integer, ArrayList<Drawable>> dr : drawables.entrySet()) {
 				for (Drawable d : dr.getValue()) {
 					d.draw(g);

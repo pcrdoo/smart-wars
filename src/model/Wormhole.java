@@ -26,6 +26,10 @@ public class Wormhole extends RoundEntity {
 	public boolean isDead() {
 		return timeToLive == 0;
 	}
+	
+	public double getTimeRemaining() {
+		return timeToLive;
+	}
 
 	@Override
 	public boolean shouldCull() {

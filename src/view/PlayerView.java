@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import debug.Measurement;
+import debug.PerformanceMonitor;
 import main.Constants;
 import model.Player;
 import model.PlayerSide;
@@ -87,7 +89,10 @@ public class PlayerView extends EntityView {
 	}
 
 	public void draw(Graphics2D g) {
+		Measurement ms = PerformanceMonitor.getInstance().measure("CompPlayerTrail");
 		trail.draw(g);
+		ms.done();
+		
 		sprite.draw(g, (int)player.getPosition().getdX(), (int)player.getPosition().getdY());
 
 		if (flareOpacity > 0.0) {

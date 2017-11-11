@@ -5,6 +5,8 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
+import debug.Measurement;
+import debug.PerformanceMonitor;
 import util.ImageCache;
 import util.Vector2D;
 import view.Drawable;
@@ -58,6 +60,8 @@ public class Explosion extends TimedGfx implements Drawable, Updatable {
 		g.drawImage(flare, x - w / 2, y - h / 2, null);
 		g.setComposite(old);
 		
+		Measurement ms = PerformanceMonitor.getInstance().measure("CompExplosion");
 		debris.draw(g);
+		ms.done();
 	}
 }

@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
 
+import debug.Measurement;
+import debug.PerformanceMonitor;
 import main.Constants;
 import main.GameStarter;
 import main.GameState;
@@ -139,10 +141,25 @@ public class MainController {
 				}
 				// Black hole collision
 				for (Wormhole wormhole : model.getWormholes()) {
-					if (wormhole.hitTest(bullet.getPosition())) {						System.out.println("HIT");
+					if (wormhole.hitTest(bullet.getPosition())) {
 						handleWormholeHit(wormhole, bullet);
 					}
 				}
+			}
+			
+			// Affect the bullet views by near wormholes
+			Wormhole nearestWormhole = null;
+			double nearestWormholeDistance = 0.0;
+			for (Wormhole w : model.getWormholes()) {
+				double dist = w.getPosition().sub(bullet.getPosition()).length(); 
+				if (nearestWormhole == null || dist < nearestWormholeDistance) {
+					nearestWormhole = w;
+					nearestWormholeDistance = dist;
+				}
+			}
+			
+			if (nearestWormhole != null) {
+				((BulletView) viewMap.get(bullet)).wormholeAffect(nearestWormhole);
 			}
 		}
 		cullBullets(impactedBullets);
@@ -323,8 +340,16 @@ public class MainController {
 			return;
 		}
 
+		PerformanceMonitor m = PerformanceMonitor.getInstance();
+		Measurement ms;
+		
+		ms = m.measure("CollisionBullet");
 		checkBulletCollisions();
+		ms.done();
+		
+		ms = m.measure("CollisionAsteroidPlayer");
 		checkAsteroidPlayerCollisions();
+		ms.done();
 
 		checkPlayerControls(model.getLeftPlayer(), leftPlayerControls);
 		checkPlayerControls(model.getRightPlayer(), rightPlayerControls);
@@ -334,7 +359,11 @@ public class MainController {
 
 		maybeSpawnWormholes(dt);
 		maybeSpawnAsteroids(dt);
+		
+		ms = m.measure("CullEntity");
 		cullEntities(getEntitiesToCull());
+		ms.done();
+		
 		checkGameOver();
 	}
 
@@ -398,7 +427,7 @@ public class MainController {
 
 	private void handleMirrorHit(Mirror mirror, Bullet bullet) {
 		bullet.bounce(mirror);
-		((MirrorView) viewMap.get(mirror)).onMirrorHit();
+		((MirrorView) viewMap.get(mirror)).onMirrorHit(bullet);
 	}
 
 	private void handleAsteroidHit(Asteroid asteroid, Bullet bullet) {

@@ -28,8 +28,8 @@ public class Player extends RoundEntity {
 		currHealth = maxHealth = Constants.PLAYER_HEALTH;
 		speed = Constants.PLAYER_SPEED;
 		gun = new Gun(this);
-		shortMirrorMagic = new MirrorMagic(this, Constants.SHORT_MIRROR_LENGTH);
-		longMirrorMagic = new MirrorMagic(this, Constants.LONG_MIRROR_LENGTH);
+		shortMirrorMagic = new MirrorMagic(this, Constants.SHORT_MIRROR_LENGTH, false);
+		longMirrorMagic = new MirrorMagic(this, Constants.LONG_MIRROR_LENGTH, true);
 		abilities = new ArrayList<Ability>();
 		abilities.add(gun);
 		abilities.add(shortMirrorMagic);
