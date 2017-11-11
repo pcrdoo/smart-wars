@@ -140,7 +140,7 @@ public class ParticleAdditiveCompositor {
 					g = Math.min(255, g);
 					b = Math.min(255, b);
 					
-					int luma = Math.min(255, (r + g + b) / 3);
+					int luma = Math.min(255, r / 5 + g * 7 / 10 + b * 7 / 100);
 					
 					int res = 
 							r |

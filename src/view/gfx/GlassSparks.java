@@ -16,7 +16,7 @@ import view.gfx.particles.ParticleSystem;
 import view.gfx.particles.PointParticleEmitter;
 
 public class GlassSparks extends TimedGfx implements Drawable, Poolable {
-	private static final int SPARK_LEFT_COLOR = 0xff227f7f, SPARK_RIGHT_COLOR = 0xffffffff;
+	private static final int SPARK_LEFT_COLOR = 0xff333333, SPARK_RIGHT_COLOR = 0xffffffff;
 	private Vector2D position;
 	private double angle;
 	private ParticleSystem sparks;
@@ -26,7 +26,7 @@ public class GlassSparks extends TimedGfx implements Drawable, Poolable {
 	public GlassSparks() {
 		super();
 		
-		sparks = new ParticleSystem(new LineParticleRenderer(new Color(SPARK_LEFT_COLOR), new Color(SPARK_RIGHT_COLOR), 1.0, 10.0, 0.0, 350.0), 200);
+		sparks = new ParticleSystem(new LineParticleRenderer(new Color(SPARK_LEFT_COLOR), new Color(SPARK_RIGHT_COLOR), 1.0, 5.0, 0.0, 350.0), 200);
 		sparksEmitter = new PointParticleEmitter(0.0, 0.5, 0.0, null, new Vector2D(5, 5), 350.0, 30.0, 0, 0);
 		
 		sparks.addEmitter(sparksEmitter);

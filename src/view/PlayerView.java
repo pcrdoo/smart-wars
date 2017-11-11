@@ -52,7 +52,7 @@ public class PlayerView extends EntityView {
 		flareHeight = flare.getHeight();
 
 		this.player = player;
-		trail = new ParticleSystem(new SpriteParticleRenderer(ImageCache.getInstance().get("assets/player-trail.png")), 150);
+		trail = new ParticleSystem(new SpriteParticleRenderer(ImageCache.getInstance().get("assets/player-" + (player.getPlayerSide() == PlayerSide.LEFT_PLAYER ? "left" : "right") + "-trail.png")), 150);
 		trailEmitter = new PointParticleEmitter(0.0, 0.5, 0.0, player.getPosition(), new Vector2D(5.0, 2.0), 30.0, 0.0,
 				0, 2 * Math.PI);
 

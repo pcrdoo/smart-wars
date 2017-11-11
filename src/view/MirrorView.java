@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import memory.Pools;
 import model.Bullet;
 import model.Mirror;
+import model.PlayerSide;
 import util.ImageCache;
 import view.gfx.GlassSparks;
 import view.gfx.Sparks;
@@ -23,8 +24,7 @@ public class MirrorView extends EntityView {
 	
 	public MirrorView(Mirror mirror) {
 		this.mirror = mirror;
-		mirrorSprite = ImageCache.getInstance().get("assets/mirror-" + (mirror.isLong() ? "long" : "short") + ".png");
-		// TODO: Short mirrors
+		mirrorSprite = ImageCache.getInstance().get("assets/mirror-" + (mirror.getOwner().getPlayerSide() == PlayerSide.LEFT_PLAYER ? "left" : "right") + "-" + (mirror.isLong() ? "long" : "short") + ".png");
 		
 		sparks = new ArrayList<>();
 	}
@@ -87,6 +87,7 @@ public class MirrorView extends EntityView {
 		}
 		
 		timeSinceLastSparksSpawn = 0.0;
+		System.out.println(mirror.getAngle());
 		sparks.add(Pools.GLASS_SPARKS.create(b.getPosition(), mirror.getAngle(), !mirror.isPointOnBottomSide(b.getPosition()), 1.5, 0.15));
 	}
 }

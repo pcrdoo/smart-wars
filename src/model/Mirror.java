@@ -9,12 +9,14 @@ import util.Vector2D;
 
 public class Mirror extends LineEntity {
 
+	private Player owner;
 	private MirrorState mirrorState;
 	private boolean isLong;
 	
-	public Mirror(Vector2D position, Vector2D velocity, double length, boolean isLong) {
+	public Mirror(Vector2D position, Vector2D velocity, Player owner, double length, boolean isLong) {
 		super(position, velocity, length);
 		this.isLong = isLong;
+		this.owner = owner;
 		
 		mirrorState = MirrorState.TRAVELLING;
 	}
@@ -59,4 +61,7 @@ public class Mirror extends LineEntity {
 		return isLong;
 	}
 
+	public Player getOwner() {
+		return owner;
+	}
 }

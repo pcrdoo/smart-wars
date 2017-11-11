@@ -38,7 +38,7 @@ public class PointParticleEmitter implements ParticleEmitter {
 		Vector2D newPosition = position.add(positionJitter.scale(2.0 * Math.random() - 1.0));
 		
 		double angle = Math.random() * (maxAngle - minAngle) + minAngle;
-		Vector2D newVelocity = new Vector2D(Math.sin(angle), Math.cos(angle)).scale(velocity + (2.0 * Math.random() - 1.0) * velocityJitter);
+		Vector2D newVelocity = new Vector2D(Math.cos(angle), Math.sin(angle)).scale(velocity + (2.0 * Math.random() - 1.0) * velocityJitter);
 		double t = lifetime + (2.0 * Math.random() - 1.0) * lifetimeJitter;
 		
 		particles.add(newPosition, newVelocity, t, 1.0);
