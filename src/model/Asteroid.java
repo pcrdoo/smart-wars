@@ -37,7 +37,7 @@ public class Asteroid extends BitmapEntity implements Poolable {
 		if (collisionMasks == null) {
 			collisionMasks = new BufferedImage[Constants.ASTEROID_TYPE_COUNT][FRAMES_PER_X * FRAMES_PER_Y];
 			for (int i = 0; i < Constants.ASTEROID_TYPE_COUNT; i++) {
-				BufferedImage spritesheet = ImageCache.getInstance().get("assets/asteroid-" + Integer.toString(i + 1) + ".png");
+				BufferedImage spritesheet = ImageCache.getInstance().get("asteroid-" + Integer.toString(i + 1) + ".png");
 				createCollisionMasks(spritesheet, i);
 			}
 		}

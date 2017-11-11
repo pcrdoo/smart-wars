@@ -27,8 +27,8 @@ public class Explosion extends TimedGfx implements Drawable, Updatable {
 	public Explosion() {
 		super();
 		
-		flare = ImageCache.getInstance().get("assets/explosion-flare.png");
-		particle = ImageCache.getInstance().get("assets/debris-particle.png");
+		flare = ImageCache.getInstance().get("explosion-flare.png");
+		particle = ImageCache.getInstance().get("debris-particle.png");
 		debris = new ParticleSystem(new SpriteParticleRenderer(particle), 100);
 		debrisEmitter = new PointParticleEmitter(0.0, 0.7, 0.0, null, new Vector2D(2, 2), 150.0, 10.0, 0, 2 * Math.PI);
 		debris.addEmitter(debrisEmitter);

@@ -24,7 +24,7 @@ public class MirrorView extends EntityView {
 	
 	public MirrorView(Mirror mirror) {
 		this.mirror = mirror;
-		mirrorSprite = ImageCache.getInstance().get("assets/mirror-" + (mirror.getOwner().getPlayerSide() == PlayerSide.LEFT_PLAYER ? "left" : "right") + "-" + (mirror.isLong() ? "long" : "short") + ".png");
+		mirrorSprite = ImageCache.getInstance().get("mirror-" + (mirror.getOwner().getPlayerSide() == PlayerSide.LEFT_PLAYER ? "left" : "right") + "-" + (mirror.isLong() ? "long" : "short") + ".png");
 		
 		sparks = new ArrayList<>();
 	}

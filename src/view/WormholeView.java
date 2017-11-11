@@ -36,13 +36,13 @@ public class WormholeView extends EntityView {
 	
 	public WormholeView(Wormhole wormhole) {
 		this.wormhole = wormhole;
-		wormholeSprite = ImageCache.getInstance().get("assets/wormhole.png");
-		glowSprite = ImageCache.getInstance().get("assets/wormhole-glow.png");
-		shadowSprite = ImageCache.getInstance().get("assets/wormhole-shadow.png");
+		wormholeSprite = ImageCache.getInstance().get("wormhole.png");
+		glowSprite = ImageCache.getInstance().get("wormhole-glow.png");
+		shadowSprite = ImageCache.getInstance().get("wormhole-shadow.png");
 		spriteAngle = 0;
 		birthTimeRemaining = Constants.WORMHOLE_BIRTH_TIME;
 		
-		swirl = new ParticleSystem(new SpriteParticleRenderer(ImageCache.getInstance().get("assets/wormhole-particle.png")), 200);
+		swirl = new ParticleSystem(new SpriteParticleRenderer(ImageCache.getInstance().get("wormhole-particle.png")), 200);
 		swirl.addEmitter(swirlEmitter = new PointParticleEmitter(0.0, 1.0, 0.1, wormhole.getPosition(), new Vector2D(10, 10), 200, 10.0, 0, 2 * Math.PI));
 		swirl.addAffector(new ParticleAffectorDecay(1.0));
 		swirl.addAffector(new ParticleAffectorDeceleration(200));

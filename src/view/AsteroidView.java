@@ -30,7 +30,7 @@ public class AsteroidView extends EntityView implements Poolable {
 	public void init(Asteroid asteroid) {
 		this.asteroid = asteroid;
 
-		sprite = new AnimatedSprite(ImageCache.getInstance().get("assets/asteroid-" + (asteroid.getType() + 1) + ".png"),
+		sprite = new AnimatedSprite(ImageCache.getInstance().get("asteroid-" + (asteroid.getType() + 1) + ".png"),
 				Constants.ASTEROID_SPRITES_X, Constants.ASTEROID_SPRITES_Y, 0);
 		
 		disintegrating = false;

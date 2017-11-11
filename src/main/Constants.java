@@ -83,6 +83,37 @@ public class Constants {
 	public static final int SPARKS_POOL_SIZE = 50;
 	public static final int GLASS_SPARKS_POOL_SIZE = 50;
 	
+	// Images
+	public static final String IMAGE_FILENAME_PREFIX = "assets/";
+	public static final String[] IMAGES_TO_PRELOAD = new String[] {
+		"asteroid-1.png",
+		"asteroid-2.png",
+		"asteroid-3.png",
+		"asteroid-4.png",
+		"asteroid-5.png",
+		"asteroid-6.png",
+		"background.png",
+		"bullet.png",
+		"debris-particle.png",
+		"explosion-flare.png",
+		"fire.png",
+		"healthbar.png",
+		"mirror-left-long.png",
+		"mirror-left-short.png",
+		"mirror-right-long.png",
+		"mirror-right-short.png",
+		"player1.png",
+		"player2.png",
+		"player-flare.png",
+		"player-left-trail.png",
+		"player-right-trail.png",
+		"stars.png",
+		"wormhole.png",
+		"wormhole-glow.png",
+		"wormhole-particle.png",
+		"wormhole-shadow.png"
+	};
+	
 	// Debug
 	public static final String[] PERF_MEASUREMENTS_NAMES = new String[] {
 			"DrawTotal",                // Total time spent in MainView.draw
@@ -118,6 +149,9 @@ public class Constants {
 			"PoolExplosionFree",        // Number of remaining explosions in the pool
 			"PoolSparksFree",           // Number of remaining sparks in the pool
 			"PoolGlassSparksFree",      // Number of remaining glass sparks in the pool
+			
+			"ImageCacheHits",           // Number of image cache hits
+			"ImageCacheMisses",         // Number of image cache misses
 	};
 	
 	public static final String[] DEBUG_CATEGORY_NAMES = new String[] {

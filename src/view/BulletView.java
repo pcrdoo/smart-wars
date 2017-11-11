@@ -24,7 +24,7 @@ public class BulletView extends EntityView implements Poolable {
 	private double alpha;
 
 	public BulletView() {
-		bulletSprite = ImageCache.getInstance().get("assets/bullet.png");
+		bulletSprite = ImageCache.getInstance().get("bullet.png");
 	}
 
 	@Override

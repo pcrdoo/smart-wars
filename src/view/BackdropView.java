@@ -13,8 +13,8 @@ public class BackdropView implements Drawable, Updatable {
 	private double backgroundAlpha = 0.0, starsAlpha = 0.0;
 	
 	public BackdropView() {
-		background = ImageCache.getInstance().get("assets/background.png");
-		stars = ImageCache.getInstance().get("assets/stars.png");
+		background = ImageCache.getInstance().get("background.png");
+		stars = ImageCache.getInstance().get("stars.png");
 	}
 	
 	public void update(double dt) {

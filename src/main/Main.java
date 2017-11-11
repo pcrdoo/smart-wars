@@ -108,6 +108,7 @@ public class Main {
 		GameWindow gw = new GameWindow();
 		gw.usePerformanceOverlay(po);
 		gw.initGameWindow();
+		gw.startGame();
 	}
 
 }

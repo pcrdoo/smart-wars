@@ -1,5 +1,6 @@
 package main;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 import controller.MainController;
@@ -7,8 +8,10 @@ import debug.DebugDisplay;
 import debug.Measurement;
 import debug.PerformanceMonitor;
 import debug.PerformanceOverlay;
+import memory.Pools;
 import model.Model;
 import rafgfxlib.GameFrame;
+import util.ImageCache;
 import view.MainView;
 
 @SuppressWarnings("serial")
@@ -19,19 +22,25 @@ public class GameWindow extends GameFrame implements GameStarter {
 	private MainView view;
 	private MainController controller;
 	private PerformanceOverlay po;
-
+	private LoadingWindow loadingWindow;
+	
 	public GameWindow() {
 		super("Smart Wars", Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
 		
+		loadingWindow = new LoadingWindow();
+		loadingWindow.setVisible(true);
+
 		po = null;
+	}
+	
+	@Override
+	public void initGameWindow() {
+		super.initGameWindow();
 		
-		// Run game thread
-		setUpdateRate(60);
-		startThread();
-		setHighQuality(true);
-		
-		// Start the war
-		startGame();
+		getWindow().setLocationRelativeTo(null);
+		getWindow().setVisible(false);
+		setVisible(false);
+		getWindow().setBackground(Color.BLACK);
 	}
 
 	public void usePerformanceOverlay(PerformanceOverlay po) {
@@ -40,10 +49,23 @@ public class GameWindow extends GameFrame implements GameStarter {
 	
 	@Override
 	public void startGame() {
+		ImageCache.getInstance().preload(Constants.IMAGES_TO_PRELOAD);
+		Pools.repopulate();
+		
 		model = new Model();
 		view = new MainView();
 		controller = new MainController(this, view, model);
 		lastUpdateTime = System.nanoTime();
+		
+		loadingWindow.setVisible(false);
+
+		// Run game thread
+		setUpdateRate(60);
+		startThread();
+		setHighQuality(true);
+		
+		getWindow().setVisible(true);
+		setVisible(true);
 	}
 	
 	@Override

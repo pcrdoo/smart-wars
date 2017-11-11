@@ -41,18 +41,18 @@ public class PlayerView extends EntityView {
 
 	public PlayerView(Player player) {
 		sprite = new AnimatedSprite(ImageCache.getInstance()
-				.get(player.getPlayerSide() == PlayerSide.LEFT_PLAYER ? "assets/player1.png" : "assets/player2.png"),
+				.get(player.getPlayerSide() == PlayerSide.LEFT_PLAYER ? "player1.png" : "player2.png"),
 				1,
 				FRAME_COUNT,
 				Constants.PLAYER_ANIMATION_FPS);
 		
-		flare = ImageCache.getInstance().get("assets/player-flare.png");
-		healthbar = ImageCache.getInstance().get("assets/healthbar.png");
+		flare = ImageCache.getInstance().get("player-flare.png");
+		healthbar = ImageCache.getInstance().get("healthbar.png");
 		flareWidth = flare.getWidth();
 		flareHeight = flare.getHeight();
 
 		this.player = player;
-		trail = new ParticleSystem(new SpriteParticleRenderer(ImageCache.getInstance().get("assets/player-" + (player.getPlayerSide() == PlayerSide.LEFT_PLAYER ? "left" : "right") + "-trail.png")), 150);
+		trail = new ParticleSystem(new SpriteParticleRenderer(ImageCache.getInstance().get("player-" + (player.getPlayerSide() == PlayerSide.LEFT_PLAYER ? "left" : "right") + "-trail.png")), 150);
 		trailEmitter = new PointParticleEmitter(0.0, 0.5, 0.0, player.getPosition(), new Vector2D(5.0, 2.0), 30.0, 0.0,
 				0, 2 * Math.PI);
 
