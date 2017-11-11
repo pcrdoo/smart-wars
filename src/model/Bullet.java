@@ -3,21 +3,33 @@ package model;
 import java.awt.Rectangle;
 
 import main.Constants;
+import memory.Poolable;
 import model.entitites.RectEntity;
 import util.Vector2D;
 
-public class Bullet extends RectEntity {
+public class Bullet extends RectEntity implements Poolable {
 	private Player owner;
 	private double damage;
 	private int bounces;
 	private double teleportCooldown;
 
-	public Bullet(Vector2D position, Vector2D velocity, Player owner) {
-		super(position, velocity, Constants.BULLET_SIZE);
-		this.owner = owner;
+	public Bullet() {
+		super(null, null, Constants.BULLET_SIZE);
 		damage = Constants.BULLET_DAMAGE;
+	}
+	
+	public void init(Vector2D position, Vector2D velocity, Player owner) {
+		this.position = position;
+		this.velocity = velocity;
+		this.owner = owner;
 		teleportCooldown = 0;
 		bounces = 0;
+	}
+	
+	public void reset() {
+		this.position = null;
+		this.velocity = null;
+		this.owner = null;
 	}
 
 	public Player getOwner() {
@@ -50,12 +62,9 @@ public class Bullet extends RectEntity {
 		}
 		
 		Rectangle boundingBox = getBoundingBox();
-		if (owner.getPlayerSide() == PlayerSide.LEFT_PLAYER && boundingBox.getMinX() > Constants.WINDOW_WIDTH) {
-			return true;
-		} else if (owner.getPlayerSide() == PlayerSide.RIGHT_PLAYER && boundingBox.getMinX() < 0) {
-			return true;
-		}
-		return false;
+		Rectangle screen = new Rectangle(0, 0, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
+		
+		return !boundingBox.intersects(screen);
 	}
 
 	public int getBounces() {

@@ -24,19 +24,31 @@ public class Explosion extends TimedGfx implements Drawable, Updatable {
 	private PointParticleEmitter debrisEmitter;
 	private double debrisDuration;
 	
-	public Explosion(Vector2D position, double duration, double debrisDuration) {
-		super(duration);
+	public Explosion() {
+		super();
 		
-		this.position = position;
 		flare = ImageCache.getInstance().get("assets/explosion-flare.png");
 		particle = ImageCache.getInstance().get("assets/debris-particle.png");
 		debris = new ParticleSystem(new SpriteParticleRenderer(particle), 100);
-		debrisEmitter = new PointParticleEmitter(500.0, 0.7, 0.0, position, new Vector2D(2, 2), 150.0, 10.0, 0, 2 * Math.PI);
-		this.debrisDuration = debrisDuration;
+		debrisEmitter = new PointParticleEmitter(0.0, 0.7, 0.0, null, new Vector2D(2, 2), 150.0, 10.0, 0, 2 * Math.PI);
 		debris.addEmitter(debrisEmitter);
 		debris.addAffector(new ParticleAffectorDeceleration(150));
 		debris.addAffector(new ParticleAffectorDecay(0.7));
+	}
+	
+	public void init(Vector2D position, double duration, double debrisDuration) {
+		super.init(duration);
+		this.position = position;
+		this.debrisDuration = debrisDuration;
+		
+		debrisEmitter.setPosition(position);
+		debrisEmitter.setSpawnsPerSecond(500.0);
 		debris.update(0.1);
+	}
+	
+	public void reset() {
+		debris.reset();
+		this.position = null;
 	}
 	
 	@Override

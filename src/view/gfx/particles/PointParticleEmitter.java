@@ -53,4 +53,8 @@ public class PointParticleEmitter implements ParticleEmitter {
 		}
 	}
 
+	public void setAngles(double minAngle, double maxAngle) {
+		this.minAngle = minAngle;
+		this.maxAngle = maxAngle;
+	}
 }

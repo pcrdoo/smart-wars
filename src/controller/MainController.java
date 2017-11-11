@@ -11,6 +11,7 @@ import debug.PerformanceMonitor;
 import main.Constants;
 import main.GameStarter;
 import main.GameState;
+import memory.Pools;
 import model.Asteroid;
 import model.Wormhole;
 import model.Bullet;
@@ -100,6 +101,7 @@ public class MainController {
 		if (entityView != null) {
 			view.removeUpdatable(entityView);
 			view.removeDrawable(entityView);
+			entityView.onRemoved();
 			viewMap.remove(entity);
 		}
 	}
@@ -108,6 +110,7 @@ public class MainController {
 		for (Bullet bullet : toCull) {
 			model.removeEntity(bullet);
 			model.removeBullet(bullet);
+			disposeEntity(bullet);
 			deleteView(bullet);
 		}
 	}
@@ -169,6 +172,7 @@ public class MainController {
 		// Delete asteroid, keep just the view for the animation.
 		model.removeEntity(asteroid);
 		model.removeAsteroid(asteroid);
+		disposeEntity(asteroid);
 		AsteroidView asteroidView = (AsteroidView) viewMap.get(asteroid);
 		viewMap.remove(asteroid);
 		disintegratingAsteroids.add(asteroidView);
@@ -224,6 +228,7 @@ public class MainController {
 				finished.add(asteroidView);
 				view.removeUpdatable(asteroidView);
 				view.removeDrawable(asteroidView);
+				asteroidView.onRemoved();
 			}
 		}
 		for (AsteroidView asteroidView : finished) {
@@ -245,7 +250,7 @@ public class MainController {
 		timeToNextAsteroidSpawn -= dt;
 		if (timeToNextAsteroidSpawn <= 0) {
 			if (asteroidRandom.nextDouble() <= Constants.ASTEROID_SPAWN_PROBABILITY) {
-				int type = asteroidRandom.nextInt(Constants.ASTEROID_TYPE_COUNT) + 1;
+				int type = asteroidRandom.nextInt(Constants.ASTEROID_TYPE_COUNT);
 				int frame = asteroidRandom.nextInt(Constants.ASTEROID_SPRITES_X * Constants.ASTEROID_SPRITES_Y);
 				double spawnXRange = Constants.ASTEROID_SPAWN_X_MAX - Constants.ASTEROID_SPAWN_X_MIN;
 				double spawnX = asteroidRandom.nextDouble() * spawnXRange + Constants.ASTEROID_SPAWN_X_MIN;
@@ -255,10 +260,10 @@ public class MainController {
 								+ (Math.random() * 2.0 - 1.0) * Constants.ASTEROID_X_VELOCITY_JITTER,
 						Constants.ASTEROID_Y_VELOCITY
 								+ (Math.random() * 2.0 - 1.0) * Constants.ASTEROID_Y_VELOCITY_JITTER);
-				Asteroid asteroid = new Asteroid(location, velocity, type, frame);
+				Asteroid asteroid = Pools.ASTEROID.create(location, velocity, type, frame);
 				model.addEntity(asteroid);
 				model.addAsteroid(asteroid);
-				AsteroidView asteroidView = new AsteroidView(asteroid);
+				AsteroidView asteroidView = Pools.ASTEROID_VIEW.create(asteroid);
 				viewMap.put(asteroid, asteroidView);
 				view.addDrawable(asteroidView, Constants.Z_ASTEROID);
 				view.addUpdatable(asteroidView);
@@ -267,7 +272,7 @@ public class MainController {
 		}
 	}
 
-	private void SpawnWormholeFromAsteroid(Asteroid asteroid) {
+	private void spawnWormholeFromAsteroid(Asteroid asteroid) {
 		Wormhole wormhole = new Wormhole(asteroid.getPosition());
 		disintegrateAsteroid(asteroid);
 		model.addEntity(wormhole);
@@ -286,7 +291,7 @@ public class MainController {
 				Collections.shuffle(model.getAsteroids());
 				ArrayList<Asteroid> asteroidsToTransform = new ArrayList<Asteroid>(model.getAsteroids().subList(0, 2));
 				for (Asteroid asteroid : asteroidsToTransform) {
-					SpawnWormholeFromAsteroid(asteroid);
+					spawnWormholeFromAsteroid(asteroid);
 				}
 			}
 			timeToNextWormholeSpawn = 1;
@@ -302,6 +307,14 @@ public class MainController {
 		}
 		return toCull;
 	}
+	
+	private void disposeEntity(Entity e) {
+		if (e instanceof Bullet) {
+			Pools.BULLET.free((Bullet) e);
+		} else if (e instanceof Asteroid) {
+			Pools.ASTEROID.free((Asteroid) e);
+		}
+	}
 
 	private void cullEntities(ArrayList<Entity> toCull) {
 		for (Entity entity : toCull) {
@@ -316,6 +329,7 @@ public class MainController {
 				model.removeWormhole((Wormhole) entity);
 			}
 			deleteView(entity);
+			disposeEntity(entity);
 		}
 	}
 
@@ -323,12 +337,15 @@ public class MainController {
 		if (!model.getLeftPlayer().isAlive() && !model.getRightPlayer().isAlive()) {
 			model.setGameState(GameState.DRAW);
 			view.onGameOver(GameState.DRAW);
+			onGameOver();
 		} else if (!model.getLeftPlayer().isAlive()) {
 			model.setGameState(GameState.RIGHT_WIN);
 			view.onGameOver(GameState.RIGHT_WIN);
+			onGameOver();
 		} else if (!model.getRightPlayer().isAlive()) {
 			model.setGameState(GameState.LEFT_WIN);
 			view.onGameOver(GameState.LEFT_WIN);
+			onGameOver();
 		}
 	}
 
@@ -367,6 +384,13 @@ public class MainController {
 		checkGameOver();
 	}
 
+	private void onGameOver() {
+		for (HashMap.Entry<Entity, EntityView> ev : viewMap.entrySet()) {
+			ev.getValue().onRemoved();
+		}
+		viewMap.clear();
+	}
+	
 	private void fireBullet(Player player) {
 		Bullet bullet = player.fireBullet();
 		if (bullet == null) {
@@ -376,7 +400,7 @@ public class MainController {
 		model.addBullet(bullet);
 		((PlayerView) viewMap.get(player)).onBulletFired();
 
-		BulletView bulletView = new BulletView(bullet);
+		BulletView bulletView = Pools.BULLET_VIEW.create(bullet);
 		viewMap.put(bullet, bulletView);
 
 		view.addDrawable(bulletView, Constants.Z_BULLETS);
@@ -420,7 +444,6 @@ public class MainController {
 		// Find other black hole.
 		assert (model.getWormholes().size() == 2);
 		int otherWormholeIndex = wormhole == model.getWormholes().get(1) ? 0 : 1;
-		System.out.println(otherWormholeIndex);
 		Wormhole otherWormhole = model.getWormholes().get(otherWormholeIndex);
 		bullet.teleport(wormhole, otherWormhole);
 	}

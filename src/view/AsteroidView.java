@@ -6,6 +6,8 @@ import java.awt.Graphics2D;
 import java.util.ArrayList;
 
 import main.Constants;
+import memory.Poolable;
+import memory.Pools;
 import model.Asteroid;
 import util.ImageCache;
 import util.Vector2D;
@@ -14,29 +16,45 @@ import view.gfx.Sparks;
 import view.gfx.particles.ParticleSystem;
 import view.gfx.particles.PointParticleEmitter;
 
-public class AsteroidView extends EntityView {
+public class AsteroidView extends EntityView implements Poolable {
 	private Asteroid asteroid;
 	private AnimatedSprite sprite;
-	private ParticleSystem trail;
-	private PointParticleEmitter trailEmitter;
 	private ArrayList<Sparks> sparks;
 	private boolean disintegrating;
 	private double disintegrationTime;
 
-	public AsteroidView(Asteroid asteroid) {
+	public AsteroidView() {
+		sparks = new ArrayList<>();
+	}
+
+	public void init(Asteroid asteroid) {
 		this.asteroid = asteroid;
 
-		sprite = new AnimatedSprite(ImageCache.getInstance().get("assets/asteroid-" + asteroid.getType() + ".png"),
+		sprite = new AnimatedSprite(ImageCache.getInstance().get("assets/asteroid-" + (asteroid.getType() + 1) + ".png"),
 				Constants.ASTEROID_SPRITES_X, Constants.ASTEROID_SPRITES_Y, 0);
-		
-		sparks = new ArrayList<>();
 		
 		disintegrating = false;
 		disintegrationTime = 0.0;
 	}
 
+	@Override
+	public void reset() {
+		asteroid = null;
+		sprite = null;
+	}
+	
+	@Override
+	public void onRemoved() {
+		for (Sparks s : sparks) {
+			Pools.SPARKS.free(s);
+		}
+		sparks.clear();	
+		
+		Pools.ASTEROID_VIEW.free(this);
+	}
+	
 	public void onAsteroidHit(Vector2D position) {
-		sparks.add(new Sparks(position, 1.5, 0.15));
+		sparks.add(Pools.SPARKS.create(position, 1.5, 0.15));
 	}
 	
 	public void onAsteroidDisintegrated() {
@@ -68,6 +86,7 @@ public class AsteroidView extends EntityView {
 		
 		for (Sparks s : finishedSparks) {
 			sparks.remove(s);
+			Pools.SPARKS.free(s);
 		}
 	}
 

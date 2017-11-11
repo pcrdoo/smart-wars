@@ -72,7 +72,7 @@ public class PerformanceOverlay implements view.Drawable {
 	}
 	
 	private void addStatisticLines(ArrayList<String> dest) {
-		DecimalFormat fmt = new DecimalFormat("0.00");
+		DecimalFormat fmt = new DecimalFormat("0");
 		
 		for (String statistic : displayedStatistics) {
 			StringBuilder sb = new StringBuilder();

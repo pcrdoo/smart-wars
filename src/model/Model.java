@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import debug.DebugDisplay;
 import debug.PerformanceMonitor;
 import main.GameState;
+import memory.Pools;
 import model.entitites.Entity;
 import util.Vector2D;
 
@@ -144,6 +145,16 @@ public class Model {
 
 	public void setGameState(GameState gameState) {
 		this.gameState = gameState;
+		if (gameState != GameState.RUNNING) {
+			// Purge everything
+			for (Asteroid a : asteroids) {
+				Pools.ASTEROID.free(a);
+			}
+			
+			for (Bullet b : bullets) {
+				Pools.BULLET.free(b);
+			}
+		}
 	}
 
 	public GameState getGameState() {

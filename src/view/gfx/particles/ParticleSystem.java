@@ -62,6 +62,12 @@ public class ParticleSystem implements Drawable, Updatable {
 		}
 	}
 
+	public void reset() {
+		for (int i = 0; i < maxParticles; i++) {
+			particles.setTime(i, -1.0);
+		}
+	}
+	
 	@Override
 	public void draw(Graphics2D g) {
 		renderer.render(g, particles);

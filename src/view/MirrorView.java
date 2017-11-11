@@ -6,6 +6,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
+import memory.Pools;
 import model.Bullet;
 import model.Mirror;
 import util.ImageCache;
@@ -41,9 +42,18 @@ public class MirrorView extends EntityView {
 		
 		for (GlassSparks s : finishedSparks) {
 			sparks.remove(s);
+			Pools.GLASS_SPARKS.free(s);
 		}
 		
 		timeSinceLastSparksSpawn += dt;
+	}
+	
+	@Override
+	public void onRemoved() {
+		for (GlassSparks s : sparks) {
+			Pools.GLASS_SPARKS.free(s);
+		}
+		sparks.clear();
 	}
 
 	@Override
@@ -77,6 +87,6 @@ public class MirrorView extends EntityView {
 		}
 		
 		timeSinceLastSparksSpawn = 0.0;
-		sparks.add(new GlassSparks(b.getPosition(), mirror.getAngle(), !mirror.isPointOnBottomSide(b.getPosition()), 1.5, 0.15));
+		sparks.add(Pools.GLASS_SPARKS.create(b.getPosition(), mirror.getAngle(), !mirror.isPointOnBottomSide(b.getPosition()), 1.5, 0.15));
 	}
 }

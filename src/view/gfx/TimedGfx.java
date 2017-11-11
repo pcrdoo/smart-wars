@@ -1,12 +1,20 @@
 package view.gfx;
 
+import memory.Poolable;
 import view.Updatable;
 
-public abstract class TimedGfx implements Updatable {
+public abstract class TimedGfx implements Updatable, Poolable {
 	protected double time, duration;
 	
-	public TimedGfx(double duration) {
+	public TimedGfx() {
+	}
+	
+	public void init(double duration) {
 		this.time = this.duration = duration;
+	}
+	
+	@Override
+	public void reset() {
 	}
 	
 	public boolean isDone() {

@@ -47,8 +47,8 @@ public class AnimatedSprite implements Updatable {
 	}
 
 	public void setFrame(int frame) {
-		frameX = frame / framesPerX;
-		frameY = frame % framesPerY;
+		frameY = frame / framesPerX;
+		frameX = frame % framesPerX;
 	}
 	
 	@Override

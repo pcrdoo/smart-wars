@@ -49,8 +49,8 @@ public class Constants {
 	
 	public static final int ASTEROID_Y_VELOCITY = 100;
 	public static final int ASTEROID_Y_VELOCITY_JITTER = 20;
-	public static final int ASTEROID_X_VELOCITY = 20;
-	public static final int ASTEROID_X_VELOCITY_JITTER = 7;
+	public static final int ASTEROID_X_VELOCITY = 15;
+	public static final int ASTEROID_X_VELOCITY_JITTER = 5;
 	public static final int ASTEROID_FPS = 5;
 	public static final double ASTEROID_PUSH_VELOCITY_INTENSITY = 2;
 	public static final double ASTEROID_PUSH_POSITION_INTENSITY = 2;
@@ -75,6 +75,13 @@ public class Constants {
 	public static final double WORMHOLE_LIFETIME = 30;
 	public static final double WORMHOLE_DEATH_START_TIME = 29;
 	public static final double WORMHOLE_BULLET_FADE_DISTANCE = 150;
+	
+	// Object pooling
+	public static final int BULLET_POOL_SIZE = 50;
+	public static final int ASTEROID_POOL_SIZE = 30;
+	public static final int EXPLOSION_POOL_SIZE = 10;
+	public static final int SPARKS_POOL_SIZE = 50;
+	public static final int GLASS_SPARKS_POOL_SIZE = 50;
 	
 	// Debug
 	public static final String[] PERF_MEASUREMENTS_NAMES = new String[] {
@@ -102,7 +109,15 @@ public class Constants {
 			"CountMirrors",             // Number of mirrors
 			
 			"CountDrawables",           // Number of drawables
-			"CountUpdatables"           // Number of view updatables 
+			"CountUpdatables",          // Number of view updatables
+			
+			"PoolBulletFree",           // Number of remaining bullets in the pool
+			"PoolBulletViewFree",       // Number of remaining bullet views in the pool
+			"PoolAsteroidFree",         // Number of remaining asteroids in the pool
+			"PoolAsteroidViewFree",     // Number of remaining asteroid views in the pool
+			"PoolExplosionFree",        // Number of remaining explosions in the pool
+			"PoolSparksFree",           // Number of remaining sparks in the pool
+			"PoolGlassSparksFree",      // Number of remaining glass sparks in the pool
 	};
 	
 	public static final String[] DEBUG_CATEGORY_NAMES = new String[] {

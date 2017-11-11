@@ -1,6 +1,7 @@
 package model.abilities;
 
 import main.Constants;
+import memory.Pools;
 import model.Bullet;
 import model.Player;
 import util.Vector2D;
@@ -17,6 +18,6 @@ public class Gun extends Ability {
 		if (!execute()) {
 			return null;
 		}
-		return new Bullet(position, velocity, player);
+		return Pools.BULLET.create(position, velocity, player);
 	}
 }

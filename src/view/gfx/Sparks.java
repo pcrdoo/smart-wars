@@ -23,18 +23,31 @@ public class Sparks extends TimedGfx implements Updatable, Drawable {
 	private ParticleSystem sparks;
 	private PointParticleEmitter sparksEmitter;
 	private double sparkDuration;
-	public Sparks(Vector2D position, double duration, double sparkDuration) {
-		super(duration);
-		
+	
+	public Sparks() {
 		sparks = new ParticleSystem(new LineParticleRenderer(new Color(SPARK_LEFT_COLOR), new Color(SPARK_RIGHT_COLOR), 1.0, 10.0, 0.0, 350.0), 200);
-		sparksEmitter = new PointParticleEmitter(700.0, 0.8, 0.0, position, new Vector2D(5, 5), 150.0, 30.0, 0, 2 * Math.PI);
-		this.sparkDuration = sparkDuration;
+		sparksEmitter = new PointParticleEmitter(0.0, 0.8, 0.0, null, new Vector2D(5, 5), 150.0, 30.0, 0, 2 * Math.PI);
+
 		sparks.addEmitter(sparksEmitter);
 		sparks.addAffector(new ParticleAffectorDeceleration(150));
 		sparks.addAffector(new ParticleAffectorDecay(0.8));
-		//sparks.update(0.1);
 	}
 
+	public void init(Vector2D position, double duration, double sparkDuration) {
+		super.init(duration);
+		
+		sparksEmitter.setSpawnsPerSecond(700.0);
+		sparksEmitter.setPosition(position);
+		
+		this.sparkDuration = sparkDuration;
+	}
+	
+	@Override
+	public void reset() {
+		sparks.reset();
+		this.position = null;
+	}
+	
 	@Override
 	public void update(double dt) {
 		super.update(dt);

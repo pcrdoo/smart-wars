@@ -10,6 +10,7 @@ import java.awt.image.BufferedImage;
 import debug.Measurement;
 import debug.PerformanceMonitor;
 import main.Constants;
+import memory.Pools;
 import model.Player;
 import model.PlayerSide;
 import util.ImageCache;
@@ -51,8 +52,8 @@ public class PlayerView extends EntityView {
 		flareHeight = flare.getHeight();
 
 		this.player = player;
-		trail = new ParticleSystem(new SpriteParticleRenderer(ImageCache.getInstance().get("assets/player-trail.png")), 50);
-		trailEmitter = new PointParticleEmitter(0.0, 0.4, 0.0, player.getPosition(), new Vector2D(2.0, 5.0), 30.0, 0.0,
+		trail = new ParticleSystem(new SpriteParticleRenderer(ImageCache.getInstance().get("assets/player-trail.png")), 150);
+		trailEmitter = new PointParticleEmitter(0.0, 0.5, 0.0, player.getPosition(), new Vector2D(5.0, 2.0), 30.0, 0.0,
 				0, 2 * Math.PI);
 
 		trail.addEmitter(trailEmitter);
@@ -67,7 +68,7 @@ public class PlayerView extends EntityView {
 			flareOpacity = 0.0;
 		}
 
-		trailEmitter.setSpawnsPerSecond(player.getVelocity().length() / Constants.PLAYER_SPEED * 25.0 + 12.0);
+		trailEmitter.setSpawnsPerSecond(player.getVelocity().length() / Constants.PLAYER_SPEED * 60.0 + 20.0);
 		trailEmitter.setPosition(player.getPosition());
 		trail.update(dt);
 
@@ -75,6 +76,7 @@ public class PlayerView extends EntityView {
 			explosion.update(dt);
 
 			if (explosion.isDone()) {
+				Pools.EXPLOSION.free(explosion);
 				explosion = null;
 			}
 		}
@@ -85,7 +87,10 @@ public class PlayerView extends EntityView {
 	}
 
 	public void onPlayerHit() {
-		explosion = new Explosion(player.getPosition(), 1.5, 0.1);
+		if (explosion != null) {
+			Pools.EXPLOSION.free(explosion);
+		}
+		explosion = Pools.EXPLOSION.create(player.getPosition(), 1.5, 0.1);
 	}
 
 	public void draw(Graphics2D g) {
