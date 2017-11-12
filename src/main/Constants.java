@@ -13,7 +13,7 @@ public class Constants {
 
 	// Z-index
 	public static final int Z_BACKDROP = 0;
-	public static final int Z_BLACK_HOLE = 1;
+	public static final int Z_WORMHOLE = 1;
 	public static final int Z_BULLETS = 2;
 	public static final int Z_ASTEROID = 3;
 	public static final int Z_PLAYER = 4;
@@ -25,7 +25,7 @@ public class Constants {
 	public static final Vector2D RIGHT_PLAYER_START_POS = new Vector2D(WINDOW_WIDTH - 60, WINDOW_HEIGHT / 2);
 	public static final double PLAYER_SPEED = 300;
 	public static final double PLAYER_RADIUS = 20;
-	public static final int PLAYER_HEALTH = 100;
+	public static final double PLAYER_HEALTH = 100;
 
 	// Bullet
 	public static final double BULLET_SPEED = 500;
@@ -43,9 +43,10 @@ public class Constants {
 	public static final int ASTEROID_SPAWN_X_MIN = (int) (LEFT_PLAYER_START_POS.getX() + 80);
 	public static final int ASTEROID_SPAWN_X_MAX = (int) (RIGHT_PLAYER_START_POS.getX() - 80);
 	public static final int ASTEROID_SPAWN_Y = -50;
+	public static final double ASTEROID_SPAWN_TIME = 1.0;
 	public static final double ASTEROID_DISINTEGRATION_TIME = 0.4;
 	
-	public static final int ASTEROID_PLAYER_DAMAGE = 20;
+	public static final double ASTEROID_PLAYER_DAMAGE = 20;
 	
 	public static final int ASTEROID_Y_VELOCITY = 100;
 	public static final int ASTEROID_Y_VELOCITY_JITTER = 20;
@@ -69,6 +70,7 @@ public class Constants {
 	
 	// Black hole
 	public static final double WORMHOLE_SPAWN_PROBABILITY = 0.1;
+	public static final double WORMHOLE_SPAWN_TIME = 1.0;
 	public static final double WORMHOLE_RADIUS = 65;
 	public static final double WORMHOLE_BIRTH_TIME = 1.0;
 	public static final double WORMHOLE_ANGULAR_VELOCITY = Math.PI / 2;
@@ -167,6 +169,12 @@ public class Constants {
 	};
 	
 	public static final int PERF_NAME_MAX_WIDTH = 26;
+	
+	// Multiplayer
+	// TODO: Remove these
+	public static final String SERVER_ADDRESS = "localhost";
+	public static final int SERVER_PORT = 24572;
+	public static final double LOCATION_UPDATE_TIME = 0.1;
 	
 }
 

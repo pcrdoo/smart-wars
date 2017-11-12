@@ -6,6 +6,7 @@ import model.Mirror;
 import model.MirrorState;
 import model.Player;
 import model.PlayerSide;
+import model.entitites.Entity;
 import util.Vector2D;
 
 public class MirrorMagic extends Ability {
@@ -45,5 +46,9 @@ public class MirrorMagic extends Ability {
 
 	public Mirror getMirror() {
 		return mirror;
+	}
+
+	public Player getOwner() {
+		return player;
 	}
 }

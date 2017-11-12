@@ -41,8 +41,8 @@ public class BulletView extends EntityView implements Poolable {
 		alpha = 1.0;
 	}
 
-	public void wormholeAffect(Wormhole w) {
-		double distance = bullet.getPosition().sub(w.getPosition()).length();
+	public void wormholeAffect(Vector2D wormholePosition) {
+		double distance = bullet.getPosition().sub(wormholePosition).length();
 		if (distance < Constants.WORMHOLE_BULLET_FADE_DISTANCE) {
 			alpha = distance / Constants.WORMHOLE_BULLET_FADE_DISTANCE;
 		} else {

@@ -76,22 +76,30 @@ public class Vector2D {
 
 	public void clampX(double mindX, double maxdX) {
 		if (this.dX < mindX) {
-			this.dX = mindX;
+			setX(mindX);
 		}
 		if (this.dX > maxdX) {
-			this.dX = maxdX;
+			setX(maxdX);
 		}
 	}
 
 	public void clampY(double mindY, double maxdY) {
 		if (this.dY < mindY) {
-			this.dY = mindY;
+			setY(mindY);
 		}
 		if (this.dY > maxdY) {
-			this.dY = maxdY;
+			setY(maxdY);
 		}
 	}
 
+	public void setX(double dX) {
+		this.dX = dX;
+	}
+	
+	public void setY(double dY) {
+		this.dY = dY;
+	}
+	
 	public double getX() {
 		return dX;
 	}

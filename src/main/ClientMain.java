@@ -6,7 +6,7 @@ import debug.DebugDisplay;
 import debug.PerformanceMonitor;
 import debug.PerformanceOverlay;
 
-public class Main {
+public class ClientMain {
 
 	public static boolean isStringInArray(String needle, String[] haystack) {
 		for (int i = 0; i < haystack.length; i++) {

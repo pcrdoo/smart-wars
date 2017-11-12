@@ -1,19 +1,26 @@
 package model.entitites;
 
 import java.awt.Rectangle;
+import java.lang.reflect.Field;
 
+import multiplayer.Message;
+import multiplayer.MessageType;
+import multiplayer.NetworkObject;
+import multiplayer.OpenPipes;
 import util.Vector2D;
 
-public abstract class Entity {
+public abstract class Entity extends NetworkObject {
 	protected Vector2D position;
 	protected Vector2D velocity; // pixels per second
 
 	public Entity(Vector2D position) {
+		super();
 		this.position = position;
 		this.velocity = new Vector2D(0, 0);
 	}
 
 	public Entity(Vector2D position, Vector2D velocity) {
+		super();
 		this.position = position;
 		this.velocity = velocity;
 	}

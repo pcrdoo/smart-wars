@@ -12,8 +12,8 @@ import view.Updatable;
 
 public class Player extends RoundEntity {
 	private PlayerSide playerSide;
-	private int maxHealth;
-	private int currHealth;
+	private double maxHealth;
+	private double currHealth;
 	private double speed; // pixels per second
 
 	private ArrayList<Ability> abilities;
@@ -78,7 +78,7 @@ public class Player extends RoundEntity {
 		}
 	}
 
-	public int getCurrHealth() {
+	public double getCurrHealth() {
 		return currHealth;
 	}
 

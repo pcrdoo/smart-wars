@@ -15,10 +15,6 @@ public abstract class BitmapEntity extends Entity {
 		super(position, velocity);
 	}
 
-	public void setImage(BufferedImage image) {
-		this.collisionMask = image;
-	}
-
 	public boolean hitTest(Vector2D point) {
 		if (collisionMask == null) {
 			return false;

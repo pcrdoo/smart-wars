@@ -1,18 +1,16 @@
 package view;
 
-import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 import memory.Pools;
-import model.Bullet;
 import model.Mirror;
 import model.PlayerSide;
 import util.ImageCache;
+import util.Vector2D;
 import view.gfx.GlassSparks;
-import view.gfx.Sparks;
 
 public class MirrorView extends EntityView {
 	private final static double SPARKS_SPAWN_COOLDOWN = 0.2;
@@ -81,12 +79,12 @@ public class MirrorView extends EntityView {
 		}
 	}
 
-	public void onMirrorHit(Bullet b) {
+	public void onMirrorHit(Vector2D bulletPosition) {
 		if (timeSinceLastSparksSpawn < SPARKS_SPAWN_COOLDOWN) {
 			return;
 		}
 		
 		timeSinceLastSparksSpawn = 0.0;
-		sparks.add(Pools.GLASS_SPARKS.create(b.getPosition(), mirror.getAngle(), !mirror.isPointOnBottomSide(b.getPosition()), 1.5, 0.15));
+		sparks.add(Pools.GLASS_SPARKS.create(bulletPosition, mirror.getAngle(), !mirror.isPointOnBottomSide(bulletPosition), 1.5, 0.15));
 	}
 }
