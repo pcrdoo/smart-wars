@@ -12,7 +12,7 @@ public class ServerMain {
 		com.sun.javafx.application.PlatformImpl.startup(()->{});
 
 		HeadlessGameFrame gf = new HeadlessGameFrame();
-		gf.initGameWindow();
+		gf.initGameWindow(false);
 		gf.startGame();
 	}
 
