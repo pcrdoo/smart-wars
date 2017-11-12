@@ -55,16 +55,20 @@ public class Main {
 	
 	public static void main(String[] args) {
 		PerformanceOverlay po = null;
+		boolean fullscreen = false;
+		
 		for (String arg : args) {
 			if (arg.equals("+perf")) {
 				PerformanceMonitor.getInstance().setEnabled(true);
 				po = new PerformanceOverlay(PerformanceMonitor.getInstance());
 			} else if (arg.startsWith("+perf:")) {
-				String[] names = arg.substring("+perf:".length()).split(",");
-				for (String name : names) {
-					if (!displayPerfItem(po, name)) {
-						System.err.println("Unknown perf item: " + name);
-						return;
+				if (po != null) {
+					String[] names = arg.substring("+perf:".length()).split(",");
+					for (String name : names) {
+						if (!displayPerfItem(po, name)) {
+							System.err.println("Unknown perf item: " + name);
+							return;
+						}
 					}
 				}
 			} else if (arg.equals("+debug")) {
@@ -99,17 +103,17 @@ public class Main {
 						return;
 					}
 				}
+			} else if (arg.equals("+fullscreen")) {
+				fullscreen = true;
 			} else {
 				System.err.println("Invalid argument: " + arg);
 				return;
 			}
 		}
 		
-		com.sun.javafx.application.PlatformImpl.startup(()->{});
-
-		GameWindow gw = new GameWindow();
+		GameWindow gw = new GameWindow(fullscreen);
 		gw.usePerformanceOverlay(po);
-		gw.initGameWindow();
+		gw.initGameWindow(fullscreen);
 		gw.startGame();
 	}
 
