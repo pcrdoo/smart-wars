@@ -90,7 +90,7 @@ public class PlayerView extends EntityView {
 		if (explosion != null) {
 			Pools.EXPLOSION.free(explosion);
 		}
-		explosion = Pools.EXPLOSION.create(player.getPosition(), 1.5, 0.1);
+		explosion = Pools.EXPLOSION.create(player.getPosition(), 1.0, 0.1);
 	}
 
 	public void draw(Graphics2D g) {
