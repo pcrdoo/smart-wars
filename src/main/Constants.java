@@ -57,7 +57,7 @@ public class Constants {
 	
 	// Mirror
 	public static final double MIRROR_MAGIC_COOLDOWN = 5;
-	public static final double MIRROR_VELOCITY = 200;
+	public static final double MIRROR_VELOCITY = 300;
 	public static final double SHORT_MIRROR_LENGTH = 70;
 	public static final double LONG_MIRROR_LENGTH = 100;
 	public static final double MIRROR_DIST_EPS = 10;
@@ -70,10 +70,10 @@ public class Constants {
 	// Black hole
 	public static final double WORMHOLE_SPAWN_PROBABILITY = 0.1;
 	public static final double WORMHOLE_RADIUS = 65;
-	public static final double WORMHOLE_BIRTH_TIME = 0.7;
+	public static final double WORMHOLE_BIRTH_TIME = 1.0;
 	public static final double WORMHOLE_ANGULAR_VELOCITY = Math.PI / 2;
-	public static final double WORMHOLE_LIFETIME = 30;
-	public static final double WORMHOLE_DEATH_START_TIME = 29;
+	public static final double WORMHOLE_LIFETIME = 40;
+	public static final double WORMHOLE_DEATH_START_TIME = 38;
 	public static final double WORMHOLE_BULLET_FADE_DISTANCE = 150;
 	
 	// Object pooling
