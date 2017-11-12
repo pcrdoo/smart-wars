@@ -15,7 +15,7 @@ import view.gfx.particles.ParticleAffectorDecay;
 import view.gfx.particles.ParticleAffectorDeceleration;
 import view.gfx.particles.ParticleSystem;
 import view.gfx.particles.PointParticleEmitter;
-import view.gfx.particles.SpriteParticleRenderer;
+import view.gfx.particles.AdditiveSpriteParticleRenderer;
 
 public class Explosion extends TimedGfx implements Drawable, Updatable {
 	private Vector2D position;
@@ -29,7 +29,7 @@ public class Explosion extends TimedGfx implements Drawable, Updatable {
 		
 		flare = ImageCache.getInstance().get("explosion-flare.png");
 		particle = ImageCache.getInstance().get("debris-particle.png");
-		debris = new ParticleSystem(new SpriteParticleRenderer(particle), 100);
+		debris = new ParticleSystem(new AdditiveSpriteParticleRenderer(particle), 100);
 		debrisEmitter = new PointParticleEmitter(0.0, 0.7, 0.0, null, new Vector2D(2, 2), 150.0, 10.0, 0, 2 * Math.PI);
 		debris.addEmitter(debrisEmitter);
 		debris.addAffector(new ParticleAffectorDeceleration(150));

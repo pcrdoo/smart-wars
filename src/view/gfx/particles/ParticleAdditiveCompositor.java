@@ -34,8 +34,7 @@ public class ParticleAdditiveCompositor {
 	    
 	    spriteWidth = sprite.getWidth();
 	    spriteHeight = sprite.getHeight();
-	    
-	    spritePixels = new int[spriteWidth][spriteHeight];
+	    spritePixels = new int[spriteHeight][spriteWidth];
 	    for (int y = 0; y < spriteHeight; y++) {
 	    	for (int x = 0; x < spriteWidth; x++) {
 	    		spritePixels[y][x] = sprite.getRGB(x, y);

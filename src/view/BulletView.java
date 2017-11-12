@@ -16,7 +16,7 @@ import util.Vector2D;
 import view.gfx.particles.ParticleAffectorDecay;
 import view.gfx.particles.ParticleSystem;
 import view.gfx.particles.PointParticleEmitter;
-import view.gfx.particles.SpriteParticleRenderer;
+import view.gfx.particles.AdditiveSpriteParticleRenderer;
 
 public class BulletView extends EntityView implements Poolable {
 	private Bullet bullet;

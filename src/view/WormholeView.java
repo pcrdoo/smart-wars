@@ -22,7 +22,7 @@ import view.gfx.particles.ParticleAffectorDeceleration;
 import view.gfx.particles.ParticleAffectorRotation;
 import view.gfx.particles.ParticleSystem;
 import view.gfx.particles.PointParticleEmitter;
-import view.gfx.particles.SpriteParticleRenderer;
+import view.gfx.particles.AdditiveSpriteParticleRenderer;
 
 public class WormholeView extends EntityView {
 	private Wormhole wormhole;
@@ -42,7 +42,7 @@ public class WormholeView extends EntityView {
 		spriteAngle = 0;
 		birthTimeRemaining = Constants.WORMHOLE_BIRTH_TIME;
 		
-		swirl = new ParticleSystem(new SpriteParticleRenderer(ImageCache.getInstance().get("wormhole-particle.png")), 200);
+		swirl = new ParticleSystem(new AdditiveSpriteParticleRenderer(ImageCache.getInstance().get("wormhole-particle.png")), 200);
 		swirl.addEmitter(swirlEmitter = new PointParticleEmitter(0.0, 1.0, 0.1, wormhole.getPosition(), new Vector2D(10, 10), 200, 10.0, 0, 2 * Math.PI));
 		swirl.addAffector(new ParticleAffectorDecay(1.0));
 		swirl.addAffector(new ParticleAffectorDeceleration(200));

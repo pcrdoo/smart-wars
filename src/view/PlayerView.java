@@ -21,10 +21,10 @@ import view.gfx.Sparks;
 import view.gfx.particles.ParticleAffectorDecay;
 import view.gfx.particles.ParticleSystem;
 import view.gfx.particles.PointParticleEmitter;
-import view.gfx.particles.SpriteParticleRenderer;
+import view.gfx.particles.AdditiveSpriteParticleRenderer;
 
 public class PlayerView extends EntityView {
-	private final static int FRAME_COUNT = 6;
+	private final static int FRAME_COUNT = 1;
 	private final static int HEALTHBAR_X_OFFSET = 40;
 	private final static double FLARE_DURATION = 0.2;
 
@@ -52,7 +52,7 @@ public class PlayerView extends EntityView {
 		flareHeight = flare.getHeight();
 
 		this.player = player;
-		trail = new ParticleSystem(new SpriteParticleRenderer(ImageCache.getInstance().get("player-" + (player.getPlayerSide() == PlayerSide.LEFT_PLAYER ? "left" : "right") + "-trail.png")), 150);
+		trail = new ParticleSystem(new AdditiveSpriteParticleRenderer(ImageCache.getInstance().get("player-" + (player.getPlayerSide() == PlayerSide.LEFT_PLAYER ? "left" : "right") + "-trail.png")), 150);
 		trailEmitter = new PointParticleEmitter(0.0, 0.5, 0.0, player.getPosition(), new Vector2D(5.0, 2.0), 30.0, 0.0,
 				0, 2 * Math.PI);
 

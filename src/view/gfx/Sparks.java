@@ -15,7 +15,7 @@ import view.gfx.particles.ParticleAffectorDecay;
 import view.gfx.particles.ParticleAffectorDeceleration;
 import view.gfx.particles.ParticleSystem;
 import view.gfx.particles.PointParticleEmitter;
-import view.gfx.particles.SpriteParticleRenderer;
+import view.gfx.particles.AdditiveSpriteParticleRenderer;
 
 public class Sparks extends TimedGfx implements Updatable, Drawable {
 	private static final int SPARK_LEFT_COLOR = 0xffA02200, SPARK_RIGHT_COLOR = 0xffFFDD20;

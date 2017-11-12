@@ -93,8 +93,9 @@ public class MainView {
 	public void onGameOver(GameState gameState) {
 		drawables.clear();
 		updatables.clear();
-		addDrawable(backdrop, Constants.Z_BACKDROP);
-		updatables.add(backdrop);
-		addDrawable(new GameOverView(gameState), Constants.Z_OVERLAY);
+		
+		GameOverView gameOver = new GameOverView(gameState);
+		addDrawable(gameOver, Constants.Z_OVERLAY);
+		addUpdatable(gameOver);
 	}
 }
