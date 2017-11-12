@@ -11,8 +11,8 @@ public class Bullet extends RectEntity implements Poolable {
 	private Player owner;
 	private double damage;
 	private int bounces;
-	private double teleportCooldown;
-
+	private double velocityChangeCooldown;
+	
 	public Bullet() {
 		super(null, null, Constants.BULLET_SIZE);
 		damage = Constants.BULLET_DAMAGE;
@@ -22,7 +22,7 @@ public class Bullet extends RectEntity implements Poolable {
 		this.position = position;
 		this.velocity = velocity;
 		this.owner = owner;
-		teleportCooldown = 0;
+		velocityChangeCooldown = 0;
 		bounces = 0;
 	}
 	
@@ -49,9 +49,9 @@ public class Bullet extends RectEntity implements Poolable {
 	@Override
 	public void update(double dt) {
 		super.update(dt);
-		teleportCooldown -= dt;
-		if (teleportCooldown < 0) {
-			teleportCooldown = 0;
+		velocityChangeCooldown -= dt;
+		if (velocityChangeCooldown < 0) {
+			velocityChangeCooldown = 0;
 		}
 	}
 
@@ -71,16 +71,23 @@ public class Bullet extends RectEntity implements Poolable {
 		return bounces;
 	}
 	
-	public void bounce(Mirror mirror) {
-		setVelocity(reflect(getVelocity(), mirror.getLineVector()));
-		bounces++;
+	public boolean bounce(Mirror mirror) {
+		if (velocityChangeCooldown == 0) {
+			setVelocity(reflect(getVelocity(), mirror.getLineVector()));
+			bounces++;
+			velocityChangeCooldown = Constants.BULLET_VELOCITY_CHANGE_COOLDOWN;
+			return true;
+		}
+		return false;
 	}
 
-	public void teleport(Wormhole inWormhole, Wormhole outWormhole) {
-		if (teleportCooldown == 0) {
+	public boolean teleport(Wormhole inWormhole, Wormhole outWormhole) {
+		if (velocityChangeCooldown == 0) {
 			Vector2D toCenter = inWormhole.getPosition().sub(position);
 			position = outWormhole.getPosition().add(toCenter);
-			teleportCooldown = Constants.BULLET_TELEPORT_COOLDOWN;
+			velocityChangeCooldown = Constants.BULLET_VELOCITY_CHANGE_COOLDOWN;
+			return true;
 		}
+		return false;
 	}
 }

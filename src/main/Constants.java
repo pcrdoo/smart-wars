@@ -33,8 +33,8 @@ public class Constants {
 	public static final double BULLET_COOLDOWN = 0.1;
 	public static final double BULLET_DAMAGE = 10;
 	public static final int MAX_BULLET_BOUNCES = 10;
-	public static final double BULLET_TELEPORT_COOLDOWN = 1;
-	
+	public static final double BULLET_VELOCITY_CHANGE_COOLDOWN = 10;
+
 	// Asteroid
 	public static final double ASTEROID_SPAWN_PROBABILITY = 0.9; // per second
 	public static final int ASTEROID_TYPE_COUNT = 6;
@@ -60,7 +60,7 @@ public class Constants {
 	public static final double MIRROR_VELOCITY = 200;
 	public static final double SHORT_MIRROR_LENGTH = 70;
 	public static final double LONG_MIRROR_LENGTH = 100;
-	public static final double MIRROR_DIST_EPS = 10;
+	public static final double MIRROR_DIST_EPS = 15;
 	public static final int MIRROR_X_MIN = (int) (LEFT_PLAYER_START_POS.getX() + 20);
 	public static final int MIRROR_X_MAX = (int) (RIGHT_PLAYER_START_POS.getX() - 20);
 	public static final int MIRROR_X_LAUNCH_LEFT = MIRROR_X_MIN + 10;

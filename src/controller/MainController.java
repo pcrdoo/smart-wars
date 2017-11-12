@@ -39,7 +39,7 @@ public class MainController {
 	private HashMap<Controls, Integer> rightPlayerControls;
 	private HashMap<Integer, Boolean> keyboardState;
 	private ArrayList<AsteroidView> disintegratingAsteroids;
-	
+
 	// View-related dependencies for each entity.
 	private HashMap<Entity, EntityView> viewMap;
 
@@ -51,7 +51,7 @@ public class MainController {
 		this.view = view;
 		this.model = model;
 		this.gameStarter = gameStarter;
-		
+
 		viewMap = new HashMap<>();
 		disintegratingAsteroids = new ArrayList<>();
 
@@ -118,7 +118,8 @@ public class MainController {
 	private void checkBulletCollisions() {
 		ArrayList<Bullet> impactedBullets = new ArrayList<>();
 		for (Bullet bullet : model.getBullets()) {
-			if ((bullet.getBounces() > 0 || bullet.getOwner() == model.getRightPlayer()) && model.getLeftPlayer().hitTest(bullet.getPosition())) {
+			if ((bullet.getBounces() > 0 || bullet.getOwner() == model.getRightPlayer())
+					&& model.getLeftPlayer().hitTest(bullet.getPosition())) {
 				handlePlayerHit(model.getLeftPlayer(), bullet);
 				impactedBullets.add(bullet);
 			} else if ((bullet.getBounces() > 0 || bullet.getOwner() == model.getLeftPlayer())
@@ -149,18 +150,18 @@ public class MainController {
 					}
 				}
 			}
-			
+
 			// Affect the bullet views by near wormholes
 			Wormhole nearestWormhole = null;
 			double nearestWormholeDistance = 0.0;
 			for (Wormhole w : model.getWormholes()) {
-				double dist = w.getPosition().sub(bullet.getPosition()).length(); 
+				double dist = w.getPosition().sub(bullet.getPosition()).length();
 				if (nearestWormhole == null || dist < nearestWormholeDistance) {
 					nearestWormhole = w;
 					nearestWormholeDistance = dist;
 				}
 			}
-			
+
 			if (nearestWormhole != null) {
 				((BulletView) viewMap.get(bullet)).wormholeAffect(nearestWormhole);
 			}
@@ -307,7 +308,7 @@ public class MainController {
 		}
 		return toCull;
 	}
-	
+
 	private void disposeEntity(Entity e) {
 		if (e instanceof Bullet) {
 			Pools.BULLET.free((Bullet) e);
@@ -359,11 +360,11 @@ public class MainController {
 
 		PerformanceMonitor m = PerformanceMonitor.getInstance();
 		Measurement ms;
-		
+
 		ms = m.measure("CollisionBullet");
 		checkBulletCollisions();
 		ms.done();
-		
+
 		ms = m.measure("CollisionAsteroidPlayer");
 		checkAsteroidPlayerCollisions();
 		ms.done();
@@ -376,11 +377,11 @@ public class MainController {
 
 		maybeSpawnWormholes(dt);
 		maybeSpawnAsteroids(dt);
-		
+
 		ms = m.measure("CullEntity");
 		cullEntities(getEntitiesToCull());
 		ms.done();
-		
+
 		checkGameOver();
 	}
 
@@ -390,7 +391,7 @@ public class MainController {
 		}
 		viewMap.clear();
 	}
-	
+
 	private void fireBullet(Player player) {
 		Bullet bullet = player.fireBullet();
 		if (bullet == null) {
@@ -449,8 +450,9 @@ public class MainController {
 	}
 
 	private void handleMirrorHit(Mirror mirror, Bullet bullet) {
-		bullet.bounce(mirror);
-		((MirrorView) viewMap.get(mirror)).onMirrorHit(bullet);
+		if (bullet.bounce(mirror)) {
+			((MirrorView) viewMap.get(mirror)).onMirrorHit(bullet);
+		}
 	}
 
 	private void handleAsteroidHit(Asteroid asteroid, Bullet bullet) {
