@@ -24,7 +24,7 @@ import view.gfx.particles.PointParticleEmitter;
 import view.gfx.particles.AdditiveSpriteParticleRenderer;
 
 public class PlayerView extends EntityView {
-	private final static int FRAME_COUNT = 1;
+	private final static int FRAME_COUNT = 6;
 	private final static int HEALTHBAR_X_OFFSET = 40;
 	private final static double FLARE_DURATION = 0.2;
 
@@ -32,7 +32,6 @@ public class PlayerView extends EntityView {
 	private BufferedImage flare;
 	private BufferedImage healthbar;
 	private Player player;
-	private int frame = 0;
 	private int flareWidth, flareHeight;
 	private double flareOpacity = 0.0;
 	private ParticleSystem trail;
