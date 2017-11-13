@@ -163,12 +163,13 @@ public class ClientController extends GameStateController {
 		receiveUpdates();
 		if (model.getGameState() != GameState.RUNNING) {
 			if (keyboardState.get(KeyEvent.VK_ENTER)) {
-				sendActionToServer(sidesToControl.get(0), Control.NEW_GAME);
+				for (PlayerSide side : sidesToControl) {
+					sendActionToServer(side, Control.NEW_GAME);
+				}
 			}
-			return;
+		} else {
+			checkDisintegratingAsteroids();
 		}
-
-		checkDisintegratingAsteroids();
 		serverPipe.writeScheduledMessages();
 	}
 
@@ -298,7 +299,8 @@ public class ClientController extends GameStateController {
 			}
 			viewMap.remove(entity);
 		} else {
-			throw new RuntimeException("Error: No view found for entity " + entity.getUuid() + " of type " + entity.getClass());
+			throw new RuntimeException(
+					"Error: No view found for entity " + entity.getUuid() + " of type " + entity.getClass());
 		}
 	}
 
@@ -365,7 +367,6 @@ public class ClientController extends GameStateController {
 				return e.getKey();
 			}
 		}
-
 		return null;
 	}
 

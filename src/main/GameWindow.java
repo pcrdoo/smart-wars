@@ -66,8 +66,22 @@ public class GameWindow extends GameFrame implements GameStarter {
 		this.po = po;
 	}
 
+	boolean skipFirst = false;
+	
 	@Override
 	public void startGame() {
+		stopThread = true;
+		int count = 0;
+		while(skipFirst) {
+			try {
+				Thread.sleep(100);
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			System.out.println("MainThread!!!");
+		} 
+		skipFirst = true;
 		ImageCache.getInstance().preload(Constants.IMAGES_TO_PRELOAD);
 		Pools.repopulate();
 

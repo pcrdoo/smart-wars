@@ -6,6 +6,7 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.UUID;
 
@@ -45,7 +46,7 @@ public class ServerController extends GameStateController {
 	private double timeToNextLocationUpdate;
 	private Random asteroidRandom;
 	private CollisionController collisionController;
-	private int playersReadyForRestart;
+	private HashSet<PlayerSide> playersReadyForRestart;
 	private ServerEventBroadcaster broadcaster;
 	private HashMap<PlayerSide, Pipe> playerPipes;
 	private HashMap<PlayerSide, Boolean> playerFiring;
@@ -123,7 +124,7 @@ public class ServerController extends GameStateController {
 	public void update(double dt) {
 		checkForIncomingMessages();
 		if (model.getGameState() != GameState.RUNNING) {
-			if (playersReadyForRestart == 2) {
+			if (playersReadyForRestart.size() == 2) {
 				broadcaster.broadcastNewGameStarting();
 				gameStarter.startGame(); // start a new game
 			}
@@ -201,7 +202,7 @@ public class ServerController extends GameStateController {
 				break;
 			case NEW_GAME:
 				if (model.getGameState() != GameState.RUNNING) {
-					playersReadyForRestart++;
+					playersReadyForRestart.add(side);
 				}
 				break;
 
@@ -339,6 +340,6 @@ public class ServerController extends GameStateController {
 
 	private void onGameOver() {
 		broadcaster.broadcastGameOver(model.getGameState());
-		playersReadyForRestart = 0;
+		playersReadyForRestart = new HashSet<>();
 	}
 }

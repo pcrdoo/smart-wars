@@ -37,9 +37,10 @@ public class HeadlessGameFrame extends GameFrame implements GameStarter {
 		setVisible(false);
 		getWindow().setBackground(Color.BLACK);
 	}
-
+	
 	@Override
 	public void startGame() {
+		stopThread = true;
 		Pools.repopulate();
 
 		model = new Model();
