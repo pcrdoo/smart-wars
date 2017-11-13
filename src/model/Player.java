@@ -1,5 +1,6 @@
 package model;
 
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
 import main.Constants;
@@ -97,5 +98,28 @@ public class Player extends RoundEntity {
 
 	public MirrorMagic getLongMirrorMagic() {
 		return longMirrorMagic;
+	}
+	
+	@Override
+	public void serializeTo(ByteBuffer buffer) {
+		super.serializeTo(buffer);
+		buffer.put((byte)playerSide.getNum());
+		buffer.putFloat((float)maxHealth);
+		buffer.putFloat((float)currHealth);
+		buffer.putFloat((float)speed);
+	}
+	
+	@Override
+	public void deserializeFrom(Model model, ByteBuffer buffer) {
+		super.deserializeFrom(model, buffer);
+		byte side = buffer.get();
+		switch(side) {
+		case 0x01: playerSide = PlayerSide.LEFT_PLAYER; break;
+		case 0x02: playerSide = PlayerSide.RIGHT_PLAYER; break;
+		}
+		
+		maxHealth = buffer.getFloat();
+		currHealth = buffer.getFloat();
+		speed = buffer.getFloat();
 	}
 }

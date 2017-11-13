@@ -1,8 +1,10 @@
 package model.entitites;
 
 import java.awt.Rectangle;
+import java.nio.ByteBuffer;
 
 import main.Constants;
+import model.Model;
 import util.Vector2D;
 
 public class LineEntity extends Entity {
@@ -55,5 +57,19 @@ public class LineEntity extends Entity {
 	@Override
 	public boolean shouldCull() {
 		return false;
+	}
+	
+	@Override
+	public void serializeTo(ByteBuffer buffer) {
+		super.serializeTo(buffer);
+		buffer.putFloat((float)length);
+		buffer.putDouble(angle);
+	}
+	
+	@Override
+	public void deserializeFrom(Model model, ByteBuffer buffer) {
+		super.deserializeFrom(model, buffer);
+		length = buffer.getFloat();
+		angle = buffer.getDouble();
 	}
 }

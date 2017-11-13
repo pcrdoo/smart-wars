@@ -4,6 +4,7 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
@@ -21,6 +22,7 @@ import model.Player;
 import model.PlayerSide;
 import model.Wormhole;
 import model.entitites.Entity;
+import model.entitites.EntityType;
 import multiplayer.LocalPipe;
 import multiplayer.Message;
 import multiplayer.MessageType;
@@ -155,13 +157,13 @@ public class ClientController extends GameStateController {
 			Message message = serverPipe.readMessage();
 			switch (message.getType()) {
 			case ENTITY_ADDED:
-				doAddEntity((Entity) message.getPayload().get(0));
+				doAddEntity((byte[]) message.getPayload().get(0));
 				break;
 			case ENTITY_REMOVED:
 				doRemoveEntity((UUID) message.getPayload().get(0));
 				break;
 			case ENTITY_UPDATED:
-				doUpdateEntity((Entity) message.getPayload().get(0));
+				doUpdateEntity((UUID) message.getPayload().get(0), (byte[]) message.getPayload().get(1));
 				break;
 			case LOCATION_UPDATE:
 				for (int i = 0; i < message.getPayload().size(); i += 2) {
@@ -207,45 +209,52 @@ public class ClientController extends GameStateController {
 		}
 	}
 
+	private EntityView createViewForEntity(EntityType t, Entity e) {
+		switch(t) {
+		case ASTEROID: return Pools.ASTEROID_VIEW.create((Asteroid) e);
+		case BULLET: return Pools.BULLET_VIEW.create((Bullet) e);
+		case PLAYER: return new PlayerView((Player) e);
+		case MIRROR: return new MirrorView((Mirror) e);
+		case WORMHOLE: return new WormholeView((Wormhole) e);
+		default: System.err.println("Unknown entity type: " + t.getNum()); return null;
+		}
+	}
+	
+	private int getZIndexForEntityType(EntityType t) {
+		switch(t) {
+		case ASTEROID: return Constants.Z_ASTEROID;
+		case BULLET: return Constants.Z_BULLETS;
+		case PLAYER: return Constants.Z_PLAYER;
+		case MIRROR: return Constants.Z_MIRROR;
+		case WORMHOLE: return Constants.Z_WORMHOLE;
+		default: System.err.println("Unknown entity type: " + t.getNum()); return -1;
+		}		
+	}
+		
 	// TODO This is why passing an object was a bad idea, definitely serialize on
 	// your own
-	private void doAddEntity(Entity entity) {
-		if (entity instanceof Asteroid) {
-			Asteroid temp_asteroid = (Asteroid) entity;
-			Asteroid asteroid = Pools.ASTEROID.create(temp_asteroid.getPosition(), temp_asteroid.getVelocity(),
-					temp_asteroid.getType(), temp_asteroid.getFrame());
-			model.addEntity(asteroid);
-			AsteroidView asteroidView = Pools.ASTEROID_VIEW.create(asteroid);
-			viewMap.put(asteroid, asteroidView);
-			view.addDrawable(asteroidView, Constants.Z_ASTEROID);
-			view.addUpdatable(asteroidView);
-		} else if (entity instanceof Bullet) {
-			Bullet temp_bullet = (Bullet) entity;
-			Bullet bullet = Pools.BULLET.create(temp_bullet.getPosition(), temp_bullet.getVelocity(),
-					temp_bullet.getOwner());
-			model.addEntity(bullet);
-			((PlayerView) viewMap.get(bullet.getOwner())).onBulletFired(); // Action
-			BulletView bulletView = Pools.BULLET_VIEW.create(bullet);
-			viewMap.put(bullet, bulletView);
-			view.addDrawable(bulletView, Constants.Z_BULLETS);
-			view.addUpdatable(bulletView);
-		} else if (entity instanceof Mirror) {
-			Mirror mirror = (Mirror) entity;
-			model.addEntity(mirror);
-			MirrorView mirrorView = new MirrorView(mirror);
-			viewMap.put(mirror, mirrorView);
-			view.addDrawable(mirrorView, Constants.Z_MIRROR);
-			view.addUpdatable(mirrorView);
-		} else if (entity instanceof Wormhole) {
-			Wormhole wormhole = (Wormhole) entity;
-			model.addEntity(wormhole);
-			WormholeView wormholeView = new WormholeView(wormhole);
-			viewMap.put(wormhole, wormholeView);
-			view.addDrawable(wormholeView, Constants.Z_WORMHOLE);
-			view.addUpdatable(wormholeView);
-		} else {
-			throw new RuntimeException("Invalid entity type: " + entity);
+	private void doAddEntity(byte[] entityBuffer) {
+		ByteBuffer buf = ByteBuffer.wrap(entityBuffer);
+		
+		byte typeByte = buf.get();
+		EntityType type = EntityType.fromNum(typeByte);
+		
+		Entity e;
+		switch(type) {
+		case PLAYER: e = new Player(PlayerSide.LEFT_PLAYER); break;
+		case ASTEROID: e = Pools.ASTEROID.createEmpty(); break;
+		case BULLET: e = Pools.BULLET.createEmpty(); break;
+		case MIRROR: e = new Mirror(null, null, null, 0.0, false); break;
+		case WORMHOLE: e = new Wormhole(null); break;
+		default: System.err.println("Unknown entity type: " + typeByte); return;
 		}
+		
+		EntityView v = createViewForEntity(type, e);
+		view.addDrawable(v, getZIndexForEntityType(type));
+		view.addUpdatable(v);
+		viewMap.put(e, v);
+		
+		model.addEntity(e);
 	}
 
 	private void doRemoveEntity(UUID uuid) {
@@ -264,9 +273,9 @@ public class ClientController extends GameStateController {
 		}
 	}
 
-	private void doUpdateEntity(Entity updatedEntity) {
-		Entity entity = model.getEntityById(updatedEntity.getUuid());
-		// TODO: entity.mergeFrom(updatedEntity); and byte buffer
+	private void doUpdateEntity(UUID uuid, byte[] entityBuffer) {
+		Entity entity = model.getEntityById(uuid);
+		entity.deserializeFrom(model, ByteBuffer.wrap(entityBuffer));
 	}
 
 	private void doLocationUpdate(UUID entityId, Vector2D newPosition) {

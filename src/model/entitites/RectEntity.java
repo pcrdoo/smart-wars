@@ -1,7 +1,9 @@
 package model.entitites;
 
 import java.awt.Rectangle;
+import java.nio.ByteBuffer;
 
+import model.Model;
 import util.Vector2D;
 
 public abstract class RectEntity extends Entity {
@@ -25,4 +27,15 @@ public abstract class RectEntity extends Entity {
 				(int) size.getX(), (int) size.getY());
 	}
 
+	@Override
+	public void serializeTo(ByteBuffer buffer) {
+		super.serializeTo(buffer);
+		size.serializeTo(buffer);
+	}
+	
+	@Override
+	public void deserializeFrom(Model model, ByteBuffer buffer) {
+		super.deserializeFrom(model, buffer);
+		size = Vector2D.deserializeFrom(buffer);
+	}
 }

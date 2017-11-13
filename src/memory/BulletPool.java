@@ -12,7 +12,7 @@ public class BulletPool extends ObjectPool<Bullet> {
 	}
 
 	@Override
-	protected Bullet createEmpty() {
+	public Bullet createEmpty() {
 		return new Bullet();
 	}
 	
