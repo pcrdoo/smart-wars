@@ -90,7 +90,7 @@ public class GameModeDialog extends JDialog {
 
 		hostnamePanel = new JPanel();
 		hostnamePanel.setLayout(new BoxLayout(hostnamePanel, BoxLayout.X_AXIS));
-		hostnameLabel = new JLabel("Host");
+		hostnameLabel = new JLabel("Host ");
 		hostnameField = new JTextField("", 20);
 		hostnamePanel.add(hostnameLabel);
 		hostnamePanel.add(Box.createRigidArea(new Dimension(40, 0)));
@@ -99,7 +99,7 @@ public class GameModeDialog extends JDialog {
 
 		portPanel = new JPanel();
 		portPanel.setLayout(new BoxLayout(portPanel, BoxLayout.X_AXIS));
-		portLabel = new JLabel("Port");
+		portLabel = new JLabel("Port ");
 		portField = new JTextField("", 5);
 		portPanel.add(portLabel);
 		portPanel.add(Box.createRigidArea(new Dimension(42, 0)));
