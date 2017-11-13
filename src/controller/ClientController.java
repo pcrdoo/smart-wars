@@ -321,7 +321,8 @@ public class ClientController extends GameStateController {
 			}
 			viewMap.remove(entity);
 		} else {
-			throw new RuntimeException(
+			// TODO: back to rte
+			System.err.println(
 					"Error: No view found for entity " + entity.getUuid() + " of type " + entity.getClass());
 		}
 	}
