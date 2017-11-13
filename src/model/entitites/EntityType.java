@@ -1,5 +1,11 @@
 package model.entitites;
 
+import model.Asteroid;
+import model.Bullet;
+import model.Mirror;
+import model.Player;
+import model.Wormhole;
+
 public enum EntityType {
 	PLAYER(0x01),
 	BULLET(0x02),
@@ -24,6 +30,22 @@ public enum EntityType {
 		case 0x03: return ASTEROID;
 		case 0x04: return MIRROR;
 		case 0x05: return WORMHOLE;
+		}
+		
+		return null;
+	}
+	
+	public static EntityType fromEntity(Entity e) {
+		if (e instanceof Player) {
+			return PLAYER;
+		} else if (e instanceof Bullet) {
+			return BULLET;
+		} else if (e instanceof Asteroid) {
+			return ASTEROID;
+		} else if (e instanceof Mirror) {
+			return MIRROR;
+		} else if (e instanceof Wormhole) {
+			return WORMHOLE;
 		}
 		
 		return null;

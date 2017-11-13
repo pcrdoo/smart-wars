@@ -10,6 +10,7 @@ import model.Mirror;
 import model.Player;
 import model.Wormhole;
 import model.entitites.Entity;
+import model.entitites.EntityType;
 import multiplayer.Message;
 import multiplayer.MessageType;
 import multiplayer.OpenPipes;
@@ -21,6 +22,7 @@ public class ServerEventBroadcaster {
 	public void broadcastAddEntity(Entity entity) {
 		Message message = new Message(MessageType.ENTITY_ADDED);
 		ByteBuffer buf = ByteBuffer.allocate(1024);
+		buf.put((byte)EntityType.fromEntity(entity).getNum());
 		entity.serializeTo(buf);
 		byte[] bytes = new byte[buf.position()];
 		buf.position(0);

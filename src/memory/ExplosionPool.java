@@ -10,7 +10,7 @@ public class ExplosionPool extends ObjectPool<Explosion> {
 	}
 
 	@Override
-	protected Explosion createEmpty() {
+	public Explosion createEmpty() {
 		return new Explosion();
 	}
 
