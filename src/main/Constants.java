@@ -37,7 +37,7 @@ public class Constants {
 
 	// Asteroid
 	public static final double ASTEROID_SPAWN_PROBABILITY = 0.9; // per second
-	public static final int ASTEROID_TYPE_COUNT = 6;
+	public static final int ASTEROID_TYPE_COUNT = 7;
 	public static final int ASTEROID_SPRITES_X = 4;
 	public static final int ASTEROID_SPRITES_Y = 4;
 	public static final int ASTEROID_SPAWN_X_MIN = (int) (LEFT_PLAYER_START_POS.getX() + 80);
