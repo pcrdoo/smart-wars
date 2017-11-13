@@ -407,7 +407,7 @@ public class ClientController extends GameStateController {
 	}
 	
 	public void handleKeyDown(int keyCode) {
-		if (keyboardState.get(keyCode)) {
+		if (keyboardState.containsKey(keyCode) && keyboardState.get(keyCode)) {
 			return;
 		}
 		
@@ -437,7 +437,7 @@ public class ClientController extends GameStateController {
 	}
 
 	public void handleKeyUp(int keyCode) {
-		if (!keyboardState.get(keyCode)) {
+		if (!keyboardState.containsKey(keyCode) || !keyboardState.get(keyCode)) {
 			return;
 		}
 		
