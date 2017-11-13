@@ -16,6 +16,7 @@ import debug.PerformanceMonitor;
 import debug.PerformanceOverlay;
 import memory.Pools;
 import model.Model;
+import multiplayer.LocalMessageQueue;
 import multiplayer.LocalPipe;
 import rafgfxlib.GameFrame;
 import util.ImageCache;
@@ -110,9 +111,10 @@ public class GameWindow extends GameFrame implements GameStarter {
 				// TODO: how to handle
 			}
 		} else {
-			LocalPipe pipe = new LocalPipe();
-			localServerController.setLocalPipe(pipe);
-			controller.setLocalPipe(pipe);
+			LocalMessageQueue clientToServer = new LocalMessageQueue();
+			LocalMessageQueue serverToClient = new LocalMessageQueue();
+			localServerController.setLocalPipe(new LocalPipe(clientToServer, serverToClient));
+			controller.setLocalPipe(new LocalPipe(serverToClient, clientToServer));
 			/*
 			 * model.updatePlayerId(PlayerSide.LEFT_PLAYER,
 			 * model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).getUuid());
