@@ -56,6 +56,8 @@ public class Constants {
 	public static final double ASTEROID_PUSH_VELOCITY_INTENSITY = 2;
 	public static final double ASTEROID_PUSH_POSITION_INTENSITY = 2;
 	
+	public static final double KHALED_PROBABILITY = 0.05;
+	
 	// Mirror
 	public static final double MIRROR_MAGIC_COOLDOWN = 5;
 	public static final double MIRROR_VELOCITY = 300;

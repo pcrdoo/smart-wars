@@ -1,7 +1,6 @@
 package controller;
 
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -127,16 +126,16 @@ public class ServerController extends GameStateController {
 				if (gameMode == GameMode.NETWORK) {
 					broadcaster.broadcastNewGameStarting();
 				}
-				
+
 				SwingUtilities.invokeLater(() -> {
 					gameStarter.startGame(); // start a new game
 				});
-				
+
 				OpenPipes.getInstance().writeScheduledMessagesOnAll();
 			}
 			return;
 		}
-		
+
 		fireGuns(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER));
 		fireGuns(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER));
 
@@ -146,7 +145,7 @@ public class ServerController extends GameStateController {
 		maybeSpawnWormholes(dt);
 		maybeSpawnAsteroids(dt);
 		cullEntities(getEntitiesToCull());
-		
+
 		maybeSendLocationUpdate(dt);
 		checkGameOver();
 		OpenPipes.getInstance().writeScheduledMessagesOnAll();
@@ -166,7 +165,7 @@ public class ServerController extends GameStateController {
 		while (pipe.hasMessages()) {
 			messages.add(pipe.readMessage(model));
 		}
-		
+
 		for (Message message : messages) {
 			if (!(message instanceof PlayerControlMessage)) {
 				throw new RuntimeException("Invalid message from the client with type " + message.getType());
@@ -295,7 +294,13 @@ public class ServerController extends GameStateController {
 		timeToNextAsteroidSpawn -= dt;
 		if (timeToNextAsteroidSpawn <= 0) {
 			if (asteroidRandom.nextDouble() <= Constants.ASTEROID_SPAWN_PROBABILITY) {
-				int type = asteroidRandom.nextInt(Constants.ASTEROID_TYPE_COUNT);
+				// Any type that's not Khaled.
+				int type = asteroidRandom.nextInt(Constants.ASTEROID_TYPE_COUNT - 1);
+				// Spawn Khaled.
+				if (asteroidRandom.nextDouble() < Constants.KHALED_PROBABILITY) {
+					type = Constants.ASTEROID_TYPE_COUNT - 1;
+				}
+				
 				int frame = asteroidRandom.nextInt(Constants.ASTEROID_SPRITES_X * Constants.ASTEROID_SPRITES_Y);
 				double spawnXRange = Constants.ASTEROID_SPAWN_X_MAX - Constants.ASTEROID_SPAWN_X_MIN;
 				double spawnX = asteroidRandom.nextDouble() * spawnXRange + Constants.ASTEROID_SPAWN_X_MIN;
