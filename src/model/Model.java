@@ -160,4 +160,11 @@ public class Model extends NetworkObject {
 	public GameState getGameState() {
 		return gameState;
 	}
+	
+	public void updatePlayerId(PlayerSide side, UUID uuid) {
+		Player player = getPlayerOnSide(side);
+		entities.remove(player.getUuid());
+		player.setUuid(uuid);
+		entities.put(uuid, player);
+	}
 }

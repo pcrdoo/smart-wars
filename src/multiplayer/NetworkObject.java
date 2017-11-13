@@ -18,6 +18,10 @@ public class NetworkObject {
 		return uuid;
 	}
 	
+	public void setUuid(UUID uuid) {
+		this.uuid = uuid;
+	}
+	
 	public void serializeTo(ByteBuffer buffer) {
 		SerializationHelpers.serializeUuid(buffer, uuid);
 	}

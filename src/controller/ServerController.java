@@ -45,6 +45,7 @@ public class ServerController extends GameStateController {
 	private int playersReadyForRestart;
 	private ServerEventBroadcaster broadcaster;
 	private HashMap<PlayerSide, Pipe> playerPipes;
+	private Pipe localPlayersPipe;
 	private GameMode gameMode;
 
 	public ServerController(GameStarter gameStarter, ServerView view, Model model, GameMode gameMode) {
@@ -59,6 +60,7 @@ public class ServerController extends GameStateController {
 		timeToNextWormholeSpawn = Constants.WORMHOLE_SPAWN_TIME;
 		timeToNextLocationUpdate = Constants.LOCATION_UPDATE_TIME;
 		asteroidRandom = new Random();
+		playerPipes = new HashMap<>();
 	}
 
 	@Override
@@ -73,6 +75,8 @@ public class ServerController extends GameStateController {
 				OpenPipes.getInstance().addPipe(rightPipe);
 				Message sideAssignmentMessage = new Message(MessageType.SIDE_ASSIGNMENT);
 				sideAssignmentMessage.addToPayload(PlayerSide.RIGHT_PLAYER);
+				sideAssignmentMessage.addToPayload(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).getUuid());
+				sideAssignmentMessage.addToPayload(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).getUuid());
 				rightPipe.scheduleMessageWrite(sideAssignmentMessage);
 			} else {
 				Pipe leftPipe = new NetworkPipe(socket);
@@ -80,6 +84,8 @@ public class ServerController extends GameStateController {
 				OpenPipes.getInstance().addPipe(leftPipe);
 				Message sideAssignmentMessage = new Message(MessageType.SIDE_ASSIGNMENT);
 				sideAssignmentMessage.addToPayload(PlayerSide.LEFT_PLAYER);
+				sideAssignmentMessage.addToPayload(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).getUuid());
+				sideAssignmentMessage.addToPayload(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).getUuid());
 				leftPipe.scheduleMessageWrite(sideAssignmentMessage);
 			}
 		}
@@ -92,8 +98,7 @@ public class ServerController extends GameStateController {
 
 	@Override
 	public void setLocalPipe(LocalPipe pipe) {
-		playerPipes.put(PlayerSide.LEFT_PLAYER, pipe);
-		playerPipes.put(PlayerSide.RIGHT_PLAYER, pipe);
+		localPlayersPipe = pipe;
 		OpenPipes.getInstance().addPipe(pipe);
 	}
 
@@ -119,13 +124,20 @@ public class ServerController extends GameStateController {
 	}
 
 	private void checkForIncomingMessages() {
-		checkForPlayerMessages(playerPipes.get(PlayerSide.LEFT_PLAYER));
-		checkForPlayerMessages(playerPipes.get(PlayerSide.RIGHT_PLAYER));
+		if (gameMode == GameMode.NETWORK) {
+			checkForPlayerMessages(playerPipes.get(PlayerSide.LEFT_PLAYER));
+			checkForPlayerMessages(playerPipes.get(PlayerSide.RIGHT_PLAYER));
+		} else {
+			checkForPlayerMessages(localPlayersPipe);
+		}
 	}
 
 	private void checkForPlayerMessages(Pipe pipe) {
+		ArrayList<Message> messages = new ArrayList<>();
 		while (pipe.hasMessages()) {
-			Message message = pipe.readMessage();
+			messages.add(pipe.readMessage());
+		}
+		for (Message message : messages) {
 			if (message.getType() != MessageType.PLAYER_CONTROL) {
 				throw new RuntimeException("Invalid message from the client with type " + message.getType());
 			}

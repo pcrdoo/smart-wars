@@ -16,6 +16,7 @@ import debug.PerformanceMonitor;
 import debug.PerformanceOverlay;
 import memory.Pools;
 import model.Model;
+import model.PlayerSide;
 import multiplayer.LocalPipe;
 import rafgfxlib.GameFrame;
 import util.ImageCache;
@@ -67,8 +68,6 @@ public class GameWindow extends GameFrame implements GameStarter {
 		ImageCache.getInstance().preload(Constants.IMAGES_TO_PRELOAD);
 		Pools.repopulate();
 
-		System.out.println(gameMode + " " + serverAddress);
-
 		model = new Model();
 		localServerModel = new Model();
 		view = new ClientView();
@@ -110,10 +109,12 @@ public class GameWindow extends GameFrame implements GameStarter {
 			}
 		} else {
 			LocalPipe pipe = new LocalPipe();
-			controller.setLocalPipe(pipe);
 			localServerController.setLocalPipe(pipe);
+			controller.setLocalPipe(pipe);
+			model.updatePlayerId(PlayerSide.LEFT_PLAYER, localServerModel.getPlayerOnSide(PlayerSide.LEFT_PLAYER).getUuid());
+			model.updatePlayerId(PlayerSide.RIGHT_PLAYER, localServerModel.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).getUuid());
 		}
-		
+
 		startThread();
 		loadingWindow.setVisible(false);
 		getWindow().setVisible(true);

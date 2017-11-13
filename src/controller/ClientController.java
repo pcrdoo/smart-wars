@@ -91,7 +91,7 @@ public class ClientController extends GameStateController {
 		rightPlayerControls.put(Control.LONG_MIRROR_MAGIC, KeyEvent.VK_L);
 
 		initKeyboardState();
-
+		
 		viewMap.put(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER), leftPlayerView);
 		viewMap.put(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER), rightPlayerView);
 	}
@@ -106,6 +106,8 @@ public class ClientController extends GameStateController {
 		}
 		PlayerSide side = (PlayerSide) message.getPayload().get(0);
 		sidesToControl.add(side);
+		model.updatePlayerId(PlayerSide.LEFT_PLAYER, (UUID) message.getPayload().get(1));
+		model.updatePlayerId(PlayerSide.RIGHT_PLAYER, (UUID) message.getPayload().get(2));
 	}
 
 	@Override
@@ -153,8 +155,11 @@ public class ClientController extends GameStateController {
 	}
 
 	private void receiveUpdates() {
+		ArrayList<Message> messages = new ArrayList<>();
 		while (serverPipe.hasMessages()) {
-			Message message = serverPipe.readMessage();
+			messages.add(serverPipe.readMessage());
+		}
+		for (Message message : messages) {
 			switch (message.getType()) {
 			case ENTITY_ADDED:
 				doAddEntity((byte[]) message.getPayload().get(0));
@@ -210,50 +215,76 @@ public class ClientController extends GameStateController {
 	}
 
 	private EntityView createViewForEntity(EntityType t, Entity e) {
-		switch(t) {
-		case ASTEROID: return Pools.ASTEROID_VIEW.create((Asteroid) e);
-		case BULLET: return Pools.BULLET_VIEW.create((Bullet) e);
-		case PLAYER: return new PlayerView((Player) e);
-		case MIRROR: return new MirrorView((Mirror) e);
-		case WORMHOLE: return new WormholeView((Wormhole) e);
-		default: System.err.println("Unknown entity type: " + t.getNum()); return null;
+		switch (t) {
+		case ASTEROID:
+			return Pools.ASTEROID_VIEW.create((Asteroid) e);
+		case BULLET:
+			return Pools.BULLET_VIEW.create((Bullet) e);
+		case PLAYER:
+			return new PlayerView((Player) e);
+		case MIRROR:
+			return new MirrorView((Mirror) e);
+		case WORMHOLE:
+			return new WormholeView((Wormhole) e);
+		default:
+			System.err.println("Unknown entity type: " + t.getNum());
+			return null;
 		}
 	}
-	
+
 	private int getZIndexForEntityType(EntityType t) {
-		switch(t) {
-		case ASTEROID: return Constants.Z_ASTEROID;
-		case BULLET: return Constants.Z_BULLETS;
-		case PLAYER: return Constants.Z_PLAYER;
-		case MIRROR: return Constants.Z_MIRROR;
-		case WORMHOLE: return Constants.Z_WORMHOLE;
-		default: System.err.println("Unknown entity type: " + t.getNum()); return -1;
-		}		
+		switch (t) {
+		case ASTEROID:
+			return Constants.Z_ASTEROID;
+		case BULLET:
+			return Constants.Z_BULLETS;
+		case PLAYER:
+			return Constants.Z_PLAYER;
+		case MIRROR:
+			return Constants.Z_MIRROR;
+		case WORMHOLE:
+			return Constants.Z_WORMHOLE;
+		default:
+			System.err.println("Unknown entity type: " + t.getNum());
+			return -1;
+		}
 	}
-		
+
 	// TODO This is why passing an object was a bad idea, definitely serialize on
 	// your own
 	private void doAddEntity(byte[] entityBuffer) {
 		ByteBuffer buf = ByteBuffer.wrap(entityBuffer);
-		
+
 		byte typeByte = buf.get();
 		EntityType type = EntityType.fromNum(typeByte);
-		
+
 		Entity e;
-		switch(type) {
-		case PLAYER: e = new Player(PlayerSide.LEFT_PLAYER); break;
-		case ASTEROID: e = Pools.ASTEROID.createEmpty(); break;
-		case BULLET: e = Pools.BULLET.createEmpty(); break;
-		case MIRROR: e = new Mirror(null, null, null, 0.0, false); break;
-		case WORMHOLE: e = new Wormhole(null); break;
-		default: System.err.println("Unknown entity type: " + typeByte); return;
+		switch (type) {
+		case PLAYER:
+			e = new Player(PlayerSide.LEFT_PLAYER);
+			break;
+		case ASTEROID:
+			e = Pools.ASTEROID.createEmpty();
+			break;
+		case BULLET:
+			e = Pools.BULLET.createEmpty();
+			break;
+		case MIRROR:
+			e = new Mirror(null, null, null, 0.0, false);
+			break;
+		case WORMHOLE:
+			e = new Wormhole(null);
+			break;
+		default:
+			System.err.println("Unknown entity type: " + typeByte);
+			return;
 		}
-		
+
 		EntityView v = createViewForEntity(type, e);
 		view.addDrawable(v, getZIndexForEntityType(type));
 		view.addUpdatable(v);
 		viewMap.put(e, v);
-		
+
 		model.addEntity(e);
 	}
 
@@ -366,6 +397,7 @@ public class ClientController extends GameStateController {
 		if (!keyboardState.get(controls.get(Control.MOVE_UP)) && !keyboardState.get(controls.get(Control.MOVE_DOWN))) {
 			sendActionToServer(player.getPlayerSide(), Control.STOP);
 		}
+		// TODO: Don't send stop every time (fix key press logic)
 	}
 
 	private void checkDisintegratingAsteroids() {
