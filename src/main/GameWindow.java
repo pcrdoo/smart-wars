@@ -9,12 +9,14 @@ import java.awt.event.KeyEvent;
 import java.net.InetSocketAddress;
 
 import controller.ClientController;
+import controller.ServerController;
 import debug.DebugDisplay;
 import debug.Measurement;
 import debug.PerformanceMonitor;
 import debug.PerformanceOverlay;
 import memory.Pools;
 import model.Model;
+import multiplayer.LocalPipe;
 import rafgfxlib.GameFrame;
 import util.ImageCache;
 import view.ClientView;
@@ -23,19 +25,25 @@ import view.ClientView;
 public class GameWindow extends GameFrame implements GameStarter {
 	private long lastUpdateTime;
 
+	private Model localServerModel;
 	private Model model;
 	private ClientView view;
 	private ClientController controller;
+	private ServerController localServerController;
 	private PerformanceOverlay po;
 	private LoadingWindow loadingWindow;
 	private GraphicsDevice device;
 	private DisplayMode oldDisplayMode;
 	private boolean fullscreen;
+	private GameMode gameMode;
+	private InetSocketAddress serverAddress;
 
-	public GameWindow(boolean fullscreen) {
+	public GameWindow(boolean fullscreen, GameMode gameMode, InetSocketAddress serverAddress) {
 		super("Smart Wars", Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
 
 		this.fullscreen = fullscreen;
+		this.gameMode = gameMode;
+		this.serverAddress = serverAddress;
 		loadingWindow = new LoadingWindow();
 		loadingWindow.setVisible(true);
 
@@ -59,13 +67,18 @@ public class GameWindow extends GameFrame implements GameStarter {
 		ImageCache.getInstance().preload(Constants.IMAGES_TO_PRELOAD);
 		Pools.repopulate();
 
-		model = new Model();
-		view = new ClientView();
-		controller = new ClientController(this, view, model, new InetSocketAddress("localhost", 12345));
-		// TODO: screen to enter hostname/ip
-		lastUpdateTime = System.nanoTime();
+		System.out.println(gameMode + " " + serverAddress);
 
-		loadingWindow.setVisible(false);
+		model = new Model();
+		localServerModel = new Model();
+		view = new ClientView();
+		if (gameMode == GameMode.NETWORK) {
+			controller = new ClientController(this, view, model, gameMode, serverAddress);
+		} else {
+			localServerController = new ServerController(this, null, localServerModel, gameMode);
+			controller = new ClientController(this, view, model, gameMode, null);
+		}
+		lastUpdateTime = System.nanoTime();
 
 		setUpdateRate(60);
 		setBackgroundClear(false);
@@ -87,14 +100,22 @@ public class GameWindow extends GameFrame implements GameStarter {
 			}
 		}
 
-		// Run game thread after sync
-		try {
-			controller.setUpConnections();
-		} catch (Exception ex) {
-			System.out.println("Failed to start game. Crash?");
-			// TODO: how to handle
+		if (gameMode == GameMode.NETWORK) {
+			// Run game thread after sync
+			try {
+				controller.setUpConnections();
+			} catch (Exception ex) {
+				System.out.println("Failed to start game. Crash?");
+				// TODO: how to handle
+			}
+		} else {
+			LocalPipe pipe = new LocalPipe();
+			controller.setLocalPipe(pipe);
+			localServerController.setLocalPipe(pipe);
 		}
+		
 		startThread();
+		loadingWindow.setVisible(false);
 		getWindow().setVisible(true);
 	}
 
@@ -132,6 +153,10 @@ public class GameWindow extends GameFrame implements GameStarter {
 		Measurement ms;
 		PerformanceMonitor m = PerformanceMonitor.getInstance();
 		synchronized (this) {
+			if (gameMode == GameMode.LOCAL) {
+				localServerController.update(dt);
+				localServerModel.update(dt);
+			}
 			ms = m.measure("ControllerUpdateTotal");
 			controller.update(dt);
 			ms.done();

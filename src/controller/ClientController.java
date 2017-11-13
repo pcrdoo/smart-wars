@@ -23,9 +23,11 @@ import model.PlayerSide;
 import model.Wormhole;
 import model.entitites.Entity;
 import model.entitites.EntityType;
+import multiplayer.LocalPipe;
 import multiplayer.Message;
 import multiplayer.MessageType;
 import multiplayer.NetworkPipe;
+import multiplayer.Pipe;
 import multiplayer.OpenPipes;
 import multiplayer.Side;
 import util.Vector2D;
@@ -51,23 +53,19 @@ public class ClientController extends GameStateController {
 	private ArrayList<AsteroidView> disintegratingAsteroids;
 
 	private InetSocketAddress serverAddress;
-	private NetworkPipe serverPipe;
+	private Pipe serverPipe;
 	private ArrayList<PlayerSide> sidesToControl; // 1 on network, 2 on local
 	private GameMode gameMode;
 
-	public ClientController(GameStarter gameStarter, ClientView view, Model model, InetSocketAddress serverAddress) {
+	public ClientController(GameStarter gameStarter, ClientView view, Model model, GameMode gameMode,
+			InetSocketAddress serverAddress) {
 		super();
 		this.view = view;
 		this.model = model;
 		this.gameStarter = gameStarter;
 		sidesToControl = new ArrayList<>();
-		if (serverAddress != null) {
-			gameMode = GameMode.NETWORK;
-			this.serverAddress = serverAddress;
-		} else {
-			// LOCAL
-			gameMode = GameMode.LOCAL;
-		}
+		this.gameMode = gameMode;
+		this.serverAddress = serverAddress;
 
 		viewMap = new HashMap<>();
 		disintegratingAsteroids = new ArrayList<>();
@@ -100,22 +98,21 @@ public class ClientController extends GameStateController {
 
 	@Override
 	public void setUpConnections() throws IOException {
-		if (gameMode == GameMode.NETWORK) {
-			Socket socket = new Socket(serverAddress.getHostName(), serverAddress.getPort());
-			OpenPipes.getInstance().setSide(Side.CLIENT);
-			serverPipe = new NetworkPipe(socket);
-			OpenPipes.getInstance().addPipe(serverPipe);
-			Message message = serverPipe.readMessage();
-			if (message.getType() != MessageType.SIDE_ASSIGNMENT) {
-				throw new RuntimeException("First message from server is not SIDE_ASSIGNMENT");
-			}
-			PlayerSide side = (PlayerSide) message.getPayload().get(0);
-			sidesToControl.add(side);
-		} else {
-			// TODO: enable single player again
-			sidesToControl.add(PlayerSide.LEFT_PLAYER);
-			sidesToControl.add(PlayerSide.RIGHT_PLAYER);
+		Socket socket = new Socket(serverAddress.getHostName(), serverAddress.getPort());
+		serverPipe = new NetworkPipe(socket);
+		Message message = serverPipe.readMessage();
+		if (message.getType() != MessageType.SIDE_ASSIGNMENT) {
+			throw new RuntimeException("First message from server is not SIDE_ASSIGNMENT");
 		}
+		PlayerSide side = (PlayerSide) message.getPayload().get(0);
+		sidesToControl.add(side);
+	}
+
+	@Override
+	public void setLocalPipe(LocalPipe pipe) {
+		this.serverPipe = pipe;
+		sidesToControl.add(PlayerSide.LEFT_PLAYER);
+		sidesToControl.add(PlayerSide.RIGHT_PLAYER);
 	}
 
 	private void initKeyboardState() {

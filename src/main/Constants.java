@@ -171,9 +171,7 @@ public class Constants {
 	public static final int PERF_NAME_MAX_WIDTH = 26;
 	
 	// Multiplayer
-	// TODO: Remove these
-	public static final String SERVER_ADDRESS = "localhost";
-	public static final int SERVER_PORT = 24572;
+	public static final int SERVER_PORT = 24570;
 	public static final double LOCATION_UPDATE_TIME = 0.1;
 	
 }

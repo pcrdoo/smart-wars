@@ -1,10 +1,12 @@
 package main;
 
 import java.awt.Color;
+import java.net.InetSocketAddress;
 
 import debug.DebugDisplay;
 import debug.PerformanceMonitor;
 import debug.PerformanceOverlay;
+import view.GameModeDialog;
 
 public class ClientMain {
 
@@ -111,7 +113,10 @@ public class ClientMain {
 			}
 		}
 		
-		GameWindow gw = new GameWindow(fullscreen);
+		GameMode gameMode=null;
+		InetSocketAddress serverAddress=null;
+		GameModeDialog gameModeDialog = new GameModeDialog();
+		GameWindow gw = new GameWindow(fullscreen, gameModeDialog.getGameMode(),gameModeDialog.getAddress());
 		gw.usePerformanceOverlay(po);
 		gw.initGameWindow(fullscreen);
 		gw.startGame();
