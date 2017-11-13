@@ -55,5 +55,4 @@ public abstract class BitmapEntity extends Entity {
 				(int) (position.getY() - collisionMask.getHeight() / 2), collisionMask.getWidth(),
 				collisionMask.getHeight());
 	}
-
 }

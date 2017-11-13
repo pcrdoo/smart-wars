@@ -7,7 +7,8 @@ import model.Model;
 import util.Vector2D;
 
 public abstract class RectEntity extends Entity {
-
+	private final static int SERIALIZED_SIZE = Vector2D.getSerializedSize();
+	
 	protected Vector2D size;
 
 	public RectEntity(Vector2D position, Vector2D velocity, Vector2D size) {
@@ -37,5 +38,10 @@ public abstract class RectEntity extends Entity {
 	public void deserializeFrom(Model model, ByteBuffer buffer) {
 		super.deserializeFrom(model, buffer);
 		size = Vector2D.deserializeFrom(buffer);
+	}
+	
+	@Override
+	public int getSerializedSize() {
+		return super.getSerializedSize() + SERIALIZED_SIZE;
 	}
 }

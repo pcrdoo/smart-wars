@@ -2,6 +2,9 @@ package multiplayer;
 
 import java.util.LinkedList;
 
+import model.Model;
+import multiplayer.messages.Message;
+
 public class LocalPipe implements Pipe {
 
 	private LinkedList<Message> queue;
@@ -12,7 +15,6 @@ public class LocalPipe implements Pipe {
 
 	@Override
 	public void scheduleMessageWrite(Message message) {
-		System.out.println("ADDED " + message.getType());
 		queue.add(message);
 	}
 
@@ -27,9 +29,8 @@ public class LocalPipe implements Pipe {
 	}
 
 	@Override
-	public Message readMessage() {
+	public Message readMessage(Model model) {
 		Message message = queue.getFirst();
-		System.out.println("READ " + message.getType());
 		queue.pop();
 		return message;
 	}

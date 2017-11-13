@@ -10,7 +10,8 @@ import multiplayer.SerializationHelpers;
 import util.Vector2D;
 
 public class Mirror extends LineEntity {
-
+	private final static int SERIALIZED_SIZE = 16 + 1 + 1;
+	
 	private Player owner;
 	private MirrorState mirrorState;
 	private boolean isLong;
@@ -86,5 +87,10 @@ public class Mirror extends LineEntity {
 		}
 		
 		isLong = buffer.get() == 1;
+	}
+	
+	@Override
+	public int getSerializedSize() {
+		return super.getSerializedSize() + SERIALIZED_SIZE;
 	}
 }

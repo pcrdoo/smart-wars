@@ -37,7 +37,7 @@ public class Model extends NetworkObject {
 		wormholes = new ArrayList<>();
 
 		entities = new HashMap<>();
-		synchronized(entities) {
+		synchronized (entities) {
 			addEntity(players.get(PlayerSide.LEFT_PLAYER));
 			addEntity(players.get(PlayerSide.RIGHT_PLAYER));
 		}
@@ -49,73 +49,74 @@ public class Model extends NetworkObject {
 
 	public void update(double dt) {
 		if (gameState == GameState.RUNNING) {
-			synchronized(entities) {
+			synchronized (entities) {
 				for (Entity entity : entities.values()) {
 					entity.update(dt);
 				}
 			}
 		}
-		
+
 		PerformanceMonitor m = PerformanceMonitor.getInstance();
 		m.recordStatistic("CountEntities", entities.size());
 		m.recordStatistic("CountBullets", bullets.size());
 		m.recordStatistic("CountAsteroids", asteroids.size());
 		m.recordStatistic("CountMirrors", mirrors.size());
 		m.recordStatistic("CountWormholes", wormholes.size());
-		
+
 		DebugDisplay dd = DebugDisplay.getInstance();
 		if (dd.isEnabled()) {
 			for (Entity e : entities.values()) {
 				dd.addRectangle("EntityBoundingBoxes", e.getBoundingBox());
 			}
-			
+
 			dd.addOval("PlayerCircles", players.get(PlayerSide.LEFT_PLAYER).getBoundingBox());
 			dd.addOval("PlayerCircles", players.get(PlayerSide.RIGHT_PLAYER).getBoundingBox());
-			
+
 			for (Wormhole w : wormholes) {
 				dd.addOval("WormholeCircles", w.getBoundingBox());
 			}
-			
+
 			for (Mirror mr : mirrors) {
 				Vector2D pos = mr.getPosition();
 				Vector2D lv = mr.getLineVector();
-				
+
 				Vector2D tl = pos.sub(lv.scale(0.5)), br = pos.add(lv.scale(0.5));
-				dd.addLine("MirrorLines", new Point((int)tl.getX(), (int)tl.getY()), new Point((int)br.getX(), (int)br.getY()));
-				
+				dd.addLine("MirrorLines", new Point((int) tl.getX(), (int) tl.getY()),
+						new Point((int) br.getX(), (int) br.getY()));
+
 			}
 		}
 	}
 
 	public void addEntity(Entity entity) {
-		synchronized(entities) {
+		synchronized (entities) {
 			entities.put(entity.getUuid(), entity);
-			if(entity instanceof Bullet) {
-				bullets.add((Bullet)entity);
- 			} else if(entity instanceof Asteroid) {
- 				asteroids.add((Asteroid)entity);
- 			} else if(entity instanceof Mirror) {
- 				mirrors.add((Mirror)entity);
- 			} else if(entity instanceof Wormhole) {
- 				wormholes.add((Wormhole)entity);
- 			}
+			if (entity instanceof Bullet) {
+				bullets.add((Bullet) entity);
+			} else if (entity instanceof Asteroid) {
+				asteroids.add((Asteroid) entity);
+			} else if (entity instanceof Mirror) {
+				mirrors.add((Mirror) entity);
+			} else if (entity instanceof Wormhole) {
+				wormholes.add((Wormhole) entity);
+			}
 		}
 	}
-
+	int ai = 0;
 	public void removeEntity(Entity entity) {
-		synchronized(entities) {
-			entities.remove(entity);
-			if(entity instanceof Bullet) {
-				bullets.remove((Bullet)entity);
+		synchronized (entities) {
+			entities.remove(entity.getUuid());
+			if (entity instanceof Bullet) {
+				bullets.remove((Bullet) entity);
 				Pools.BULLET.free((Bullet) entity);
- 			} else if(entity instanceof Asteroid) {
- 				asteroids.remove((Asteroid)entity);
- 				Pools.ASTEROID.free((Asteroid) entity);
- 			} else if(entity instanceof Mirror) {
- 				mirrors.remove((Mirror)entity);
- 			} else if(entity instanceof Wormhole) {
- 				wormholes.remove((Wormhole)entity);
- 			}
+			} else if (entity instanceof Asteroid) {
+				asteroids.remove((Asteroid) entity);
+				Pools.ASTEROID.free((Asteroid) entity);
+			} else if (entity instanceof Mirror) {
+				mirrors.remove((Mirror) entity);
+			} else if (entity instanceof Wormhole) {
+				wormholes.remove((Wormhole) entity);
+			}
 		}
 	}
 
@@ -138,7 +139,7 @@ public class Model extends NetworkObject {
 	public Collection<Entity> getEntities() {
 		return entities.values();
 	}
-	
+
 	public Entity getEntityById(UUID id) {
 		return entities.get(id);
 	}
@@ -150,7 +151,7 @@ public class Model extends NetworkObject {
 			for (Asteroid a : asteroids) {
 				Pools.ASTEROID.free(a);
 			}
-			
+
 			for (Bullet b : bullets) {
 				Pools.BULLET.free(b);
 			}
@@ -160,11 +161,13 @@ public class Model extends NetworkObject {
 	public GameState getGameState() {
 		return gameState;
 	}
-	
+
 	public void updatePlayerId(PlayerSide side, UUID uuid) {
 		Player player = getPlayerOnSide(side);
 		entities.remove(player.getUuid());
 		player.setUuid(uuid);
 		entities.put(uuid, player);
+		
+		System.out.println("switcharoo happened on " + player);
 	}
 }

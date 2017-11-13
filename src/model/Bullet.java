@@ -10,6 +10,8 @@ import multiplayer.SerializationHelpers;
 import util.Vector2D;
 
 public class Bullet extends RectEntity implements Poolable {
+	private final static int SERIALIZED_SIZE = 16 + 4 + 4 + 8;
+	
 	private Player owner;
 	private double damage;
 	private int bounces;
@@ -109,5 +111,10 @@ public class Bullet extends RectEntity implements Poolable {
 		damage = buffer.getFloat();
 		bounces = buffer.getInt();
 		velocityChangeCooldown = buffer.getDouble();
+	}
+	
+	@Override
+	public int getSerializedSize() {
+		return super.getSerializedSize() + SERIALIZED_SIZE;
 	}
 }

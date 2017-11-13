@@ -2,6 +2,8 @@ package multiplayer;
 
 import java.util.ArrayList;
 
+import multiplayer.messages.Message;
+
 public class OpenPipes {
 	// Only server uses this.
 

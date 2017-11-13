@@ -8,7 +8,8 @@ import model.entitites.RoundEntity;
 import util.Vector2D;
 
 public class Wormhole extends RoundEntity {
-
+	private final static int SERIALIZED_SIZE = 8;
+	
 	private double timeToLive;
 
 	public Wormhole(Vector2D position) {
@@ -49,5 +50,9 @@ public class Wormhole extends RoundEntity {
 		super.deserializeFrom(model, buffer);
 		timeToLive = buffer.getDouble();
 	}
-
+	
+	@Override
+	public int getSerializedSize() {
+		return super.getSerializedSize() + SERIALIZED_SIZE;
+	}
 }

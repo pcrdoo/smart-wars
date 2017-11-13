@@ -8,7 +8,7 @@ import debug.PerformanceMonitor;
 import debug.PerformanceOverlay;
 import view.GameModeDialog;
 
-public class ClientMain {
+public class Main {
 
 	public static boolean isStringInArray(String needle, String[] haystack) {
 		for (int i = 0; i < haystack.length; i++) {
@@ -58,6 +58,7 @@ public class ClientMain {
 	public static void main(String[] args) {
 		PerformanceOverlay po = null;
 		boolean fullscreen = false;
+		boolean server = false;
 		
 		for (String arg : args) {
 			if (arg.equals("+perf")) {
@@ -107,19 +108,26 @@ public class ClientMain {
 				}
 			} else if (arg.equals("+fullscreen")) {
 				fullscreen = true;
+			} else if (arg.equals("+server")) {
+				server = true;
 			} else {
 				System.err.println("Invalid argument: " + arg);
 				return;
 			}
 		}
 		
-		GameMode gameMode=null;
-		InetSocketAddress serverAddress=null;
-		GameModeDialog gameModeDialog = new GameModeDialog();
-		GameWindow gw = new GameWindow(fullscreen, gameModeDialog.getGameMode(),gameModeDialog.getAddress());
-		gw.usePerformanceOverlay(po);
-		gw.initGameWindow(fullscreen);
-		gw.startGame();
+		if (server) {
+			HeadlessGameFrame gf = new HeadlessGameFrame();
+			gf.initGameWindow(false);
+			gf.startGame();
+		} else {
+			GameModeDialog gameModeDialog = new GameModeDialog();
+			GameWindow gw = new GameWindow(fullscreen, gameModeDialog.getGameMode(),gameModeDialog.getAddress());
+
+			gw.usePerformanceOverlay(po);
+			gw.initGameWindow(fullscreen);
+			gw.startGame();
+		}
 	}
 
 }

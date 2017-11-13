@@ -8,7 +8,8 @@ import model.Model;
 import util.Vector2D;
 
 public class LineEntity extends Entity {
-
+	private final static int SERIALIZED_SIZE = 4 + 8;
+	
 	protected double length;
 	protected double angle; // [-PI, PI]
 
@@ -71,5 +72,10 @@ public class LineEntity extends Entity {
 		super.deserializeFrom(model, buffer);
 		length = buffer.getFloat();
 		angle = buffer.getDouble();
+	}
+	
+	@Override
+	public int getSerializedSize() {
+		return super.getSerializedSize() + SERIALIZED_SIZE;
 	}
 }

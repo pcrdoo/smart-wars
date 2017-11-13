@@ -117,4 +117,8 @@ public class Vector2D {
 	public static Vector2D deserializeFrom(ByteBuffer buffer)  {
 		return new Vector2D(buffer.getFloat(), buffer.getFloat());
 	}
+	
+	public static int getSerializedSize() {
+		return 2 * 4;
+	}
 }

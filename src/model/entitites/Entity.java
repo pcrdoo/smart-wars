@@ -5,13 +5,15 @@ import java.lang.reflect.Field;
 import java.nio.ByteBuffer;
 
 import model.Model;
-import multiplayer.Message;
-import multiplayer.MessageType;
 import multiplayer.NetworkObject;
 import multiplayer.OpenPipes;
+import multiplayer.messages.Message;
+import multiplayer.messages.MessageType;
 import util.Vector2D;
 
 public abstract class Entity extends NetworkObject {
+	private final static int SERIALIZED_SIZE = 2 * Vector2D.getSerializedSize();
+	
 	protected Vector2D position;
 	protected Vector2D velocity; // pixels per second
 
@@ -28,11 +30,6 @@ public abstract class Entity extends NetworkObject {
 	}
 
 	public void update(double dt) {
-		if(position == null) {
-			System.out.println(this.getClass());
-		}
-		System.out.println((position == null) + " position nije null");
-		System.out.println((velocity == null) + " vel nije null");
 		position = position.add(velocity.scale(dt));
 	}
 
@@ -70,7 +67,11 @@ public abstract class Entity extends NetworkObject {
 		super.deserializeFrom(model, buffer);
 		position = Vector2D.deserializeFrom(buffer);
 		velocity = Vector2D.deserializeFrom(buffer);
-		System.out.println((position == null) + " position null");
-		System.out.println((velocity == null) + " vel null");
 	}
+	
+	@Override
+	public int getSerializedSize() {
+		return super.getSerializedSize() + SERIALIZED_SIZE;
+	}
+	
 }

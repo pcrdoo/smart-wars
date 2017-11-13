@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Random;
+import java.util.UUID;
 
 import main.Constants;
 import main.GameMode;
@@ -24,11 +25,10 @@ import model.Wormhole;
 import model.abilities.MirrorMagic;
 import model.entitites.Entity;
 import multiplayer.LocalPipe;
-import multiplayer.Message;
-import multiplayer.MessageType;
 import multiplayer.NetworkPipe;
 import multiplayer.OpenPipes;
 import multiplayer.Pipe;
+import multiplayer.messages.*;
 import util.Vector2D;
 import view.ServerView;
 
@@ -45,6 +45,7 @@ public class ServerController extends GameStateController {
 	private int playersReadyForRestart;
 	private ServerEventBroadcaster broadcaster;
 	private HashMap<PlayerSide, Pipe> playerPipes;
+	private HashMap<PlayerSide, Boolean> playerFiring;
 	private Pipe localPlayersPipe;
 	private GameMode gameMode;
 
@@ -54,39 +55,40 @@ public class ServerController extends GameStateController {
 		this.model = model;
 		this.gameStarter = gameStarter;
 		this.gameMode = gameMode;
-		broadcaster = new ServerEventBroadcaster();
+		broadcaster = new ServerEventBroadcaster(gameMode);
 		collisionController = new CollisionController(broadcaster, model);
 		timeToNextAsteroidSpawn = Constants.ASTEROID_SPAWN_TIME;
 		timeToNextWormholeSpawn = Constants.WORMHOLE_SPAWN_TIME;
 		timeToNextLocationUpdate = Constants.LOCATION_UPDATE_TIME;
 		asteroidRandom = new Random();
 		playerPipes = new HashMap<>();
+		playerFiring = new HashMap<>();
+		playerFiring.put(PlayerSide.LEFT_PLAYER, false);
+		playerFiring.put(PlayerSide.RIGHT_PLAYER, false);
 	}
 
 	@Override
 	public void setUpConnections() throws IOException {
 		ServerSocket serverSocket = new ServerSocket(Constants.SERVER_PORT);
 		// wait for two
+		UUID leftUuid = model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).getUuid(),
+				rightUuid = model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).getUuid();
+		
 		for (int i = 0; i < 2; i++) {
 			Socket socket = serverSocket.accept();
+			
 			if (playerPipes.containsKey(PlayerSide.LEFT_PLAYER)) {
 				Pipe rightPipe = new NetworkPipe(socket);
 				playerPipes.put(PlayerSide.RIGHT_PLAYER, rightPipe);
 				OpenPipes.getInstance().addPipe(rightPipe);
-				Message sideAssignmentMessage = new Message(MessageType.SIDE_ASSIGNMENT);
-				sideAssignmentMessage.addToPayload(PlayerSide.RIGHT_PLAYER);
-				sideAssignmentMessage.addToPayload(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).getUuid());
-				sideAssignmentMessage.addToPayload(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).getUuid());
-				rightPipe.scheduleMessageWrite(sideAssignmentMessage);
+				
+				rightPipe.scheduleMessageWrite(new SideAssignmentMessage(PlayerSide.RIGHT_PLAYER, leftUuid, rightUuid));
 			} else {
 				Pipe leftPipe = new NetworkPipe(socket);
 				playerPipes.put(PlayerSide.LEFT_PLAYER, leftPipe);
 				OpenPipes.getInstance().addPipe(leftPipe);
-				Message sideAssignmentMessage = new Message(MessageType.SIDE_ASSIGNMENT);
-				sideAssignmentMessage.addToPayload(PlayerSide.LEFT_PLAYER);
-				sideAssignmentMessage.addToPayload(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).getUuid());
-				sideAssignmentMessage.addToPayload(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).getUuid());
-				leftPipe.scheduleMessageWrite(sideAssignmentMessage);
+				
+				leftPipe.scheduleMessageWrite(new SideAssignmentMessage(PlayerSide.LEFT_PLAYER, leftUuid, rightUuid));
 			}
 		}
 		OpenPipes.getInstance().writeScheduledMessagesOnAll();
@@ -102,6 +104,18 @@ public class ServerController extends GameStateController {
 		OpenPipes.getInstance().addPipe(pipe);
 	}
 
+	private void fireGuns(Player player) {
+		if (!playerFiring.get(player.getPlayerSide())) {
+			return;
+		}
+		
+		Bullet bullet = player.fireBullet();
+		if (bullet != null) {
+			model.addEntity(bullet);
+			broadcaster.broadcastAddEntity(bullet);
+		}
+	}
+	
 	@Override
 	public void update(double dt) {
 		checkForIncomingMessages();
@@ -112,6 +126,10 @@ public class ServerController extends GameStateController {
 			}
 			return;
 		}
+		
+		fireGuns(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER));
+		fireGuns(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER));
+		
 		cullEntities(collisionController.checkBulletCollisions());
 		collisionController.checkAsteroidPlayerCollisions();
 		checkDyingWormholes();
@@ -135,23 +153,33 @@ public class ServerController extends GameStateController {
 	private void checkForPlayerMessages(Pipe pipe) {
 		ArrayList<Message> messages = new ArrayList<>();
 		while (pipe.hasMessages()) {
-			messages.add(pipe.readMessage());
+			messages.add(pipe.readMessage(model));
 		}
+		
 		for (Message message : messages) {
-			if (message.getType() != MessageType.PLAYER_CONTROL) {
+			if (!(message instanceof PlayerControlMessage)) {
 				throw new RuntimeException("Invalid message from the client with type " + message.getType());
 			}
-			PlayerSide side = (PlayerSide) (message.getPayload().get(0));
+			
+			PlayerSide side;
+			if (gameMode == GameMode.LOCAL) {
+				side = ((LocalPlayerControlMessage) message).getSide();
+			} else {
+				side = (pipe == playerPipes.get(PlayerSide.LEFT_PLAYER) ? PlayerSide.LEFT_PLAYER : PlayerSide.RIGHT_PLAYER);
+			}
+			
 			Player player = model.getPlayerOnSide(side);
-			Control control = (Control) (message.getPayload().get(1));
+			
+			Control control = ((PlayerControlMessage) message).getControl();
 			switch (control) {
-			case FIRE_GUN:
-				Bullet bullet = player.fireBullet();
-				if (bullet != null) {
-					model.addEntity(bullet);
-					broadcaster.broadcastAddEntity(bullet);
-				}
+			case START_GUN:
+				playerFiring.put(side, true);
 				break;
+				
+			case STOP_GUN:
+				playerFiring.put(side, false);
+				break;
+				
 			case MOVE_UP:
 				player.moveUp();
 				break;
@@ -171,6 +199,8 @@ public class ServerController extends GameStateController {
 				if (model.getGameState() != GameState.RUNNING) {
 					playersReadyForRestart++;
 				}
+				break;
+				
 			default:
 				throw new RuntimeException("Invalid control: " + control);
 			}

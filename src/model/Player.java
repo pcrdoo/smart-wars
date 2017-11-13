@@ -12,6 +12,8 @@ import util.Vector2D;
 import view.Updatable;
 
 public class Player extends RoundEntity {
+	private final static int SERIALIZED_SIZE = 1 + 4 + 4 + 4;
+	
 	private PlayerSide playerSide;
 	private double maxHealth;
 	private double currHealth;
@@ -121,5 +123,10 @@ public class Player extends RoundEntity {
 		maxHealth = buffer.getFloat();
 		currHealth = buffer.getFloat();
 		speed = buffer.getFloat();
+	}
+	
+	@Override
+	public int getSerializedSize() {
+		return super.getSerializedSize() + SERIALIZED_SIZE;
 	}
 }

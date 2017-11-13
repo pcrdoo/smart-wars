@@ -7,6 +7,8 @@ import model.Model;
 import util.Vector2D;
 
 public abstract class RoundEntity extends Entity {
+	private final static int SERIALIZED_SIZE = 4;
+	
 	protected double radius;
 
 	protected RoundEntity(Vector2D position, double radius) {
@@ -34,5 +36,10 @@ public abstract class RoundEntity extends Entity {
 	public void deserializeFrom(Model model, ByteBuffer buffer) {
 		super.deserializeFrom(model, buffer);
 		radius = buffer.getFloat();
+	}
+	
+	@Override
+	public int getSerializedSize() {
+		return super.getSerializedSize() + SERIALIZED_SIZE;
 	}
 }

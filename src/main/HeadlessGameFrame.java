@@ -12,7 +12,9 @@ import view.ServerView;
 @SuppressWarnings("serial")
 public class HeadlessGameFrame extends GameFrame implements GameStarter {
 	private long lastUpdateTime;
-
+	private long lastModelUpdateTime;
+	private long lastViewUpdateTime;
+	
 	private Model model;
 	private ServerView view;
 	private ServerController controller;
@@ -60,6 +62,9 @@ public class HeadlessGameFrame extends GameFrame implements GameStarter {
 			// TODO: how to handle
 		}
 		startThread();
+		lastUpdateTime = System.nanoTime();
+		lastModelUpdateTime = System.nanoTime();
+		lastViewUpdateTime = System.nanoTime();
 	}
 
 	@Override
@@ -76,16 +81,11 @@ public class HeadlessGameFrame extends GameFrame implements GameStarter {
 
 	@Override
 	public void update() {
-		long currentTime = System.nanoTime();
-		double dt = (double) (currentTime - lastUpdateTime) / 1e9;
-
-		synchronized (this) {
-			controller.update(dt);
-			model.update(dt);
-			view.update(dt);
-		}
-
+		controller.update((System.nanoTime() - lastUpdateTime) / 1.0e9);
 		lastUpdateTime = System.nanoTime();
+		model.update((System.nanoTime() - lastModelUpdateTime) / 1.0e9);
+		lastModelUpdateTime = System.nanoTime();
+		view.update(0);
 	}
 
 	@Override

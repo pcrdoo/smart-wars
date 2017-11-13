@@ -7,7 +7,8 @@ import model.Model;
 
 // Anything that can be sent over network
 public class NetworkObject {
-
+	private final static int SERIALIZED_SIZE = 16;
+	
 	protected UUID uuid;
 
 	public NetworkObject() {
@@ -28,5 +29,9 @@ public class NetworkObject {
 	
 	public void deserializeFrom(Model model, ByteBuffer buffer) {
 		uuid = SerializationHelpers.deserializeUuid(buffer);
+	}
+	
+	public int getSerializedSize() {
+		return SERIALIZED_SIZE;
 	}
 }

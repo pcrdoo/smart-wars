@@ -3,6 +3,7 @@ package controller;
 import java.nio.ByteBuffer;
 import java.util.Collection;
 
+import main.GameMode;
 import main.GameState;
 import model.Asteroid;
 import model.Bullet;
@@ -11,95 +12,71 @@ import model.Player;
 import model.Wormhole;
 import model.entitites.Entity;
 import model.entitites.EntityType;
-import multiplayer.Message;
-import multiplayer.MessageType;
 import multiplayer.OpenPipes;
+import multiplayer.messages.*;
 
 public class ServerEventBroadcaster {
-	public ServerEventBroadcaster() {
+	private GameMode mode;
+	
+	public ServerEventBroadcaster(GameMode mode) {
+		this.mode = mode;
 	}
 
 	public void broadcastAddEntity(Entity entity) {
-		Message message = new Message(MessageType.ENTITY_ADDED);
-		ByteBuffer buf = ByteBuffer.allocate(1024);
-		buf.put((byte)EntityType.fromEntity(entity).getNum());
-		entity.serializeTo(buf);
-		byte[] bytes = new byte[buf.position()];
-		buf.position(0);
-		buf.get(bytes, 0, bytes.length);
-		message.addToPayload(bytes);
-		OpenPipes.getInstance().scheduleMessageWriteToAll(message);
+		OpenPipes.getInstance().scheduleMessageWriteToAll(new AddEntityMessage(entity));
 	}
 	
 	public void broadcastRemoveEntity(Entity entity) {
-		Message message = new Message(MessageType.ENTITY_REMOVED);
-		message.addToPayload(entity.getUuid());
-		OpenPipes.getInstance().scheduleMessageWriteToAll(message);
+		OpenPipes.getInstance().scheduleMessageWriteToAll(new RemoveEntityMessage(entity));
 	}
 	
 	public void broadcastUpdateEntity(Entity entity) {
-		Message message = new Message(MessageType.ENTITY_UPDATED);
-		message.addToPayload(entity.getUuid());
-		ByteBuffer buf = ByteBuffer.allocate(1024);
-		entity.serializeTo(buf);
-		byte[] bytes = new byte[buf.position()];
-		buf.position(0);
-		buf.get(bytes, 0, bytes.length);
-		message.addToPayload(bytes);
-		OpenPipes.getInstance().scheduleMessageWriteToAll(message);
+		if (mode == GameMode.LOCAL) {
+			return;
+		}
+		
+		OpenPipes.getInstance().scheduleMessageWriteToAll(new UpdateEntityMessage(entity.getUuid(), entity));
 	}
 
 	public void broadcastLocations(Collection<Entity> entities) {
-		Message message = new Message(MessageType.LOCATION_UPDATE);
-		for(Entity entity: entities) {
-			message.addToPayload(entity.getUuid());
-			message.addToPayload(entity.getPosition());
+		if (mode == GameMode.LOCAL) {
+			return;
 		}
-		OpenPipes.getInstance().scheduleMessageWriteToAll(message);
+		
+		OpenPipes.getInstance().scheduleMessageWriteToAll(new PositionSyncMessage(entities));
 	}
 
 	public void broadcastWormholeAffect(Bullet bullet, Wormhole nearestWormhole) {
-		Message message = new Message(MessageType.VIEW_WORMHOLE_AFFECT);
+		/*Message message = new Message(MessageType.VIEW_WORMHOLE_AFFECT);
 		message.addToPayload(bullet.getUuid());
 		message.addToPayload(nearestWormhole.getPosition());
-		OpenPipes.getInstance().scheduleMessageWriteToAll(message);
+		OpenPipes.getInstance().scheduleMessageWriteToAll(message);*/
+		
+		// TODO: Remove completely
 	}
 
 	public void broadcastDisintegrateAsteroid(Asteroid asteroid) {
-		Message message = new Message(MessageType.VIEW_DISINTEGRATE_ASTEROID);
-		message.addToPayload(asteroid.getUuid());
-		OpenPipes.getInstance().scheduleMessageWriteToAll(message);
+		OpenPipes.getInstance().scheduleMessageWriteToAll(new DisintegrateAsteroidMessage(asteroid));
 	}
 
 	public void broadcastPlayerHit(Player player) {
-		Message message = new Message(MessageType.VIEW_PLAYER_HIT);
-		message.addToPayload(player.getUuid());
-		OpenPipes.getInstance().scheduleMessageWriteToAll(message);
+		OpenPipes.getInstance().scheduleMessageWriteToAll(new PlayerHitMessage(player));
 	}
 
 	public void broadcastMirrorBounce(Mirror mirror, Bullet bullet) {
-		Message message = new Message(MessageType.VIEW_MIRROR_BOUNCE);
-		message.addToPayload(mirror.getUuid());
-		message.addToPayload(bullet.getPosition());
-		OpenPipes.getInstance().scheduleMessageWriteToAll(message);
+		OpenPipes.getInstance().scheduleMessageWriteToAll(new MirrorBounceMessage(mirror, bullet.getPosition()));
 	}
 	
 	public void broadcastBulletAsteroidHit(Asteroid asteroid, Bullet bullet) {
-		Message message = new Message(MessageType.VIEW_BULLET_ASTEROID_HIT);
-		message.addToPayload(asteroid.getUuid());
-		message.addToPayload(bullet.getPosition());
-		OpenPipes.getInstance().scheduleMessageWriteToAll(message);
+		OpenPipes.getInstance().scheduleMessageWriteToAll(new AsteroidHitMessage(asteroid, bullet.getPosition()));
 	}
 
 	public void broadcastGameOver(GameState gameState) {
-		Message message = new Message(MessageType.GAME_OVER);
-		message.addToPayload(gameState);	
-		OpenPipes.getInstance().scheduleMessageWriteToAll(message);
+		OpenPipes.getInstance().scheduleMessageWriteToAll(new GameOverMessage(gameState));
 	}
 	
 	public void broadcastNewGameStarting() {
-		Message message = new Message(MessageType.NEW_GAME_STARTING);
-		OpenPipes.getInstance().scheduleMessageWriteToAll(message);
+		OpenPipes.getInstance().scheduleMessageWriteToAll(new NewGameStartingMessage());
 	}
 
 }

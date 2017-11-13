@@ -11,6 +11,8 @@ import util.ImageCache;
 import util.Vector2D;
 
 public class Asteroid extends BitmapEntity implements Poolable {
+	private final static int SERIALIZED_SIZE = 2;
+	
 	private final static int FRAMES_PER_X = 4;
 	private final static int FRAMES_PER_Y = 4;
 	
@@ -84,5 +86,10 @@ public class Asteroid extends BitmapEntity implements Poolable {
 		type = buffer.get();
 		frame = buffer.get();
 		collisionMask = collisionMasks[type][frame];
+	}
+	
+	@Override
+	public int getSerializedSize() {
+		return super.getSerializedSize() + SERIALIZED_SIZE;
 	}
 }

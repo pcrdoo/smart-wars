@@ -25,7 +25,10 @@ import view.ClientView;
 @SuppressWarnings("serial")
 public class GameWindow extends GameFrame implements GameStarter {
 	private long lastUpdateTime;
-
+	private long lastServerUpdateTime;
+	private long lastViewUpdateTime;
+	private long lastModelUpdateTime;
+	
 	private Model localServerModel;
 	private Model model;
 	private ClientView view;
@@ -57,6 +60,7 @@ public class GameWindow extends GameFrame implements GameStarter {
 		getWindow().setLocationRelativeTo(null);
 		getWindow().setVisible(false);
 		getWindow().setBackground(Color.BLACK);
+		
 	}
 
 	public void usePerformanceOverlay(PerformanceOverlay po) {
@@ -69,19 +73,19 @@ public class GameWindow extends GameFrame implements GameStarter {
 		Pools.repopulate();
 
 		model = new Model();
-		localServerModel = new Model();
+		//localServerModel = new Model();
 		view = new ClientView();
 		if (gameMode == GameMode.NETWORK) {
 			controller = new ClientController(this, view, model, gameMode, serverAddress);
 		} else {
-			localServerController = new ServerController(this, null, localServerModel, gameMode);
+			localServerController = new ServerController(this, null, model, gameMode);
 			controller = new ClientController(this, view, model, gameMode, null);
 		}
 		lastUpdateTime = System.nanoTime();
 
 		setUpdateRate(60);
 		setBackgroundClear(false);
-		setHighQuality(true);
+		setHighQuality(false);
 
 		if (fullscreen) {
 			GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -111,13 +115,18 @@ public class GameWindow extends GameFrame implements GameStarter {
 			LocalPipe pipe = new LocalPipe();
 			localServerController.setLocalPipe(pipe);
 			controller.setLocalPipe(pipe);
-			model.updatePlayerId(PlayerSide.LEFT_PLAYER, localServerModel.getPlayerOnSide(PlayerSide.LEFT_PLAYER).getUuid());
-			model.updatePlayerId(PlayerSide.RIGHT_PLAYER, localServerModel.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).getUuid());
+			/*model.updatePlayerId(PlayerSide.LEFT_PLAYER, model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).getUuid());
+			model.updatePlayerId(PlayerSide.RIGHT_PLAYER, model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).getUuid());*/
 		}
 
 		startThread();
 		loadingWindow.setVisible(false);
 		getWindow().setVisible(true);
+
+		lastUpdateTime = System.nanoTime();
+		lastServerUpdateTime = System.nanoTime();
+		lastModelUpdateTime = System.nanoTime();
+		lastViewUpdateTime = System.nanoTime();
 	}
 
 	@Override
@@ -148,30 +157,34 @@ public class GameWindow extends GameFrame implements GameStarter {
 
 	@Override
 	public void update() {
-		long currentTime = System.nanoTime();
-		double dt = (double) (currentTime - lastUpdateTime) / 1e9;
 
 		Measurement ms;
 		PerformanceMonitor m = PerformanceMonitor.getInstance();
-		synchronized (this) {
-			if (gameMode == GameMode.LOCAL) {
-				localServerController.update(dt);
-				localServerModel.update(dt);
-			}
-			ms = m.measure("ControllerUpdateTotal");
-			controller.update(dt);
+		if (gameMode == GameMode.LOCAL) {
+			ms = m.measure("SrvControllerUpdateTotal");
+			double dtServer = (double) (System.nanoTime() - lastServerUpdateTime) / 1e9;
+			localServerController.update(dtServer);
 			ms.done();
-
-			ms = m.measure("ModelUpdateTotal");
-			model.update(dt);
-			ms.done();
-
-			ms = m.measure("ViewUpdateTotal");
-			view.update(dt);
-			ms.done();
+			lastServerUpdateTime = System.nanoTime();
+			//localServerModel.update(dt);
 		}
-
+		ms = m.measure("ControllerUpdateTotal");
+		double dtController = (double) (System.nanoTime() - lastUpdateTime) / 1e9;
+		controller.update(dtController);
 		lastUpdateTime = System.nanoTime();
+		ms.done();
+
+		ms = m.measure("ModelUpdateTotal");
+		double dtModel = (double) (System.nanoTime() - lastModelUpdateTime) / 1e9;
+		model.update(dtModel);
+		lastModelUpdateTime = System.nanoTime();
+		ms.done();
+
+		ms = m.measure("ViewUpdateTotal");
+		double dtView = (double) (System.nanoTime() - lastViewUpdateTime) / 1e9;
+		view.update(dtView);
+		lastViewUpdateTime = System.nanoTime();
+		ms.done();
 	}
 
 	@Override

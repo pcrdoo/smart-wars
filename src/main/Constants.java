@@ -123,7 +123,8 @@ public class Constants {
 	// Debug
 	public static final String[] PERF_MEASUREMENTS_NAMES = new String[] {
 			"DrawTotal",                // Total time spent in MainView.draw
-			"ControllerUpdateTotal",    // Total time spent in MainController.update
+			"ControllerUpdateTotal",    // Total time spent in ClientController.update
+			"SrvControllerUpdateTotal", // Total time spent in ServerController.update
 			"ModelUpdateTotal",         // Total time spent in Model.update
 			"ViewUpdateTotal",          // Total time spent in MainView.update
 			
@@ -172,7 +173,7 @@ public class Constants {
 	
 	// Multiplayer
 	public static final int SERVER_PORT = 24570;
-	public static final double LOCATION_UPDATE_TIME = 0.1;
+	public static final double LOCATION_UPDATE_TIME = 1.0;
 	
 }
 
