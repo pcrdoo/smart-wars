@@ -10,102 +10,86 @@ import rafgfxlib.GameFrame;
 import view.ServerView;
 
 @SuppressWarnings("serial")
-public class HeadlessGameFrame extends GameFrame implements GameStarter {
+public class HeadlessGameFrame implements GameStarter {
 	private long lastUpdateTime;
 	private long lastModelUpdateTime;
-	// private long lastViewUpdateTime;
 
+	private boolean stopThread = false;
+	
 	private Model model;
-	private ServerView view;
 	private ServerController controller;
-	private LoadingWindow loadingWindow;
-
+	private Thread runnerThread;
+	
 	public HeadlessGameFrame() {
-		super("Smart Wars", Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
-		// TODO: ^ what else could I do :(
-
-		loadingWindow = new LoadingWindow();
-		loadingWindow.setVisible(true);
-	}
-
-	@Override
-	public void initGameWindow(boolean fullscreen) {
-		super.initGameWindow(false);
-
-		getWindow().setLocationRelativeTo(null);
-		getWindow().setVisible(false);
-		setVisible(false);
-		getWindow().setBackground(Color.BLACK);
+		System.out.println("Initializing server...");
 	}
 	
+	private void threadWorker() {
+		System.out.println("Game started!");
+		
+		double updateIntervalMilis = 1000.0 / 60.0;
+		long lastUpdate = System.nanoTime();
+		while (true) {
+			if (stopThread) {
+				stopThread = false;
+				return;
+			}
+			
+			System.out.println("updupd");
+			update();
+			try {
+				long waitTime = (long) (updateIntervalMilis - (System.nanoTime() - lastUpdate) / 1.0e6);
+				if (waitTime > 0) {
+					Thread.sleep(waitTime);
+				}
+			} catch (InterruptedException e) { }
+			
+			lastUpdate = System.nanoTime();
+		}
+	}
+	
+	public void startThread() {
+		if (runnerThread != null && runnerThread.isAlive()) {
+			stopThread = true;
+			try {
+				runnerThread.join();
+			} catch (InterruptedException e) { }
+		}
+		
+		stopThread = false;
+		runnerThread = new Thread(() -> {
+			threadWorker();
+		});
+		runnerThread.start();
+	}
 	@Override
 	public void startGame() {
 		stopThread = true;
 		Pools.repopulate();
 
 		model = new Model();
-		view = new ServerView();
-		controller = new ServerController(this, view, model, GameMode.NETWORK);
+		controller = new ServerController(this, model, GameMode.NETWORK);
 		lastUpdateTime = System.nanoTime();
-
-		loadingWindow.setVisible(false);
-		// Never show the game or perform updates, show ServerView instead
-		view.setVisible(true);
-
-		// Run game thread
-		setUpdateRate(60);
-
+		
 		try {
+			System.out.println("Waiting for client connections...");
 			controller.setUpConnections();
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			throw new RuntimeException("Failed to start game.");
 			// TODO: how to handle
 		}
+
+		System.out.println("Starting game thread.");
 		startThread();
 		lastUpdateTime = System.nanoTime();
 		lastModelUpdateTime = System.nanoTime();
-		// lastViewUpdateTime = System.nanoTime();
 	}
-
-	@Override
-	public void handleWindowInit() {
-	}
-
-	@Override
-	public void handleWindowDestroy() {
-	}
-
-	@Override
-	public void render(Graphics2D g, int sw, int sh) {
-	}
-
-	@Override
+	
 	public void update() {
 		controller.update((System.nanoTime() - lastUpdateTime) / 1.0e9);
 		lastUpdateTime = System.nanoTime();
 		model.update((System.nanoTime() - lastModelUpdateTime) / 1.0e9);
 		lastModelUpdateTime = System.nanoTime();
-		view.update(0);
-	}
-
-	@Override
-	public void handleMouseDown(int x, int y, GFMouseButton button) {
-	}
-
-	@Override
-	public void handleMouseUp(int x, int y, GFMouseButton button) {
-	}
-
-	@Override
-	public void handleMouseMove(int x, int y) {
-	}
-
-	@Override
-	public void handleKeyDown(int keyCode) {
-	}
-
-	@Override
-	public void handleKeyUp(int keyCode) {
 	}
 }

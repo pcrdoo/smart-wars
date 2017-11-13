@@ -80,7 +80,7 @@ public class GameWindow extends GameFrame implements GameStarter {
 		if (gameMode == GameMode.NETWORK) {
 			controller = new ClientController(this, view, model, gameMode, serverAddress);
 		} else {
-			localServerController = new ServerController(this, null, model, gameMode);
+			localServerController = new ServerController(this, model, gameMode);
 			controller = new ClientController(this, view, model, gameMode, null);
 		}
 		lastUpdateTime = System.nanoTime();

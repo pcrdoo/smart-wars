@@ -4,7 +4,6 @@ public class ServerMain {
 
 	public static void main(String[] args) {
 		HeadlessGameFrame gf = new HeadlessGameFrame();
-		gf.initGameWindow(false);
 		gf.startGame();
 	}
 
