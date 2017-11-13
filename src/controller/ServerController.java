@@ -225,9 +225,11 @@ public class ServerController extends GameStateController {
 			switch (mirrorMagic.getMirror().getMirrorState()) {
 			case TRAVELLING:
 				mirrorMagic.getMirror().setMirrorState(MirrorState.SPINNING);
+				broadcaster.broadcastUpdateEntity(mirrorMagic.getMirror());
 				break;
 			case SPINNING:
 				mirrorMagic.getMirror().setMirrorState(MirrorState.STABLE);
+				broadcaster.broadcastUpdateEntity(mirrorMagic.getMirror());
 				break;
 			case STABLE:
 				Mirror mirror = mirrorMagic.getMirror();
@@ -239,8 +241,6 @@ public class ServerController extends GameStateController {
 				break;
 			}
 		}
-		// TODO overkill
-		broadcaster.broadcastUpdateEntity(mirrorMagic.getOwner());
 	}
 
 	private void cullEntities(ArrayList<Entity> toCull) {
