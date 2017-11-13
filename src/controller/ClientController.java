@@ -294,6 +294,11 @@ public class ClientController extends GameStateController {
 	// TODO This is why passing an object was a bad idea, definitely serialize on
 	// your own
 	private void doAddEntity(Entity entity) {
+		if (entity == null) {
+			System.err.println("TODO fix this");
+			return;
+		}
+		
 		EntityType type = EntityType.fromEntity(entity);
 		EntityView entityView = createViewForEntity(type, entity);
 		view.addDrawable(entityView, getZIndexForEntityType(type));
@@ -306,6 +311,11 @@ public class ClientController extends GameStateController {
 	}
 
 	private void doRemoveEntity(Entity entity) {
+		if (entity == null) {
+			System.err.println("TODO fix this");
+			return;
+		}
+		
 		deleteView(entity);
 
 		if (gameMode == GameMode.NETWORK) {
