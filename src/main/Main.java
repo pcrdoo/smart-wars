@@ -114,7 +114,6 @@ public class Main {
 
 		if (server) {
 			HeadlessGameFrame gf = new HeadlessGameFrame();
-			gf.initGameWindow(false);
 			gf.startGame();
 		} else {
 			GameModeDialog gameModeDialog = new GameModeDialog();

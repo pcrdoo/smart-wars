@@ -37,12 +37,10 @@ import multiplayer.messages.Message;
 import multiplayer.messages.PlayerControlMessage;
 import multiplayer.messages.SideAssignmentMessage;
 import util.Vector2D;
-import view.ServerView;
 
 public class ServerController extends GameStateController {
 
 	private Model model;
-	private ServerView view;
 	private GameStarter gameStarter;
 	private double timeToNextAsteroidSpawn;
 	private double timeToNextWormholeSpawn;
@@ -56,9 +54,8 @@ public class ServerController extends GameStateController {
 	private Pipe localPlayersPipe;
 	private GameMode gameMode;
 
-	public ServerController(GameStarter gameStarter, ServerView view, Model model, GameMode gameMode) {
+	public ServerController(GameStarter gameStarter, Model model, GameMode gameMode) {
 		super();
-		this.view = view;
 		this.model = model;
 		this.gameStarter = gameStarter;
 		this.gameMode = gameMode;
@@ -90,19 +87,18 @@ public class ServerController extends GameStateController {
 				OpenPipes.getInstance().addPipe(rightPipe);
 
 				rightPipe.scheduleMessageWrite(new SideAssignmentMessage(PlayerSide.RIGHT_PLAYER, leftUuid, rightUuid));
+				System.out.println("Right player connected from " + socket.getInetAddress().toString());
 			} else {
 				Pipe leftPipe = new NetworkPipe(socket);
 				playerPipes.put(PlayerSide.LEFT_PLAYER, leftPipe);
 				OpenPipes.getInstance().addPipe(leftPipe);
 
 				leftPipe.scheduleMessageWrite(new SideAssignmentMessage(PlayerSide.LEFT_PLAYER, leftUuid, rightUuid));
+				System.out.println("Left player connected from " + socket.getInetAddress().toString());
 			}
 		}
 		OpenPipes.getInstance().writeScheduledMessagesOnAll();
 		serverSocket.close();
-		if (view != null) {
-			view.addText("Test ServerView: end of setUpConnections");
-		}
 	}
 
 	@Override
@@ -351,6 +347,7 @@ public class ServerController extends GameStateController {
 
 	private void onGameOver() {
 		broadcaster.broadcastGameOver(model.getGameState());
+		System.out.println((model.getGameState() == GameState.LEFT_WIN ? "Left player " : "Right player ") + " won!");
 		playersReadyForRestart = new HashSet<>();
 	}
 }
