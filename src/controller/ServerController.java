@@ -79,7 +79,8 @@ public class ServerController extends GameStateController {
 
 		for (int i = 0; i < 2; i++) {
 			Socket socket = serverSocket.accept();
-
+			socket.setTcpNoDelay(true);
+			
 			if (playerPipes.containsKey(PlayerSide.LEFT_PLAYER)) {
 				Pipe rightPipe = new NetworkPipe(socket);
 				playerPipes.put(PlayerSide.RIGHT_PLAYER, rightPipe);

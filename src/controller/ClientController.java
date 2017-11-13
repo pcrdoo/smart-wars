@@ -111,6 +111,8 @@ public class ClientController extends GameStateController {
 	@Override
 	public void setUpConnections() throws IOException {
 		Socket socket = new Socket(serverAddress.getHostName(), serverAddress.getPort());
+		socket.setTcpNoDelay(true);
+		
 		serverPipe = new NetworkPipe(socket);
 		Message message = serverPipe.readMessage(model);
 		if (!(message instanceof SideAssignmentMessage)) {
