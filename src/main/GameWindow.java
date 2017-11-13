@@ -72,7 +72,7 @@ public class GameWindow extends GameFrame implements GameStarter {
 	public void startGame() {
 		stopThread = true;
 		ImageCache.getInstance().preload(Constants.IMAGES_TO_PRELOAD);
-		Pools.repopulate();
+		Pools.repopulate(true);
 
 		model = new Model();
 		// localServerModel = new Model();

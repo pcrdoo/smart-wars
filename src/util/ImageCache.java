@@ -27,6 +27,10 @@ public class ImageCache {
 	}
 
 	private static BufferedImage convertToType(BufferedImage image, int type) {
+		if (image.getType() == type) {
+			return image;
+		}
+		
 		BufferedImage newImage = new BufferedImage(image.getWidth(), image.getHeight(), type);
 		Graphics2D graphics = newImage.createGraphics();
 		graphics.drawImage(image, 0, 0, null);

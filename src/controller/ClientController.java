@@ -249,7 +249,9 @@ public class ClientController extends GameStateController {
 		}
 
 		if (nearestWormhole != null) {
-			((BulletView) viewMap.get(bullet)).wormholeAffect(nearestWormhole.getPosition());
+			if (((BulletView) viewMap.get(bullet)) != null) {
+				((BulletView) viewMap.get(bullet)).wormholeAffect(nearestWormhole.getPosition());
+			}
 		}
 	}
 	

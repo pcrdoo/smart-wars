@@ -35,7 +35,6 @@ public class HeadlessGameFrame implements GameStarter {
 				return;
 			}
 			
-			System.out.println("updupd");
 			update();
 			try {
 				long waitTime = (long) (updateIntervalMilis - (System.nanoTime() - lastUpdate) / 1.0e6);
@@ -65,7 +64,7 @@ public class HeadlessGameFrame implements GameStarter {
 	@Override
 	public void startGame() {
 		stopThread = true;
-		Pools.repopulate();
+		Pools.repopulate(false);
 
 		model = new Model();
 		controller = new ServerController(this, model, GameMode.NETWORK);

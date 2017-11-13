@@ -9,13 +9,15 @@ public class Pools {
 	public static final SparksPool SPARKS = new SparksPool();
 	public static final GlassSparksPool GLASS_SPARKS = new GlassSparksPool();
 	
-	public static void repopulate() {
+	public static void repopulate(boolean view) {
 		BULLET.repopulate();
 		BULLET_VIEW.repopulate();
 		ASTEROID.repopulate();
 		ASTEROID_VIEW.repopulate();
-		EXPLOSION.repopulate();
-		SPARKS.repopulate();
-		GLASS_SPARKS.repopulate();
+		if (view) {
+			EXPLOSION.repopulate();
+			SPARKS.repopulate();
+			GLASS_SPARKS.repopulate();
+		}
 	}
 }

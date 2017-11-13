@@ -12,9 +12,6 @@ public abstract class ObjectPool<T extends Poolable> {
 	public ObjectPool(int size, String statisticName) {
 		this.size = size;
 		this.statisticName = statisticName;
-
-		repopulate();
-		reportFree();
 	}
 
 	protected abstract T createEmpty();
@@ -46,5 +43,7 @@ public abstract class ObjectPool<T extends Poolable> {
 		for (int i = 0; i < size; i++) {
 			freeList.add(createEmpty());
 		}
+		
+		reportFree();
 	}
 }
