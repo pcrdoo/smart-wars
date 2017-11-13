@@ -1,37 +1,41 @@
 package multiplayer;
 
-import java.util.LinkedList;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 import model.Model;
 import multiplayer.messages.Message;
 
 public class LocalPipe implements Pipe {
+    
+	private LocalMessageQueue inputQueue;
+	private LocalMessageQueue outputQueue;
+	private ArrayList<Message> buffer;
 
-	private LinkedList<Message> queue;
-
-	public LocalPipe() {
-		queue = new LinkedList<>();
+	public LocalPipe(LocalMessageQueue inputQueue, LocalMessageQueue outputQueue) {
+		this.inputQueue = inputQueue;
+		this.outputQueue = outputQueue;
+		buffer = new ArrayList<>();
 	}
 
 	@Override
 	public void scheduleMessageWrite(Message message) {
-		queue.add(message);
+		buffer.add(message);
 	}
 
 	@Override
 	public void writeScheduledMessages() {
-		
+		outputQueue.writeAll(buffer);
+		buffer.clear();
 	}
 
 	@Override
 	public boolean hasMessages() {
-		return !queue.isEmpty();
+		return !inputQueue.isEmpty();
 	}
 
 	@Override
 	public Message readMessage(Model model) {
-		Message message = queue.getFirst();
-		queue.pop();
-		return message;
+		return inputQueue.read();
 	}
 }

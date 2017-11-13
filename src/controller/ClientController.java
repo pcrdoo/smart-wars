@@ -4,10 +4,11 @@ import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.UUID;
+
+import javax.swing.plaf.synth.SynthSeparatorUI;
 
 import main.Constants;
 import main.GameMode;
@@ -26,12 +27,22 @@ import model.entitites.EntityType;
 import multiplayer.LocalPipe;
 import multiplayer.NetworkPipe;
 import multiplayer.Pipe;
-import multiplayer.OpenPipes;
-import multiplayer.Side;
-import multiplayer.messages.*;
+import multiplayer.messages.AddEntityMessage;
+import multiplayer.messages.AsteroidHitMessage;
+import multiplayer.messages.DisintegrateAsteroidMessage;
+import multiplayer.messages.GameOverMessage;
+import multiplayer.messages.LocalPlayerControlMessage;
+import multiplayer.messages.Message;
+import multiplayer.messages.MirrorBounceMessage;
+import multiplayer.messages.PlayerControlMessage;
+import multiplayer.messages.PlayerHitMessage;
+import multiplayer.messages.PositionSyncMessage;
+import multiplayer.messages.RemoveEntityMessage;
+import multiplayer.messages.SideAssignmentMessage;
+import multiplayer.messages.UpdateEntityMessage;
+import multiplayer.messages.UuidPosition;
 import util.Vector2D;
 import view.AsteroidView;
-import view.BulletView;
 import view.ClientView;
 import view.EntityView;
 import view.MirrorView;
@@ -103,15 +114,17 @@ public class ClientController extends GameStateController {
 		if (!(message instanceof SideAssignmentMessage)) {
 			throw new RuntimeException("First message from server is not SIDE_ASSIGNMENT");
 		}
-		
+
 		SideAssignmentMessage sideAssignment = (SideAssignmentMessage) message;
-		
+
 		PlayerSide side = sideAssignment.getClientSide();
 		sidesToControl.add(side);
-		
-		/*UUID oldLeftUuid = model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).getUuid(),
-				oldRightUuid = model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).getUuid();*/
-				
+
+		/*
+		 * UUID oldLeftUuid = model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).getUuid(),
+		 * oldRightUuid = model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).getUuid();
+		 */
+
 		model.updatePlayerId(PlayerSide.LEFT_PLAYER, sideAssignment.getLeftPlayerUuid());
 		model.updatePlayerId(PlayerSide.RIGHT_PLAYER, sideAssignment.getRightPlayerUuid());
 	}
@@ -153,7 +166,7 @@ public class ClientController extends GameStateController {
 			}
 			return;
 		}
-		
+
 		checkDisintegratingAsteroids();
 		serverPipe.writeScheduledMessages();
 	}
@@ -163,21 +176,21 @@ public class ClientController extends GameStateController {
 		while (serverPipe.hasMessages()) {
 			messages.add(serverPipe.readMessage(model));
 		}
-		
+
 		for (Message message : messages) {
 			switch (message.getType()) {
 			case ENTITY_ADDED:
 				doAddEntity(((AddEntityMessage) message).getEntity());
 				break;
-				
+
 			case ENTITY_REMOVED:
 				doRemoveEntity(((RemoveEntityMessage) message).getEntity());
 				break;
-				
+
 			case ENTITY_UPDATED:
 				((UpdateEntityMessage) message).apply(model);
 				break;
-				
+
 			case POSITION_SYNC:
 				for (UuidPosition uuidPosition : ((PositionSyncMessage) message).getUuidPositions()) {
 					doPositionSync(uuidPosition.getUuid(), uuidPosition.getPosition());
@@ -187,29 +200,29 @@ public class ClientController extends GameStateController {
 			case VIEW_DISINTEGRATE_ASTEROID:
 				doDisintegrateAsteroid(((DisintegrateAsteroidMessage) message).getAsteroid());
 				break;
-				
+
 			case VIEW_PLAYER_HIT:
 				doPlayerHit(((PlayerHitMessage) message).getPlayer());
 				break;
-				
+
 			case VIEW_MIRROR_BOUNCE:
 				MirrorBounceMessage mirrorBounce = (MirrorBounceMessage) message;
 				doMirrorBounce(mirrorBounce.getMirror(), mirrorBounce.getPosition());
 				break;
-				
+
 			case VIEW_BULLET_ASTEROID_HIT:
 				AsteroidHitMessage asteroidHit = (AsteroidHitMessage) message;
 				doBulletAsteroidHit(asteroidHit.getAsteroid(), asteroidHit.getPosition());
 				break;
-				
+
 			case GAME_OVER:
 				doGameOver(((GameOverMessage) message).getState());
 				break;
-				
+
 			case NEW_GAME_STARTING:
 				doNewGameStarting();
 				break;
-				
+
 			default:
 				throw new RuntimeException("Unexpected message type: " + message.getType());
 			}
@@ -260,7 +273,7 @@ public class ClientController extends GameStateController {
 		view.addDrawable(v, getZIndexForEntityType(type));
 		view.addUpdatable(v);
 		viewMap.put(e, v);
-		
+
 		if (gameMode == GameMode.NETWORK) {
 			model.addEntity(e);
 		}
@@ -268,21 +281,24 @@ public class ClientController extends GameStateController {
 
 	private void doRemoveEntity(Entity entity) {
 		deleteView(entity);
-		
+
 		if (gameMode == GameMode.NETWORK) {
 			model.removeEntity(entity);
 		}
 	}
-
+	
 	private void deleteView(Entity entity) {
 		EntityView entityView = viewMap.get(entity);
 		if (entityView != null) {
-			view.removeUpdatable(entityView);
-			view.removeDrawable(entityView);
-			entityView.onRemoved();
-			viewMap.remove(entity);
+			if (!disintegratingAsteroids.contains(entityView)) {
+				view.removeUpdatable(entityView);
+				view.removeDrawable(entityView);
+				entityView.onRemoved();
+				viewMap.remove(entity);
+			}
 		} else {
-			System.err.println("Warning: No view found for entity " + entity.getUuid() + " of type " + entity.getClass());
+			System.err
+					.println("Warning: No view found for entity " + entity.getUuid() + " of type " + entity.getClass());
 		}
 	}
 
@@ -292,25 +308,27 @@ public class ClientController extends GameStateController {
 	}
 
 	// TODO: Reinstate this only on the client side (as it's purely gfx)
-	/*private void doWormholeAffect(UUID bulletId, Vector2D wormholePosition) {
-		Bullet bullet = (Bullet) model.getEntityById(bulletId);
-		((BulletView) viewMap.get(bullet)).wormholeAffect(wormholePosition);
-	}*/
+	/*
+	 * private void doWormholeAffect(UUID bulletId, Vector2D wormholePosition) {
+	 * Bullet bullet = (Bullet) model.getEntityById(bulletId); ((BulletView)
+	 * viewMap.get(bullet)).wormholeAffect(wormholePosition); }
+	 */
 
 	private void doDisintegrateAsteroid(Asteroid asteroid) {
 		// Delete asteroid, keep just the view for the animation.
 		AsteroidView asteroidView = (AsteroidView) viewMap.get(asteroid);
-		viewMap.remove(asteroid);
 		disintegratingAsteroids.add(asteroidView);
+		viewMap.remove(asteroid);
 		asteroidView.onAsteroidDisintegrated();
 	}
 
+	@SuppressWarnings("unused")
 	private void _dumpViewMap() {
 		for (HashMap.Entry<Entity, EntityView> e : viewMap.entrySet()) {
 			System.out.println(e.getKey().getUuid() + " - " + e.getKey().getClass() + " = " + e.getValue().getClass());
 		}
 	}
-	
+
 	private void doPlayerHit(Player player) {
 		((PlayerView) viewMap.get(player)).onPlayerHit();
 
@@ -328,7 +346,7 @@ public class ClientController extends GameStateController {
 		if (gameMode == GameMode.NETWORK) {
 			model.setGameState(gameState);
 		}
-		
+
 		for (HashMap.Entry<Entity, EntityView> ev : viewMap.entrySet()) {
 			ev.getValue().onRemoved();
 		}
@@ -341,41 +359,49 @@ public class ClientController extends GameStateController {
 	}
 
 	// Controls
-	
+
 	public Control keyCodeToControl(int keyCode, HashMap<Control, Integer> controls) {
 		for (HashMap.Entry<Control, Integer> e : controls.entrySet()) {
 			if (e.getValue() == keyCode) {
 				return e.getKey();
 			}
 		}
-		
+
 		return null;
 	}
+
 	public void handlePlayerKeyDown(int keyCode, Player player, HashMap<Control, Integer> controls) {
 		Control c = keyCodeToControl(keyCode, controls);
 		if (c == null) {
 			return;
 		}
-		
+
 		Control newControl = null;
 		switch (c) {
-		case MOVE_UP: newControl = Control.MOVE_UP; break;
-		case MOVE_DOWN: newControl = Control.MOVE_DOWN; break;
-		case START_GUN: newControl = Control.START_GUN; break;
-		default: break;
+		case MOVE_UP:
+			newControl = Control.MOVE_UP;
+			break;
+		case MOVE_DOWN:
+			newControl = Control.MOVE_DOWN;
+			break;
+		case START_GUN:
+			newControl = Control.START_GUN;
+			break;
+		default:
+			break;
 		}
-		
+
 		if (newControl != null) {
 			sendActionToServer(player.getPlayerSide(), newControl);
 		}
 	}
-	
+
 	public void handlePlayerKeyUp(int keyCode, Player player, HashMap<Control, Integer> controls) {
 		Control c = keyCodeToControl(keyCode, controls);
 		if (c == null) {
 			return;
 		}
-		
+
 		Control newControl = null;
 		switch (c) {
 		case MOVE_UP:
@@ -385,7 +411,7 @@ public class ClientController extends GameStateController {
 				newControl = Control.STOP;
 			}
 			break;
-			
+
 		case MOVE_DOWN:
 			if (keyboardState.get(controls.get(Control.MOVE_UP))) {
 				newControl = Control.MOVE_UP;
@@ -393,29 +419,30 @@ public class ClientController extends GameStateController {
 				newControl = Control.STOP;
 			}
 			break;
-			
-		case START_GUN: 
+
+		case START_GUN:
 			newControl = Control.STOP_GUN;
 			break;
-			
-		default: break;
+
+		default:
+			break;
 		}
 
 		if (newControl != null) {
 			sendActionToServer(player.getPlayerSide(), newControl);
 		}
 	}
-	
+
 	public void handleKeyDown(int keyCode) {
 		if (keyboardState.containsKey(keyCode) && keyboardState.get(keyCode)) {
 			return;
 		}
-		
+
 		keyboardState.put(keyCode, true);
-		
+
 		if (sidesToControl.contains(PlayerSide.LEFT_PLAYER)) {
 			handlePlayerKeyDown(keyCode, model.getPlayerOnSide(PlayerSide.LEFT_PLAYER), leftPlayerControls);
-			
+
 			if (keyCode == leftPlayerControls.get(Control.SHORT_MIRROR_MAGIC)) {
 				sendActionToServer(PlayerSide.LEFT_PLAYER, Control.SHORT_MIRROR_MAGIC);
 			}
@@ -423,7 +450,7 @@ public class ClientController extends GameStateController {
 				sendActionToServer(PlayerSide.LEFT_PLAYER, Control.LONG_MIRROR_MAGIC);
 			}
 		}
-		
+
 		if (sidesToControl.contains(PlayerSide.RIGHT_PLAYER)) {
 			if (keyCode == rightPlayerControls.get(Control.SHORT_MIRROR_MAGIC)) {
 				sendActionToServer(PlayerSide.RIGHT_PLAYER, Control.SHORT_MIRROR_MAGIC);
@@ -440,9 +467,9 @@ public class ClientController extends GameStateController {
 		if (!keyboardState.containsKey(keyCode) || !keyboardState.get(keyCode)) {
 			return;
 		}
-		
+
 		keyboardState.put(keyCode, false);
-		
+
 		if (sidesToControl.contains(PlayerSide.LEFT_PLAYER)) {
 			handlePlayerKeyUp(keyCode, model.getPlayerOnSide(PlayerSide.LEFT_PLAYER), leftPlayerControls);
 		}

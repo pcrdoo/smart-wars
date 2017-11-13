@@ -3,8 +3,6 @@ package multiplayer;
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
 import java.nio.ByteBuffer;
@@ -41,30 +39,30 @@ public class NetworkPipe implements Pipe {
 		} catch (IOException e) {
 			throw new NetworkException("IOException in initialize: " + e.getMessage());
 		}
-		
+
 		writerThread = new Thread() {
 			public void run() {
 				while (true) {
 					synchronized (buffer) {
 						try {
 							buffer.wait();
-							
+
 							int fullSize = 0;
 							for (Message message : buffer) {
 								fullSize += message.getSerializedSize() + 1 /* for type */ + 4 /* for length */;
 							}
-							
+
 							byte[] bytes = new byte[fullSize];
 							ByteBuffer buf = ByteBuffer.wrap(bytes);
 							for (Message message : buffer) {
-								buf.put((byte)message.getType().getNum());
+								buf.put((byte) message.getType().getNum());
 								buf.putInt(message.getSerializedSize());
 								message.serializeTo(buf);
 							}
-							
+
 							buffer.clear();
 							outputStream.write(bytes, 0, bytes.length);
-							
+
 						} catch (IOException e) {
 							throw new NetworkException("IOException in writerThread: " + e.getMessage());
 						} catch (InterruptedException e) {
@@ -74,7 +72,7 @@ public class NetworkPipe implements Pipe {
 				}
 			}
 		};
-		
+
 		writerThread.start();
 	}
 
@@ -102,38 +100,50 @@ public class NetworkPipe implements Pipe {
 	}
 
 	private Message deserializeMessage(Model model, MessageType type, ByteBuffer buffer) {
-		switch(type) {
-		case ENTITY_ADDED: return new AddEntityMessage(model, buffer);
-		case ENTITY_UPDATED: return new UpdateEntityMessage(model, buffer);
-		case ENTITY_REMOVED: return new RemoveEntityMessage(model, buffer);
-		case GAME_OVER: return new GameOverMessage(model, buffer);
-		case NEW_GAME_STARTING: return new NewGameStartingMessage(model, buffer);
-		case POSITION_SYNC: return new PositionSyncMessage(model, buffer);
-		case SIDE_ASSIGNMENT: return new SideAssignmentMessage(model, buffer);
-		case PLAYER_CONTROL: return new PlayerControlMessage(model, buffer);
-		case VIEW_PLAYER_HIT: return new PlayerHitMessage(model, buffer);
-		case VIEW_BULLET_ASTEROID_HIT: return new AsteroidHitMessage(model, buffer);
-		case VIEW_MIRROR_BOUNCE: return new MirrorBounceMessage(model, buffer);
-		case VIEW_DISINTEGRATE_ASTEROID: return new DisintegrateAsteroidMessage(model, buffer);
+		switch (type) {
+		case ENTITY_ADDED:
+			return new AddEntityMessage(model, buffer);
+		case ENTITY_UPDATED:
+			return new UpdateEntityMessage(model, buffer);
+		case ENTITY_REMOVED:
+			return new RemoveEntityMessage(model, buffer);
+		case GAME_OVER:
+			return new GameOverMessage(model, buffer);
+		case NEW_GAME_STARTING:
+			return new NewGameStartingMessage(model, buffer);
+		case POSITION_SYNC:
+			return new PositionSyncMessage(model, buffer);
+		case SIDE_ASSIGNMENT:
+			return new SideAssignmentMessage(model, buffer);
+		case PLAYER_CONTROL:
+			return new PlayerControlMessage(model, buffer);
+		case VIEW_PLAYER_HIT:
+			return new PlayerHitMessage(model, buffer);
+		case VIEW_BULLET_ASTEROID_HIT:
+			return new AsteroidHitMessage(model, buffer);
+		case VIEW_MIRROR_BOUNCE:
+			return new MirrorBounceMessage(model, buffer);
+		case VIEW_DISINTEGRATE_ASTEROID:
+			return new DisintegrateAsteroidMessage(model, buffer);
 		}
-		
+
 		System.err.println("Unrecognized message type: " + type);
 		return null;
 	}
-	
+
 	@Override
 	public Message readMessage(Model model) {
 		try {
 			byte[] header = new byte[1 + 4];
 			inputStream.read(header, 0, 1 + 4);
 			ByteBuffer buf = ByteBuffer.wrap(header);
-			
+
 			byte typeByte = buf.get();
 			int length = buf.getInt();
-			
+
 			byte[] messageBytes = new byte[length];
 			inputStream.read(messageBytes, 0, length);
-			
+
 			buf = ByteBuffer.wrap(messageBytes);
 			return deserializeMessage(model, MessageType.fromNum(typeByte), buf);
 		} catch (IOException e) {

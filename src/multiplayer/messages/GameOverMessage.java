@@ -7,24 +7,24 @@ import model.Model;
 
 public class GameOverMessage implements Message {
 	private final static int MESSAGE_SIZE = 1;
-	
+
 	private GameState state;
-	
+
 	public GameOverMessage(GameState state) {
 		this.state = state;
 	}
-	
+
 	public GameOverMessage() {
-		
+
 	}
-	
+
 	public GameOverMessage(Model model, ByteBuffer buffer) {
 		deserializeFrom(model, buffer);
 	}
-	
+
 	@Override
 	public void serializeTo(ByteBuffer buffer) {
-		buffer.put((byte)state.getNum());
+		buffer.put((byte) state.getNum());
 	}
 
 	@Override
@@ -50,5 +50,4 @@ public class GameOverMessage implements Message {
 		this.state = state;
 	}
 
-	
 }

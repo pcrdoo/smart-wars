@@ -17,11 +17,11 @@ public class OpenPipes {
 	public void addPipe(Pipe pipe) {
 		pipes.add(pipe);
 	}
-	
+
 	public ArrayList<Pipe> getPipes() {
 		return pipes;
 	}
-	
+
 	public static OpenPipes getInstance() {
 		if (instance == null) {
 			instance = new OpenPipes();
@@ -30,13 +30,13 @@ public class OpenPipes {
 	}
 
 	public void scheduleMessageWriteToAll(Message message) {
-		for(Pipe pipe: pipes) {
+		for (Pipe pipe : pipes) {
 			pipe.scheduleMessageWrite(message);
 		}
 	}
-	
+
 	public void writeScheduledMessagesOnAll() {
-		for(Pipe pipe: pipes) {
+		for (Pipe pipe : pipes) {
 			pipe.writeScheduledMessages();
 		}
 	}

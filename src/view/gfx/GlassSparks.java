@@ -2,7 +2,6 @@ package view.gfx;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
-import java.util.ArrayList;
 
 import debug.Measurement;
 import debug.PerformanceMonitor;
@@ -22,13 +21,14 @@ public class GlassSparks extends TimedGfx implements Drawable, Poolable {
 	private ParticleSystem sparks;
 	private PointParticleEmitter sparksEmitter;
 	private double sparkDuration;
-	
+
 	public GlassSparks() {
 		super();
-		
-		sparks = new ParticleSystem(new LineParticleRenderer(new Color(SPARK_LEFT_COLOR), new Color(SPARK_RIGHT_COLOR), 1.0, 5.0, 0.0, 350.0), 200);
+
+		sparks = new ParticleSystem(new LineParticleRenderer(new Color(SPARK_LEFT_COLOR), new Color(SPARK_RIGHT_COLOR),
+				1.0, 5.0, 0.0, 350.0), 200);
 		sparksEmitter = new PointParticleEmitter(0.0, 0.5, 0.0, null, new Vector2D(5, 5), 350.0, 30.0, 0, 0);
-		
+
 		sparks.addEmitter(sparksEmitter);
 		sparks.addAffector(new ParticleAffectorDeceleration(350));
 		sparks.addAffector(new ParticleAffectorDecay(0.5));
@@ -44,6 +44,10 @@ public class GlassSparks extends TimedGfx implements Drawable, Poolable {
 		sparksEmitter.setPosition(position);
 		sparksEmitter.setAngles(this.angle - 0.4, this.angle + 0.4);
 		sparksEmitter.setSpawnsPerSecond(400.0);
+	}
+	
+	public Vector2D getPosition() {
+		return position;
 	}
 	
 	@Override

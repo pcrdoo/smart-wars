@@ -5,24 +5,19 @@ import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
 
 import debug.Measurement;
 import debug.PerformanceMonitor;
 import main.Constants;
-import model.Asteroid;
 import model.Wormhole;
-import model.Mirror;
 import util.ImageCache;
 import util.Vector2D;
-import view.gfx.AnimatedSprite;
-import view.gfx.Sparks;
+import view.gfx.particles.AdditiveSpriteParticleRenderer;
 import view.gfx.particles.ParticleAffectorDecay;
 import view.gfx.particles.ParticleAffectorDeceleration;
 import view.gfx.particles.ParticleAffectorRotation;
 import view.gfx.particles.ParticleSystem;
 import view.gfx.particles.PointParticleEmitter;
-import view.gfx.particles.AdditiveSpriteParticleRenderer;
 
 public class WormholeView extends EntityView {
 	private Wormhole wormhole;
@@ -33,7 +28,7 @@ public class WormholeView extends EntityView {
 	private double birthTimeRemaining;
 	private ParticleSystem swirl;
 	private PointParticleEmitter swirlEmitter;
-	
+
 	public WormholeView(Wormhole wormhole) {
 		this.wormhole = wormhole;
 		wormholeSprite = ImageCache.getInstance().get("wormhole.png");
@@ -41,9 +36,11 @@ public class WormholeView extends EntityView {
 		shadowSprite = ImageCache.getInstance().get("wormhole-shadow.png");
 		spriteAngle = 0;
 		birthTimeRemaining = Constants.WORMHOLE_BIRTH_TIME;
-		
-		swirl = new ParticleSystem(new AdditiveSpriteParticleRenderer(ImageCache.getInstance().get("wormhole-particle.png")), 200);
-		swirl.addEmitter(swirlEmitter = new PointParticleEmitter(0.0, 1.0, 0.1, wormhole.getPosition(), new Vector2D(10, 10), 200, 10.0, 0, 2 * Math.PI));
+
+		swirl = new ParticleSystem(
+				new AdditiveSpriteParticleRenderer(ImageCache.getInstance().get("wormhole-particle.png")), 200);
+		swirl.addEmitter(swirlEmitter = new PointParticleEmitter(0.0, 1.0, 0.1, wormhole.getPosition(),
+				new Vector2D(10, 10), 200, 10.0, 0, 2 * Math.PI));
 		swirl.addAffector(new ParticleAffectorDecay(1.0));
 		swirl.addAffector(new ParticleAffectorDeceleration(200));
 		swirl.addAffector(new ParticleAffectorRotation(wormhole.getPosition(), Math.PI / 2));
@@ -59,7 +56,7 @@ public class WormholeView extends EntityView {
 		if (birthTimeRemaining < 0) {
 			birthTimeRemaining = 0;
 		}
-		
+
 		swirl.update(dt);
 	}
 
@@ -71,23 +68,24 @@ public class WormholeView extends EntityView {
 			wormholeIntensity = 1.0 - birthTimeRemaining / Constants.WORMHOLE_BIRTH_TIME;
 			fadingIn = true;
 		} else if (wormhole.getTimeRemaining() < Constants.WORMHOLE_LIFETIME - Constants.WORMHOLE_DEATH_START_TIME) {
-			wormholeIntensity = wormhole.getTimeRemaining() / (Constants.WORMHOLE_LIFETIME - Constants.WORMHOLE_DEATH_START_TIME);
+			wormholeIntensity = wormhole.getTimeRemaining()
+					/ (Constants.WORMHOLE_LIFETIME - Constants.WORMHOLE_DEATH_START_TIME);
 		}
-		
+
 		int w = wormholeSprite.getWidth(), h = wormholeSprite.getHeight();
 		int wGlow = glowSprite.getWidth(), hGlow = glowSprite.getHeight();
 		int x = (int) (wormhole.getPosition().getX()), y = (int) (wormhole.getPosition().getY());
-		
+
 		Composite old = g.getComposite();
 		if (wormholeIntensity < 1.0) {
-			float glowAlpha = fadingIn ? 1.0f - (float)wormholeIntensity : (float)wormholeIntensity;
-		
+			float glowAlpha = fadingIn ? 1.0f - (float) wormholeIntensity : (float) wormholeIntensity;
+
 			g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, glowAlpha));
 			g.drawImage(glowSprite, x - wGlow / 2, y - hGlow / 2, null);
-			
+
 			swirlEmitter.setSpawnsPerSecond(fadingIn ? wormholeIntensity * 400.0 : 0.0);
 		}
-		
+
 		g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, (float) wormholeIntensity));
 		g.drawImage(shadowSprite, x - shadowSprite.getWidth() / 2, y - shadowSprite.getHeight() / 2, null);
 
@@ -97,7 +95,7 @@ public class WormholeView extends EntityView {
 		swirl.draw(g);
 		ms.done();
 		g.setComposite(spriteComposite);
-		
+
 		AffineTransform cache = g.getTransform();
 		g.setTransform(new AffineTransform());
 		g.scale(cache.getScaleX(), cache.getScaleY());

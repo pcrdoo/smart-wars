@@ -3,13 +3,12 @@ package model;
 import java.nio.ByteBuffer;
 
 import main.Constants;
-import model.abilities.Ability;
 import model.entitites.RoundEntity;
 import util.Vector2D;
 
 public class Wormhole extends RoundEntity {
 	private final static int SERIALIZED_SIZE = 8;
-	
+
 	private double timeToLive;
 
 	public Wormhole(Vector2D position) {
@@ -29,7 +28,7 @@ public class Wormhole extends RoundEntity {
 	public boolean isDead() {
 		return timeToLive == 0;
 	}
-	
+
 	public double getTimeRemaining() {
 		return timeToLive;
 	}
@@ -38,19 +37,19 @@ public class Wormhole extends RoundEntity {
 	public boolean shouldCull() {
 		return false;
 	}
-	
+
 	@Override
 	public void serializeTo(ByteBuffer buffer) {
 		super.serializeTo(buffer);
 		buffer.putDouble(timeToLive);
 	}
-	
+
 	@Override
 	public void deserializeFrom(Model model, ByteBuffer buffer) {
 		super.deserializeFrom(model, buffer);
 		timeToLive = buffer.getDouble();
 	}
-	
+
 	@Override
 	public int getSerializedSize() {
 		return super.getSerializedSize() + SERIALIZED_SIZE;

@@ -1,12 +1,9 @@
 package model.abilities;
 
 import main.Constants;
-import model.Bullet;
 import model.Mirror;
-import model.MirrorState;
 import model.Player;
 import model.PlayerSide;
-import model.entitites.Entity;
 import util.Vector2D;
 
 public class MirrorMagic extends Ability {
@@ -27,7 +24,7 @@ public class MirrorMagic extends Ability {
 		if (execute()) {
 			Vector2D mirrorPosition = null;
 			Vector2D mirrorVelocity = null;
-			if(player.getPlayerSide() == PlayerSide.LEFT_PLAYER) {
+			if (player.getPlayerSide() == PlayerSide.LEFT_PLAYER) {
 				mirrorPosition = new Vector2D(Constants.MIRROR_X_LAUNCH_LEFT, player.getPosition().getY());
 				mirrorVelocity = new Vector2D(Constants.MIRROR_VELOCITY, 0);
 			} else {
@@ -39,7 +36,7 @@ public class MirrorMagic extends Ability {
 		}
 		return false;
 	}
-	
+
 	public void removeMirror() {
 		mirror = null;
 	}

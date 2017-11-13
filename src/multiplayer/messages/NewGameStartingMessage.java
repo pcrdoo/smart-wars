@@ -6,20 +6,20 @@ import model.Model;
 
 public class NewGameStartingMessage implements Message {
 	public NewGameStartingMessage() {
-		
+
 	}
-	
+
 	public NewGameStartingMessage(Model model, ByteBuffer buffer) {
-		
+
 	}
-	
+
 	@Override
 	public void serializeTo(ByteBuffer buffer) {
 	}
 
 	@Override
 	public void deserializeFrom(Model model, ByteBuffer buffer) {
-		
+
 	}
 
 	@Override
