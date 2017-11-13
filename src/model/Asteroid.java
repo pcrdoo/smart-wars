@@ -2,6 +2,7 @@ package model;
 
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
+import java.nio.ByteBuffer;
 
 import main.Constants;
 import memory.Poolable;
@@ -68,5 +69,20 @@ public class Asteroid extends BitmapEntity implements Poolable {
 	public void reset() {
 		this.velocity = null;
 		this.position = null;
+	}
+	
+	@Override
+	public void serializeTo(ByteBuffer buffer) {
+		super.serializeTo(buffer);
+		buffer.put((byte)type);
+		buffer.put((byte)frame);
+	}
+	
+	@Override
+	public void deserializeFrom(Model model, ByteBuffer buffer) {
+		super.deserializeFrom(model, buffer);
+		type = buffer.get();
+		frame = buffer.get();
+		collisionMask = collisionMasks[type][frame];
 	}
 }

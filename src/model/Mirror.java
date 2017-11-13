@@ -1,10 +1,12 @@
 package model;
 
 import java.awt.Rectangle;
+import java.nio.ByteBuffer;
 
 import main.Constants;
 import model.abilities.Ability;
 import model.entitites.LineEntity;
+import multiplayer.SerializationHelpers;
 import util.Vector2D;
 
 public class Mirror extends LineEntity {
@@ -61,5 +63,28 @@ public class Mirror extends LineEntity {
 
 	public Player getOwner() {
 		return owner;
+	}
+	
+	@Override
+	public void serializeTo(ByteBuffer buffer) {
+		super.serializeTo(buffer);
+		SerializationHelpers.serializeUuid(buffer, owner.getUuid());
+		buffer.put((byte)mirrorState.getNum());
+		buffer.put((byte)(isLong ? 0 : 1));
+	}
+	
+	@Override
+	public void deserializeFrom(Model model, ByteBuffer buffer) {
+		super.deserializeFrom(model, buffer);
+		owner = (Player) model.getEntityById(SerializationHelpers.deserializeUuid(buffer));
+		
+		byte state = buffer.get();
+		switch ((int)state) {
+		case 0x01: mirrorState = MirrorState.TRAVELLING; break;
+		case 0x02: mirrorState = MirrorState.SPINNING; break;
+		case 0x03: mirrorState = MirrorState.STABLE; break;
+		}
+		
+		isLong = buffer.get() == 1;
 	}
 }

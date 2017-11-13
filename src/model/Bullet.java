@@ -1,10 +1,12 @@
 package model;
 
 import java.awt.Rectangle;
+import java.nio.ByteBuffer;
 
 import main.Constants;
 import memory.Poolable;
 import model.entitites.RectEntity;
+import multiplayer.SerializationHelpers;
 import util.Vector2D;
 
 public class Bullet extends RectEntity implements Poolable {
@@ -89,5 +91,23 @@ public class Bullet extends RectEntity implements Poolable {
 			return true;
 		}
 		return false;
+	}
+	
+	@Override
+	public void serializeTo(ByteBuffer buffer) {
+		super.serializeTo(buffer);
+		SerializationHelpers.serializeUuid(buffer, owner.getUuid());
+		buffer.putFloat((float)damage);
+		buffer.putInt(bounces);
+		buffer.putDouble(velocityChangeCooldown);
+	}
+	
+	@Override
+	public void deserializeFrom(Model model, ByteBuffer buffer) {
+		super.deserializeFrom(model, buffer);
+		owner = (Player) model.getEntityById(SerializationHelpers.deserializeUuid(buffer));
+		damage = buffer.getFloat();
+		bounces = buffer.getInt();
+		velocityChangeCooldown = buffer.getDouble();
 	}
 }

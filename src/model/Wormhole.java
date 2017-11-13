@@ -1,5 +1,7 @@
 package model;
 
+import java.nio.ByteBuffer;
+
 import main.Constants;
 import model.abilities.Ability;
 import model.entitites.RoundEntity;
@@ -34,6 +36,18 @@ public class Wormhole extends RoundEntity {
 	@Override
 	public boolean shouldCull() {
 		return false;
+	}
+	
+	@Override
+	public void serializeTo(ByteBuffer buffer) {
+		super.serializeTo(buffer);
+		buffer.putDouble(timeToLive);
+	}
+	
+	@Override
+	public void deserializeFrom(Model model, ByteBuffer buffer) {
+		super.deserializeFrom(model, buffer);
+		timeToLive = buffer.getDouble();
 	}
 
 }

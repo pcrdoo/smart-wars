@@ -1,6 +1,7 @@
 package util;
 
 import java.lang.Math;
+import java.nio.ByteBuffer;
 
 public class Vector2D {
 
@@ -106,5 +107,14 @@ public class Vector2D {
 
 	public double getY() {
 		return dY;
+	}
+	
+	public void serializeTo(ByteBuffer buffer) {
+		buffer.putFloat((float)dX);
+		buffer.putFloat((float)dY);
+	}
+	
+	public static Vector2D deserializeFrom(ByteBuffer buffer)  {
+		return new Vector2D(buffer.getFloat(), buffer.getFloat());
 	}
 }

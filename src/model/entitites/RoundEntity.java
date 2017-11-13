@@ -1,7 +1,9 @@
 package model.entitites;
 
 import java.awt.Rectangle;
+import java.nio.ByteBuffer;
 
+import model.Model;
 import util.Vector2D;
 
 public abstract class RoundEntity extends Entity {
@@ -20,5 +22,17 @@ public abstract class RoundEntity extends Entity {
 	public Rectangle getBoundingBox() {
 		return new Rectangle((int) (position.getX() - radius), (int) (position.getY() - radius), (int) (2 * radius),
 				(int) (2 * radius));
+	}
+	
+	@Override
+	public void serializeTo(ByteBuffer buffer) {
+		super.serializeTo(buffer);
+		buffer.putFloat((float)radius);
+	}
+	
+	@Override
+	public void deserializeFrom(Model model, ByteBuffer buffer) {
+		super.deserializeFrom(model, buffer);
+		radius = buffer.getFloat();
 	}
 }

@@ -2,7 +2,9 @@ package model.entitites;
 
 import java.awt.Rectangle;
 import java.lang.reflect.Field;
+import java.nio.ByteBuffer;
 
+import model.Model;
 import multiplayer.Message;
 import multiplayer.MessageType;
 import multiplayer.NetworkObject;
@@ -50,4 +52,16 @@ public abstract class Entity extends NetworkObject {
 	}
 	
 	public abstract boolean shouldCull();
+	
+	@Override
+	public void serializeTo(ByteBuffer buffer) {
+		position.serializeTo(buffer);
+		velocity.serializeTo(buffer);
+	}
+	
+	@Override
+	public void deserializeFrom(Model model, ByteBuffer buffer) {
+		position = Vector2D.deserializeFrom(buffer);
+		velocity = Vector2D.deserializeFrom(buffer);
+	}
 }

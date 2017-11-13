@@ -1,5 +1,6 @@
 package controller;
 
+import java.nio.ByteBuffer;
 import java.util.Collection;
 
 import main.GameState;
@@ -19,7 +20,12 @@ public class ServerEventBroadcaster {
 
 	public void broadcastAddEntity(Entity entity) {
 		Message message = new Message(MessageType.ENTITY_ADDED);
-		message.addToPayload(entity);
+		ByteBuffer buf = ByteBuffer.allocate(1024);
+		entity.serializeTo(buf);
+		byte[] bytes = new byte[buf.position()];
+		buf.position(0);
+		buf.get(bytes, 0, bytes.length);
+		message.addToPayload(bytes);
 		OpenPipes.getInstance().scheduleMessageWriteToAll(message);
 	}
 	
@@ -31,7 +37,13 @@ public class ServerEventBroadcaster {
 	
 	public void broadcastUpdateEntity(Entity entity) {
 		Message message = new Message(MessageType.ENTITY_UPDATED);
-		message.addToPayload(entity);	
+		message.addToPayload(entity.getUuid());
+		ByteBuffer buf = ByteBuffer.allocate(1024);
+		entity.serializeTo(buf);
+		byte[] bytes = new byte[buf.position()];
+		buf.position(0);
+		buf.get(bytes, 0, bytes.length);
+		message.addToPayload(bytes);
 		OpenPipes.getInstance().scheduleMessageWriteToAll(message);
 	}
 
