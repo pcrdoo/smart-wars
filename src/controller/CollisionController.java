@@ -115,7 +115,7 @@ public class CollisionController {
 	}
 
 	private void handleAsteroidHit(Asteroid asteroid, Bullet bullet) {
-		asteroid.getPushed(bullet.getPosition());
+		asteroid.getPushed(bullet.getVelocity());
 		broadcaster.broadcastBulletAsteroidHit(asteroid, bullet);
 		broadcaster.broadcastUpdateEntity(asteroid);
 	}
