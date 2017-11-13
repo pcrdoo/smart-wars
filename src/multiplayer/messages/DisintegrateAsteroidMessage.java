@@ -41,7 +41,8 @@ public class DisintegrateAsteroidMessage implements Message {
 		
 		asteroid = (Asteroid) e;
 		if (asteroid == null) {
-			System.err.println("Warning: Entity " + uuid.toString() + " sent as asteroid for disintegration is of type " + EntityType.fromEntity(e));
+			System.err.println("Warning: Entity " + uuid.toString() + " sent as asteroid for disintegration is of type "
+					+ EntityType.fromEntity(e));
 		}
 	}
 

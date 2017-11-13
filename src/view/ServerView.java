@@ -20,7 +20,7 @@ public class ServerView extends MainView {
 	public void setVisible(boolean flag) {
 		frame.setVisible(flag);
 	}
-	
+
 	public void addText(String text) {
 		area.append(text + "\n");
 	}

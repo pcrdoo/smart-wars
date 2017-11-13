@@ -17,7 +17,7 @@ public class SparksPool extends ObjectPool<Sparks> {
 	public Sparks create(Vector2D position, double duration, double debrisDuration) {
 		Sparks obj = super.create();
 		obj.init(position, duration, debrisDuration);
-		
+
 		return obj;
 	}
 }

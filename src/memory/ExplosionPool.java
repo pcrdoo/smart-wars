@@ -17,7 +17,7 @@ public class ExplosionPool extends ObjectPool<Explosion> {
 	public Explosion create(Vector2D position, double duration, double debrisDuration) {
 		Explosion obj = super.create();
 		obj.init(position, duration, debrisDuration);
-		
+
 		return obj;
 	}
 }

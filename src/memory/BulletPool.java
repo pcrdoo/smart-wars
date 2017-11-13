@@ -15,11 +15,11 @@ public class BulletPool extends ObjectPool<Bullet> {
 	public Bullet createEmpty() {
 		return new Bullet();
 	}
-	
+
 	public Bullet create(Vector2D position, Vector2D velocity, Player owner) {
 		Bullet obj = super.create();
 		obj.init(position, velocity, owner);
-		
+
 		return obj;
 	}
 }

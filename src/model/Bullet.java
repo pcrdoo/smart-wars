@@ -11,17 +11,17 @@ import util.Vector2D;
 
 public class Bullet extends RectEntity implements Poolable {
 	private final static int SERIALIZED_SIZE = 16 + 4 + 4 + 8;
-	
+
 	private Player owner;
 	private double damage;
 	private int bounces;
 	private double velocityChangeCooldown;
-	
+
 	public Bullet() {
 		super(null, null, Constants.BULLET_SIZE);
 		damage = Constants.BULLET_DAMAGE;
 	}
-	
+
 	public void init(Vector2D position, Vector2D velocity, Player owner) {
 		this.position = position;
 		this.velocity = velocity;
@@ -29,7 +29,7 @@ public class Bullet extends RectEntity implements Poolable {
 		velocityChangeCooldown = 0;
 		bounces = 0;
 	}
-	
+
 	public void reset() {
 		this.position = null;
 		this.velocity = null;
@@ -64,17 +64,17 @@ public class Bullet extends RectEntity implements Poolable {
 		if (bounces > Constants.MAX_BULLET_BOUNCES) {
 			return true;
 		}
-		
+
 		Rectangle boundingBox = getBoundingBox();
 		Rectangle screen = new Rectangle(0, 0, Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
-		
+
 		return !boundingBox.intersects(screen);
 	}
 
 	public int getBounces() {
 		return bounces;
 	}
-	
+
 	public boolean bounce(Mirror mirror) {
 		if (velocityChangeCooldown == 0) {
 			setVelocity(reflect(getVelocity(), mirror.getLineVector()));
@@ -94,16 +94,16 @@ public class Bullet extends RectEntity implements Poolable {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public void serializeTo(ByteBuffer buffer) {
 		super.serializeTo(buffer);
 		SerializationHelpers.serializeUuid(buffer, owner.getUuid());
-		buffer.putFloat((float)damage);
+		buffer.putFloat((float) damage);
 		buffer.putInt(bounces);
 		buffer.putDouble(velocityChangeCooldown);
 	}
-	
+
 	@Override
 	public void deserializeFrom(Model model, ByteBuffer buffer) {
 		super.deserializeFrom(model, buffer);
@@ -112,7 +112,7 @@ public class Bullet extends RectEntity implements Poolable {
 		bounces = buffer.getInt();
 		velocityChangeCooldown = buffer.getDouble();
 	}
-	
+
 	@Override
 	public int getSerializedSize() {
 		return super.getSerializedSize() + SERIALIZED_SIZE;

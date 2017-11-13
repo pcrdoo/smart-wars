@@ -5,15 +5,14 @@ import java.util.ArrayList;
 
 import main.Constants;
 import model.abilities.Ability;
+import model.abilities.Gun;
 import model.abilities.MirrorMagic;
 import model.entitites.RoundEntity;
-import model.abilities.Gun;
 import util.Vector2D;
-import view.Updatable;
 
 public class Player extends RoundEntity {
 	private final static int SERIALIZED_SIZE = 1 + 4 + 4 + 4;
-	
+
 	private PlayerSide playerSide;
 	private double maxHealth;
 	private double currHealth;
@@ -89,9 +88,9 @@ public class Player extends RoundEntity {
 	public boolean shouldCull() {
 		return false;
 	}
-	
+
 	public void doMirrorMagic(MirrorMagic mirrorMagic) {
-		
+
 	}
 
 	public MirrorMagic getShortMirrorMagic() {
@@ -101,30 +100,34 @@ public class Player extends RoundEntity {
 	public MirrorMagic getLongMirrorMagic() {
 		return longMirrorMagic;
 	}
-	
+
 	@Override
 	public void serializeTo(ByteBuffer buffer) {
 		super.serializeTo(buffer);
-		buffer.put((byte)playerSide.getNum());
-		buffer.putFloat((float)maxHealth);
-		buffer.putFloat((float)currHealth);
-		buffer.putFloat((float)speed);
+		buffer.put((byte) playerSide.getNum());
+		buffer.putFloat((float) maxHealth);
+		buffer.putFloat((float) currHealth);
+		buffer.putFloat((float) speed);
 	}
-	
+
 	@Override
 	public void deserializeFrom(Model model, ByteBuffer buffer) {
 		super.deserializeFrom(model, buffer);
 		byte side = buffer.get();
-		switch(side) {
-		case 0x01: playerSide = PlayerSide.LEFT_PLAYER; break;
-		case 0x02: playerSide = PlayerSide.RIGHT_PLAYER; break;
+		switch (side) {
+		case 0x01:
+			playerSide = PlayerSide.LEFT_PLAYER;
+			break;
+		case 0x02:
+			playerSide = PlayerSide.RIGHT_PLAYER;
+			break;
 		}
-		
+
 		maxHealth = buffer.getFloat();
 		currHealth = buffer.getFloat();
 		speed = buffer.getFloat();
 	}
-	
+
 	@Override
 	public int getSerializedSize() {
 		return super.getSerializedSize() + SERIALIZED_SIZE;

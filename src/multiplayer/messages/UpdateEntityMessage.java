@@ -12,29 +12,29 @@ public class UpdateEntityMessage implements Message {
 	private final static int SERIALIZED_SIZE = 16 + 4;
 	private UUID uuid;
 	private byte[] serializedEntity;
-	
+
 	public UpdateEntityMessage(UUID uuid, Entity entity) {
 		this.uuid = uuid;
 		serializedEntity = new byte[entity.getSerializedSize()];
 		entity.serializeTo(ByteBuffer.wrap(serializedEntity));
 	}
-	
+
 	public UpdateEntityMessage(Model model, ByteBuffer buffer) {
 		deserializeFrom(model, buffer);
 	}
-	
+
 	@Override
 	public MessageType getType() {
 		return MessageType.ENTITY_UPDATED;
 	}
-	
+
 	@Override
 	public void serializeTo(ByteBuffer buffer) {
 		SerializationHelpers.serializeUuid(buffer, uuid);
 		buffer.putInt(serializedEntity.length);
 		buffer.put(serializedEntity);
 	}
-	
+
 	@Override
 	public void deserializeFrom(Model model, ByteBuffer buffer) {
 		uuid = SerializationHelpers.deserializeUuid(buffer);
@@ -42,7 +42,7 @@ public class UpdateEntityMessage implements Message {
 		serializedEntity = new byte[length];
 		buffer.get(serializedEntity, 0, length);
 	}
-	
+
 	public void apply(Model model) {
 		Entity e = model.getEntityById(uuid);
 		if (e != null) {
@@ -52,7 +52,7 @@ public class UpdateEntityMessage implements Message {
 			System.err.println("Warning: Could not find entity " + uuid.toString() + " to apply update");
 		}
 	}
-	
+
 	@Override
 	public int getSerializedSize() {
 		return SERIALIZED_SIZE + serializedEntity.length;

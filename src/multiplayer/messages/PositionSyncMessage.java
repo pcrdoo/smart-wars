@@ -10,18 +10,19 @@ import model.entitites.Entity;
 public class PositionSyncMessage implements Message {
 	private final static int MESSAGE_SIZE = 4;
 	private ArrayList<UuidPosition> uuidPositions;
-	
+
 	public PositionSyncMessage(Collection<Entity> entities) {
 		uuidPositions = new ArrayList<>();
-		
+
 		for (Entity e : entities) {
 			uuidPositions.add(new UuidPosition(e.getUuid(), e.getPosition()));
 		}
 	}
+
 	public PositionSyncMessage(Model model, ByteBuffer buffer) {
 		deserializeFrom(model, buffer);
 	}
-	
+
 	@Override
 	public void serializeTo(ByteBuffer buffer) {
 		buffer.putInt(uuidPositions.size());
@@ -48,11 +49,11 @@ public class PositionSyncMessage implements Message {
 	public MessageType getType() {
 		return MessageType.POSITION_SYNC;
 	}
-	
+
 	public ArrayList<UuidPosition> getUuidPositions() {
 		return uuidPositions;
 	}
-	
+
 	public void setUuidPositions(ArrayList<UuidPosition> uuidPositions) {
 		this.uuidPositions = uuidPositions;
 	}

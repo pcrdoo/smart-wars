@@ -12,23 +12,23 @@ import util.Vector2D;
 
 public class AsteroidHitMessage implements Message {
 	private final static int MESSAGE_SIZE = 16 + Vector2D.getSerializedSize();
-	
+
 	private Asteroid asteroid;
 	private Vector2D position;
-	
+
 	public AsteroidHitMessage(Asteroid asteroid, Vector2D position) {
 		this.asteroid = asteroid;
 		this.position = position;
 	}
-	
+
 	public AsteroidHitMessage(Model model, ByteBuffer buffer) {
 		deserializeFrom(model, buffer);
 	}
-	
+
 	public AsteroidHitMessage() {
-		
+
 	}
-	
+
 	@Override
 	public void serializeTo(ByteBuffer buffer) {
 		SerializationHelpers.serializeUuid(buffer, asteroid.getUuid());
@@ -43,12 +43,13 @@ public class AsteroidHitMessage implements Message {
 			System.err.println("Warning: Entity " + uuid.toString() + " sent as a hit asteroid doesn't exist");
 			return;
 		}
-		
+
 		asteroid = (Asteroid) e;
 		if (asteroid == null) {
-			System.err.println("Warning: Entity " + uuid.toString() + " sent as a hit asteroid is of type " + EntityType.fromEntity(e));
+			System.err.println("Warning: Entity " + uuid.toString() + " sent as a hit asteroid is of type "
+					+ EntityType.fromEntity(e));
 		}
-		
+
 		position = Vector2D.deserializeFrom(buffer);
 	}
 

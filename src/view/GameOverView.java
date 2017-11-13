@@ -10,27 +10,26 @@ import main.Constants;
 import main.GameState;
 import util.ImageCache;
 import util.Vector2D;
-import view.gfx.particles.ParticleSystem;
-import view.gfx.particles.PointParticleEmitter;
-import view.gfx.particles.AdditiveSpriteParticleRenderer;
 import view.gfx.particles.AlphaSpriteParticleRenderer;
 import view.gfx.particles.ParticleAffectorDecay;
 import view.gfx.particles.ParticleAffectorDeceleration;
 import view.gfx.particles.ParticleAffectorRotation;
+import view.gfx.particles.ParticleSystem;
+import view.gfx.particles.PointParticleEmitter;
 
 public class GameOverView implements Drawable, Updatable {
-	
+
 	private String finalMessage;
 	private BackdropView backdrop;
 	private ParticleSystem victoryFlares;
 	private BufferedImage backTexture;
 	private Font font;
-	
+
 	public GameOverView(GameState gameState) {
-		assert(gameState != GameState.RUNNING);
+		assert (gameState != GameState.RUNNING);
 		BufferedImage particle = null;
-		
-		switch(gameState) {
+
+		switch (gameState) {
 		case DRAW:
 			finalMessage = "Damn it's a draw. Buy your momma a house.";
 			break;
@@ -48,23 +47,26 @@ public class GameOverView implements Drawable, Updatable {
 		default:
 			throw new IllegalArgumentException("Game state shouldn't be running when game is over.");
 		}
-		
+
 		backdrop = new BackdropView();
 		font = new Font("default", Font.BOLD, 16);
-		
+
 		victoryFlares = new ParticleSystem(new AlphaSpriteParticleRenderer(particle), 150);
-		victoryFlares.addEmitter(new PointParticleEmitter(25.0, 3.0, 0.0, new Vector2D(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2), new Vector2D(0, 0), 300.0, 300.0, 0, 2 * Math.PI));
+		victoryFlares.addEmitter(new PointParticleEmitter(25.0, 3.0, 0.0,
+				new Vector2D(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2), new Vector2D(0, 0), 300.0, 300.0,
+				0, 2 * Math.PI));
 		victoryFlares.addAffector(new ParticleAffectorDecay(3.5));
 		victoryFlares.addAffector(new ParticleAffectorDeceleration(50));
-		victoryFlares.addAffector(new ParticleAffectorRotation(new Vector2D(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2), Math.PI / 3));
+		victoryFlares.addAffector(new ParticleAffectorRotation(
+				new Vector2D(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2), Math.PI / 3));
 	}
-	
+
 	@Override
 	public void update(double dt) {
 		backdrop.update(dt);
 		victoryFlares.update(dt);
 	}
-	
+
 	public void draw(Graphics2D g) {
 		backdrop.draw(g);
 		victoryFlares.draw(g);
@@ -72,7 +74,7 @@ public class GameOverView implements Drawable, Updatable {
 		g.setColor(Color.WHITE);
 		g.setFont(font);
 		FontMetrics metrics = g.getFontMetrics(font);
-		
+
 		String s = finalMessage + " Press ENTER for another one.";
 		int strWidth = metrics.stringWidth(s);
 		g.drawString(s, Constants.WINDOW_WIDTH / 2 - strWidth / 2, Constants.WINDOW_HEIGHT - 50);

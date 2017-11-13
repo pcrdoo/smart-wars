@@ -102,7 +102,9 @@ public class Model extends NetworkObject {
 			}
 		}
 	}
+
 	int ai = 0;
+
 	public void removeEntity(Entity entity) {
 		synchronized (entities) {
 			entities.remove(entity.getUuid());
@@ -167,7 +169,7 @@ public class Model extends NetworkObject {
 		entities.remove(player.getUuid());
 		player.setUuid(uuid);
 		entities.put(uuid, player);
-		
+
 		System.out.println("switcharoo happened on " + player);
 	}
 }

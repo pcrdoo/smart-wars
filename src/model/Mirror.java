@@ -1,26 +1,24 @@
 package model;
 
-import java.awt.Rectangle;
 import java.nio.ByteBuffer;
 
 import main.Constants;
-import model.abilities.Ability;
 import model.entitites.LineEntity;
 import multiplayer.SerializationHelpers;
 import util.Vector2D;
 
 public class Mirror extends LineEntity {
 	private final static int SERIALIZED_SIZE = 16 + 1 + 1;
-	
+
 	private Player owner;
 	private MirrorState mirrorState;
 	private boolean isLong;
-	
+
 	public Mirror(Vector2D position, Vector2D velocity, Player owner, double length, boolean isLong) {
 		super(position, velocity, length);
 		this.isLong = isLong;
 		this.owner = owner;
-		
+
 		mirrorState = MirrorState.TRAVELLING;
 	}
 
@@ -57,7 +55,7 @@ public class Mirror extends LineEntity {
 	public double getAngle() {
 		return angle;
 	}
-	
+
 	public boolean isLong() {
 		return isLong;
 	}
@@ -65,30 +63,36 @@ public class Mirror extends LineEntity {
 	public Player getOwner() {
 		return owner;
 	}
-	
+
 	@Override
 	public void serializeTo(ByteBuffer buffer) {
 		super.serializeTo(buffer);
 		SerializationHelpers.serializeUuid(buffer, owner.getUuid());
-		buffer.put((byte)mirrorState.getNum());
-		buffer.put((byte)(isLong ? 0 : 1));
+		buffer.put((byte) mirrorState.getNum());
+		buffer.put((byte) (isLong ? 0 : 1));
 	}
-	
+
 	@Override
 	public void deserializeFrom(Model model, ByteBuffer buffer) {
 		super.deserializeFrom(model, buffer);
 		owner = (Player) model.getEntityById(SerializationHelpers.deserializeUuid(buffer));
-		
+
 		byte state = buffer.get();
-		switch ((int)state) {
-		case 0x01: mirrorState = MirrorState.TRAVELLING; break;
-		case 0x02: mirrorState = MirrorState.SPINNING; break;
-		case 0x03: mirrorState = MirrorState.STABLE; break;
+		switch ((int) state) {
+		case 0x01:
+			mirrorState = MirrorState.TRAVELLING;
+			break;
+		case 0x02:
+			mirrorState = MirrorState.SPINNING;
+			break;
+		case 0x03:
+			mirrorState = MirrorState.STABLE;
+			break;
 		}
-		
+
 		isLong = buffer.get() == 1;
 	}
-	
+
 	@Override
 	public int getSerializedSize() {
 		return super.getSerializedSize() + SERIALIZED_SIZE;

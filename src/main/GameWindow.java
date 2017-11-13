@@ -16,7 +16,6 @@ import debug.PerformanceMonitor;
 import debug.PerformanceOverlay;
 import memory.Pools;
 import model.Model;
-import model.PlayerSide;
 import multiplayer.LocalPipe;
 import rafgfxlib.GameFrame;
 import util.ImageCache;
@@ -28,8 +27,7 @@ public class GameWindow extends GameFrame implements GameStarter {
 	private long lastServerUpdateTime;
 	private long lastViewUpdateTime;
 	private long lastModelUpdateTime;
-	
-	private Model localServerModel;
+
 	private Model model;
 	private ClientView view;
 	private ClientController controller;
@@ -60,7 +58,7 @@ public class GameWindow extends GameFrame implements GameStarter {
 		getWindow().setLocationRelativeTo(null);
 		getWindow().setVisible(false);
 		getWindow().setBackground(Color.BLACK);
-		
+
 	}
 
 	public void usePerformanceOverlay(PerformanceOverlay po) {
@@ -73,7 +71,7 @@ public class GameWindow extends GameFrame implements GameStarter {
 		Pools.repopulate();
 
 		model = new Model();
-		//localServerModel = new Model();
+		// localServerModel = new Model();
 		view = new ClientView();
 		if (gameMode == GameMode.NETWORK) {
 			controller = new ClientController(this, view, model, gameMode, serverAddress);
@@ -115,8 +113,12 @@ public class GameWindow extends GameFrame implements GameStarter {
 			LocalPipe pipe = new LocalPipe();
 			localServerController.setLocalPipe(pipe);
 			controller.setLocalPipe(pipe);
-			/*model.updatePlayerId(PlayerSide.LEFT_PLAYER, model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).getUuid());
-			model.updatePlayerId(PlayerSide.RIGHT_PLAYER, model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).getUuid());*/
+			/*
+			 * model.updatePlayerId(PlayerSide.LEFT_PLAYER,
+			 * model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).getUuid());
+			 * model.updatePlayerId(PlayerSide.RIGHT_PLAYER,
+			 * model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).getUuid());
+			 */
 		}
 
 		startThread();
@@ -166,7 +168,7 @@ public class GameWindow extends GameFrame implements GameStarter {
 			localServerController.update(dtServer);
 			ms.done();
 			lastServerUpdateTime = System.nanoTime();
-			//localServerModel.update(dt);
+			// localServerModel.update(dt);
 		}
 		ms = m.measure("ControllerUpdateTotal");
 		double dtController = (double) (System.nanoTime() - lastUpdateTime) / 1e9;
