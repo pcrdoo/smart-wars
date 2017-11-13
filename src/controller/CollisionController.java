@@ -8,6 +8,7 @@ import model.Bullet;
 import model.Mirror;
 import model.Model;
 import model.Player;
+import model.PlayerSide;
 import model.Wormhole;
 import model.entitites.Entity;
 
@@ -24,15 +25,15 @@ public class CollisionController {
 	public void checkAsteroidPlayerCollisions() {
 		ArrayList<Asteroid> toDisintegrate = new ArrayList<>();
 		for (Asteroid asteroid : model.getAsteroids()) {
-			if (asteroid.hitTest(model.getLeftPlayer())) {
-				model.getLeftPlayer().receiveDamage(Constants.ASTEROID_PLAYER_DAMAGE);
-				broadcaster.broadcastUpdateEntity(model.getLeftPlayer());
-				broadcaster.broadcastPlayerAsteroidHit(model.getLeftPlayer(), asteroid);
+			if (asteroid.hitTest(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER))) {
+				model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).receiveDamage(Constants.ASTEROID_PLAYER_DAMAGE);
+				broadcaster.broadcastUpdateEntity(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER));
+				broadcaster.broadcastPlayerAsteroidHit(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER), asteroid);
 				toDisintegrate.add(asteroid);
-			} else if (asteroid.hitTest(model.getRightPlayer())) {
-				model.getRightPlayer().receiveDamage(Constants.ASTEROID_PLAYER_DAMAGE);
-				broadcaster.broadcastUpdateEntity(model.getRightPlayer());
-				broadcaster.broadcastPlayerAsteroidHit(model.getRightPlayer(), asteroid);
+			} else if (asteroid.hitTest(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER))) {
+				model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).receiveDamage(Constants.ASTEROID_PLAYER_DAMAGE);
+				broadcaster.broadcastUpdateEntity(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER));
+				broadcaster.broadcastPlayerAsteroidHit(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER), asteroid);
 				toDisintegrate.add(asteroid);
 			}
 		}
@@ -46,13 +47,13 @@ public class CollisionController {
 	public ArrayList<Entity> checkBulletCollisions() {
 		ArrayList<Entity> impactedBullets = new ArrayList<>();
 		for (Bullet bullet : model.getBullets()) {
-			if ((bullet.getBounces() > 0 || bullet.getOwner() == model.getRightPlayer())
-					&& model.getLeftPlayer().hitTest(bullet.getPosition())) {
-				handlePlayerHit(model.getLeftPlayer(), bullet);
+			if ((bullet.getBounces() > 0 || bullet.getOwner() == model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER))
+					&& model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).hitTest(bullet.getPosition())) {
+				handlePlayerHit(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER), bullet);
 				impactedBullets.add(bullet);
-			} else if ((bullet.getBounces() > 0 || bullet.getOwner() == model.getLeftPlayer())
-					&& model.getRightPlayer().hitTest(bullet.getPosition())) {
-				handlePlayerHit(model.getRightPlayer(), bullet);
+			} else if ((bullet.getBounces() > 0 || bullet.getOwner() == model.getPlayerOnSide(PlayerSide.LEFT_PLAYER))
+					&& model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).hitTest(bullet.getPosition())) {
+				handlePlayerHit(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER), bullet);
 				impactedBullets.add(bullet);
 			} else {
 				// Asteroid collision

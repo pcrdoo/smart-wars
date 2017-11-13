@@ -130,7 +130,7 @@ public class ServerController extends GameStateController {
 				throw new RuntimeException("Invalid message from the client with type " + message.getType());
 			}
 			PlayerSide side = (PlayerSide) (message.getPayload().get(0));
-			Player player = side == PlayerSide.LEFT_PLAYER ? model.getLeftPlayer() : model.getRightPlayer();
+			Player player = model.getPlayerOnSide(side);
 			Control control = (Control) (message.getPayload().get(1));
 			switch (control) {
 			case FIRE_GUN:
@@ -277,13 +277,14 @@ public class ServerController extends GameStateController {
 	}
 
 	private void checkGameOver() {
-		if (!model.getLeftPlayer().isAlive() && !model.getRightPlayer().isAlive()) {
+		if (!model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).isAlive()
+				&& !model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).isAlive()) {
 			model.setGameState(GameState.DRAW);
 			onGameOver();
-		} else if (!model.getLeftPlayer().isAlive()) {
+		} else if (!model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).isAlive()) {
 			model.setGameState(GameState.RIGHT_WIN);
 			onGameOver();
-		} else if (!model.getRightPlayer().isAlive()) {
+		} else if (!model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).isAlive()) {
 			model.setGameState(GameState.LEFT_WIN);
 			onGameOver();
 		}

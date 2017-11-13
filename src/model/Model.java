@@ -16,8 +16,7 @@ import util.Vector2D;
 
 public class Model extends NetworkObject {
 
-	private Player leftPlayer;
-	private Player rightPlayer;
+	private HashMap<PlayerSide, Player> players;
 	private HashMap<UUID, Entity> entities;
 	private ArrayList<Bullet> bullets; // separate bullets for culling
 	private ArrayList<Asteroid> asteroids; // separate asteroids for culling
@@ -29,8 +28,9 @@ public class Model extends NetworkObject {
 	public Model() {
 		super();
 		gameState = GameState.RUNNING;
-		leftPlayer = new Player(PlayerSide.LEFT_PLAYER);
-		rightPlayer = new Player(PlayerSide.RIGHT_PLAYER);
+		players = new HashMap<>();
+		players.put(PlayerSide.LEFT_PLAYER, new Player(PlayerSide.LEFT_PLAYER));
+		players.put(PlayerSide.RIGHT_PLAYER, new Player(PlayerSide.RIGHT_PLAYER));
 		bullets = new ArrayList<>();
 		asteroids = new ArrayList<>();
 		mirrors = new ArrayList<>();
@@ -38,17 +38,13 @@ public class Model extends NetworkObject {
 
 		entities = new HashMap<>();
 		synchronized(entities) {
-			addEntity(leftPlayer);
-			addEntity(rightPlayer);
+			addEntity(players.get(PlayerSide.LEFT_PLAYER));
+			addEntity(players.get(PlayerSide.RIGHT_PLAYER));
 		}
 	}
 
-	public Player getLeftPlayer() {
-		return leftPlayer;
-	}
-
-	public Player getRightPlayer() {
-		return rightPlayer;
+	public Player getPlayerOnSide(PlayerSide playerSide) {
+		return players.get(playerSide);
 	}
 
 	public void update(double dt) {
@@ -73,8 +69,8 @@ public class Model extends NetworkObject {
 				dd.addRectangle("EntityBoundingBoxes", e.getBoundingBox());
 			}
 			
-			dd.addOval("PlayerCircles", leftPlayer.getBoundingBox());
-			dd.addOval("PlayerCircles", rightPlayer.getBoundingBox());
+			dd.addOval("PlayerCircles", players.get(PlayerSide.LEFT_PLAYER).getBoundingBox());
+			dd.addOval("PlayerCircles", players.get(PlayerSide.RIGHT_PLAYER).getBoundingBox());
 			
 			for (Wormhole w : wormholes) {
 				dd.addOval("WormholeCircles", w.getBoundingBox());

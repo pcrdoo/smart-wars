@@ -68,7 +68,7 @@ public class ClientController extends GameStateController {
 		viewMap = new HashMap<>();
 		disintegratingAsteroids = new ArrayList<>();
 
-		PlayerView leftPlayerView = new PlayerView(model.getLeftPlayer());
+		PlayerView leftPlayerView = new PlayerView(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER));
 		view.addDrawable(leftPlayerView, Constants.Z_PLAYER);
 		view.addUpdatable(leftPlayerView);
 		leftPlayerControls = new HashMap<Control, Integer>();
@@ -78,7 +78,7 @@ public class ClientController extends GameStateController {
 		leftPlayerControls.put(Control.SHORT_MIRROR_MAGIC, KeyEvent.VK_Q);
 		leftPlayerControls.put(Control.LONG_MIRROR_MAGIC, KeyEvent.VK_A);
 
-		PlayerView rightPlayerView = new PlayerView(model.getRightPlayer());
+		PlayerView rightPlayerView = new PlayerView(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER));
 		view.addDrawable(rightPlayerView, Constants.Z_PLAYER);
 		view.addUpdatable(rightPlayerView);
 		rightPlayerControls = new HashMap<Control, Integer>();
@@ -90,8 +90,8 @@ public class ClientController extends GameStateController {
 
 		initKeyboardState();
 
-		viewMap.put(model.getLeftPlayer(), leftPlayerView);
-		viewMap.put(model.getRightPlayer(), rightPlayerView);
+		viewMap.put(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER), leftPlayerView);
+		viewMap.put(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER), rightPlayerView);
 	}
 
 	@Override
@@ -141,10 +141,10 @@ public class ClientController extends GameStateController {
 			return;
 		}
 		if (sidesToControl.contains(PlayerSide.LEFT_PLAYER)) {
-			checkPlayerControls(model.getLeftPlayer(), leftPlayerControls);
+			checkPlayerControls(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER), leftPlayerControls);
 		}
 		if (sidesToControl.contains(PlayerSide.RIGHT_PLAYER)) {
-			checkPlayerControls(model.getRightPlayer(), rightPlayerControls);
+			checkPlayerControls(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER), rightPlayerControls);
 		}
 		checkDisintegratingAsteroids();
 		serverPipe.writeScheduledMessages();
