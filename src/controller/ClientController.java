@@ -63,7 +63,6 @@ public class ClientController extends GameStateController {
 			gameMode = GameMode.NETWORK;
 			this.serverAddress = serverAddress;
 		} else {
-			// LOCAL
 			gameMode = GameMode.LOCAL;
 		}
 
@@ -100,7 +99,6 @@ public class ClientController extends GameStateController {
 	public void setUpConnections() throws IOException {
 		if (gameMode == GameMode.NETWORK) {
 			Socket socket = new Socket(serverAddress.getHostName(), serverAddress.getPort());
-			OpenPipes.getInstance().setSide(Side.CLIENT);
 			serverPipe = new NetworkPipe(socket);
 			OpenPipes.getInstance().addPipe(serverPipe);
 			Message message = serverPipe.readMessage();

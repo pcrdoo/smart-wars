@@ -64,7 +64,6 @@ public class ServerController extends GameStateController {
 	public void setUpConnections() throws IOException {
 		ServerSocket serverSocket = new ServerSocket(port);
 		// wait for two
-		OpenPipes.getInstance().setSide(Side.SERVER);
 		for (int i = 0; i < 2; i++) {
 			Socket socket = serverSocket.accept();
 			if (playerPipes.containsKey(PlayerSide.LEFT_PLAYER)) {

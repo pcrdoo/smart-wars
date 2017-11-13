@@ -8,6 +8,8 @@ import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
 import java.net.InetSocketAddress;
 
+import javax.swing.JDialog;
+
 import controller.ClientController;
 import debug.DebugDisplay;
 import debug.Measurement;
@@ -18,6 +20,7 @@ import model.Model;
 import rafgfxlib.GameFrame;
 import util.ImageCache;
 import view.ClientView;
+import view.GameModeDialog;
 
 @SuppressWarnings("serial")
 public class GameWindow extends GameFrame implements GameStarter {
@@ -31,11 +34,16 @@ public class GameWindow extends GameFrame implements GameStarter {
 	private GraphicsDevice device;
 	private DisplayMode oldDisplayMode;
 	private boolean fullscreen;
+	private GameMode gameMode;
+	private InetSocketAddress serverAddress;
+	
 
-	public GameWindow(boolean fullscreen) {
+	public GameWindow(boolean fullscreen, GameMode gameMode, InetSocketAddress serverAddress) {
 		super("Smart Wars", Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
 
 		this.fullscreen = fullscreen;
+		this.gameMode = gameMode;
+		this.serverAddress = serverAddress;
 		loadingWindow = new LoadingWindow();
 		loadingWindow.setVisible(true);
 
@@ -58,14 +66,17 @@ public class GameWindow extends GameFrame implements GameStarter {
 	public void startGame() {
 		ImageCache.getInstance().preload(Constants.IMAGES_TO_PRELOAD);
 		Pools.repopulate();
-
+		
+		System.out.println(gameMode + " " + serverAddress);
+		
 		model = new Model();
 		view = new ClientView();
-		controller = new ClientController(this, view, model, new InetSocketAddress("localhost", 12345));
-		// TODO: screen to enter hostname/ip
+		if(gameMode == GameMode.NETWORK) {
+			controller = new ClientController(this, view, model, serverAddress);
+		} else {
+			controller = new ClientController(this, view, model, null);
+		}
 		lastUpdateTime = System.nanoTime();
-
-		loadingWindow.setVisible(false);
 
 		setUpdateRate(60);
 		setBackgroundClear(false);
@@ -87,6 +98,7 @@ public class GameWindow extends GameFrame implements GameStarter {
 			}
 		}
 
+
 		// Run game thread after sync
 		try {
 			controller.setUpConnections();
@@ -95,6 +107,7 @@ public class GameWindow extends GameFrame implements GameStarter {
 			// TODO: how to handle
 		}
 		startThread();
+		loadingWindow.setVisible(false);
 		getWindow().setVisible(true);
 	}
 

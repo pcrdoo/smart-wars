@@ -6,16 +6,11 @@ public class OpenPipes {
 
 	private ArrayList<NetworkPipe> pipes;
 	private static OpenPipes instance;
-	private Side side;
 
 	protected OpenPipes() {
 		pipes = new ArrayList<>();
 	}
-	
-	public void setSide(Side side) {
-		this.side = side;
-	}
-	
+
 	public void addPipe(NetworkPipe pipe) {
 		pipes.add(pipe);
 	}
@@ -41,10 +36,6 @@ public class OpenPipes {
 		for(NetworkPipe pipe: pipes) {
 			pipe.writeScheduledMessages();
 		}
-	}
-
-	public boolean isServer() {
-		return side == Side.SERVER;
 	}
 
 }
