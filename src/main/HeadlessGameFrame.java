@@ -42,7 +42,7 @@ public class HeadlessGameFrame extends GameFrame implements GameStarter {
 
 		model = new Model();
 		view = new ServerView();
-		controller = new ServerController(this, view, model, Constants.SERVER_PORT);
+		controller = new ServerController(this, view, model, GameMode.NETWORK);
 		lastUpdateTime = System.nanoTime();
 
 		loadingWindow.setVisible(false);

@@ -3,19 +3,20 @@ package multiplayer;
 import java.util.ArrayList;
 
 public class OpenPipes {
+	// Only server uses this.
 
-	private ArrayList<NetworkPipe> pipes;
+	private ArrayList<Pipe> pipes;
 	private static OpenPipes instance;
 
 	protected OpenPipes() {
 		pipes = new ArrayList<>();
 	}
 
-	public void addPipe(NetworkPipe pipe) {
+	public void addPipe(Pipe pipe) {
 		pipes.add(pipe);
 	}
 	
-	public ArrayList<NetworkPipe> getPipes() {
+	public ArrayList<Pipe> getPipes() {
 		return pipes;
 	}
 	
@@ -27,13 +28,13 @@ public class OpenPipes {
 	}
 
 	public void scheduleMessageWriteToAll(Message message) {
-		for(NetworkPipe pipe: pipes) {
+		for(Pipe pipe: pipes) {
 			pipe.scheduleMessageWrite(message);
 		}
 	}
 	
 	public void writeScheduledMessagesOnAll() {
-		for(NetworkPipe pipe: pipes) {
+		for(Pipe pipe: pipes) {
 			pipe.writeScheduledMessages();
 		}
 	}

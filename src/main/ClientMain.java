@@ -113,11 +113,9 @@ public class ClientMain {
 			}
 		}
 		
-		// Screen to choose mode and enter hostname and ip
 		GameMode gameMode=null;
 		InetSocketAddress serverAddress=null;
 		GameModeDialog gameModeDialog = new GameModeDialog();
-		System.out.println(gameMode + " " + serverAddress);
 		GameWindow gw = new GameWindow(fullscreen, gameModeDialog.getGameMode(),gameModeDialog.getAddress());
 		gw.usePerformanceOverlay(po);
 		gw.initGameWindow(fullscreen);

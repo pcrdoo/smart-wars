@@ -6,7 +6,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 
-public class NetworkPipe {
+public class NetworkPipe implements Pipe {
 
 	private ObjectInputStream inputStream;
 	private ObjectOutputStream outputStream;
@@ -43,18 +43,21 @@ public class NetworkPipe {
 		writerThread.start();
 	}
 
+	@Override
 	public void scheduleMessageWrite(Message message) {
 		synchronized (buffer) {
 			buffer.add(message);
 		}
 	}
 
+	@Override
 	public void writeScheduledMessages() {
 		synchronized (buffer) {
 			buffer.notify();
 		}
 	}
 
+	@Override
 	public boolean hasMessages() {
 		try {
 			return inputStream.available() > 0;
@@ -63,6 +66,7 @@ public class NetworkPipe {
 		}
 	}
 
+	@Override
 	public Message readMessage() {
 		try {
 			return (Message) inputStream.readObject();
