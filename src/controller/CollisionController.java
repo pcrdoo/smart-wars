@@ -28,19 +28,19 @@ public class CollisionController {
 			if (asteroid.hitTest(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER))) {
 				model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).receiveDamage(Constants.ASTEROID_PLAYER_DAMAGE);
 				broadcaster.broadcastUpdateEntity(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER));
-				broadcaster.broadcastPlayerAsteroidHit(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER), asteroid);
+				broadcaster.broadcastPlayerHit(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER));
 				toDisintegrate.add(asteroid);
 			} else if (asteroid.hitTest(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER))) {
 				model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).receiveDamage(Constants.ASTEROID_PLAYER_DAMAGE);
 				broadcaster.broadcastUpdateEntity(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER));
-				broadcaster.broadcastPlayerAsteroidHit(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER), asteroid);
+				broadcaster.broadcastPlayerHit(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER));
 				toDisintegrate.add(asteroid);
 			}
 		}
 		for (Asteroid asteroid : toDisintegrate) {
 			model.removeEntity(asteroid);
-			broadcaster.broadcastRemoveEntity(asteroid);
 			broadcaster.broadcastDisintegrateAsteroid(asteroid);
+			broadcaster.broadcastRemoveEntity(asteroid);
 		}
 	}
 
@@ -122,6 +122,7 @@ public class CollisionController {
 
 	private void handlePlayerHit(Player player, Bullet bullet) {
 		player.receiveDamage(bullet.getDamage());
+		broadcaster.broadcastPlayerHit(player);
 		broadcaster.broadcastUpdateEntity(player);
 	}
 

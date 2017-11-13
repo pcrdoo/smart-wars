@@ -28,6 +28,11 @@ public abstract class Entity extends NetworkObject {
 	}
 
 	public void update(double dt) {
+		if(position == null) {
+			System.out.println(this.getClass());
+		}
+		System.out.println((position == null) + " position nije null");
+		System.out.println((velocity == null) + " vel nije null");
 		position = position.add(velocity.scale(dt));
 	}
 
@@ -55,13 +60,17 @@ public abstract class Entity extends NetworkObject {
 	
 	@Override
 	public void serializeTo(ByteBuffer buffer) {
+		super.serializeTo(buffer);
 		position.serializeTo(buffer);
 		velocity.serializeTo(buffer);
 	}
 	
 	@Override
 	public void deserializeFrom(Model model, ByteBuffer buffer) {
+		super.deserializeFrom(model, buffer);
 		position = Vector2D.deserializeFrom(buffer);
 		velocity = Vector2D.deserializeFrom(buffer);
+		System.out.println((position == null) + " position null");
+		System.out.println((velocity == null) + " vel null");
 	}
 }

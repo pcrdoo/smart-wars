@@ -187,7 +187,7 @@ public class ClientController extends GameStateController {
 				UUID asteroidId = (UUID) (message.getPayload().get(0));
 				doDisintegrateAsteroid(asteroidId);
 				break;
-			case VIEW_PLAYER_ASTEROID_HIT:
+			case VIEW_PLAYER_HIT:
 				UUID playerId = (UUID) (message.getPayload().get(0));
 				doPlayerAsteroidHit(playerId);
 				break;
@@ -279,6 +279,7 @@ public class ClientController extends GameStateController {
 			System.err.println("Unknown entity type: " + typeByte);
 			return;
 		}
+		e.deserializeFrom(model, buf);
 
 		EntityView v = createViewForEntity(type, e);
 		view.addDrawable(v, getZIndexForEntityType(type));
@@ -290,6 +291,7 @@ public class ClientController extends GameStateController {
 
 	private void doRemoveEntity(UUID uuid) {
 		Entity entity = model.getEntityById(uuid);
+		System.out.println("REMOVE " + uuid + " " + entity.getClass());
 		deleteView(entity);
 		model.removeEntity(entity);
 	}
@@ -311,6 +313,11 @@ public class ClientController extends GameStateController {
 
 	private void doLocationUpdate(UUID entityId, Vector2D newPosition) {
 		Entity entity = model.getEntityById(entityId);
+		System.out.println("BRT");
+		System.out.println(entityId);
+		for(Entity e : model.getEntities()) {
+			System.out.println(e.getClass() + " " + e.getUuid());
+		}
 		entity.setPosition(newPosition);
 	}
 

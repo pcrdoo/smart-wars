@@ -12,6 +12,7 @@ public class LocalPipe implements Pipe {
 
 	@Override
 	public void scheduleMessageWrite(Message message) {
+		System.out.println("ADDED " + message.getType());
 		queue.add(message);
 	}
 
@@ -28,6 +29,7 @@ public class LocalPipe implements Pipe {
 	@Override
 	public Message readMessage() {
 		Message message = queue.getFirst();
+		System.out.println("READ " + message.getType());
 		queue.pop();
 		return message;
 	}

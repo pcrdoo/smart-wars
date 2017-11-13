@@ -204,6 +204,7 @@ public class ServerController extends GameStateController {
 				break;
 			}
 		}
+		// TODO overkill
 		broadcaster.broadcastUpdateEntity(mirrorMagic.getOwner());
 	}
 

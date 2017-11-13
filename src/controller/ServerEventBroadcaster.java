@@ -71,8 +71,8 @@ public class ServerEventBroadcaster {
 		OpenPipes.getInstance().scheduleMessageWriteToAll(message);
 	}
 
-	public void broadcastPlayerAsteroidHit(Player player, Asteroid asteroid) {
-		Message message = new Message(MessageType.VIEW_PLAYER_ASTEROID_HIT);
+	public void broadcastPlayerHit(Player player) {
+		Message message = new Message(MessageType.VIEW_PLAYER_HIT);
 		message.addToPayload(player.getUuid());
 		OpenPipes.getInstance().scheduleMessageWriteToAll(message);
 	}
