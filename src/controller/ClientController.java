@@ -173,11 +173,9 @@ public class ClientController extends GameStateController {
 
 	private void receiveUpdates() {
 		ArrayList<Message> messages = new ArrayList<>();
-		System.out.println("Client receiving updates!");
 		while (serverPipe.hasMessages()) {
 			messages.add(serverPipe.readMessage(model));
 		}
-		System.out.println("Client got " + messages.size() + " updates.");
 
 		for (Message message : messages) {
 			switch (message.getType()) {
@@ -288,14 +286,16 @@ public class ClientController extends GameStateController {
 			model.removeEntity(entity);
 		}
 	}
-
+	
 	private void deleteView(Entity entity) {
 		EntityView entityView = viewMap.get(entity);
 		if (entityView != null) {
-			view.removeUpdatable(entityView);
-			view.removeDrawable(entityView);
-			entityView.onRemoved();
-			viewMap.remove(entity);
+			if (!disintegratingAsteroids.contains(entityView)) {
+				view.removeUpdatable(entityView);
+				view.removeDrawable(entityView);
+				entityView.onRemoved();
+				viewMap.remove(entity);
+			}
 		} else {
 			System.err
 					.println("Warning: No view found for entity " + entity.getUuid() + " of type " + entity.getClass());
@@ -317,8 +317,8 @@ public class ClientController extends GameStateController {
 	private void doDisintegrateAsteroid(Asteroid asteroid) {
 		// Delete asteroid, keep just the view for the animation.
 		AsteroidView asteroidView = (AsteroidView) viewMap.get(asteroid);
-		viewMap.remove(asteroid);
 		disintegratingAsteroids.add(asteroidView);
+		viewMap.remove(asteroid);
 		asteroidView.onAsteroidDisintegrated();
 	}
 

@@ -154,13 +154,11 @@ public class ServerController extends GameStateController {
 	}
 
 	private void checkForPlayerMessages(Pipe pipe) {
-		System.out.println("Server receiving updates!");
 		ArrayList<Message> messages = new ArrayList<>();
 		while (pipe.hasMessages()) {
 			messages.add(pipe.readMessage(model));
 		}
-		System.out.println("Server got " + messages.size() + " updates.");
-
+		
 		for (Message message : messages) {
 			if (!(message instanceof PlayerControlMessage)) {
 				throw new RuntimeException("Invalid message from the client with type " + message.getType());
