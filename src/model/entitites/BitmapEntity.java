@@ -4,7 +4,6 @@ import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
 
-import util.ImageCache;
 import util.Vector2D;
 
 public abstract class BitmapEntity extends Entity {
@@ -45,7 +44,7 @@ public abstract class BitmapEntity extends Entity {
 				}
 			}
 		}
-		
+
 		return false;
 	}
 

@@ -1,7 +1,5 @@
 package memory;
 
-import model.Bullet;
-
 public class Pools {
 	public static final BulletPool BULLET = new BulletPool();
 	public static final BulletViewPool BULLET_VIEW = new BulletViewPool();

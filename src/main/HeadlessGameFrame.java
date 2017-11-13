@@ -13,8 +13,8 @@ import view.ServerView;
 public class HeadlessGameFrame extends GameFrame implements GameStarter {
 	private long lastUpdateTime;
 	private long lastModelUpdateTime;
-	private long lastViewUpdateTime;
-	
+	// private long lastViewUpdateTime;
+
 	private Model model;
 	private ServerView view;
 	private ServerController controller;
@@ -53,7 +53,7 @@ public class HeadlessGameFrame extends GameFrame implements GameStarter {
 
 		// Run game thread
 		setUpdateRate(60);
-		
+
 		try {
 			controller.setUpConnections();
 		} catch (Exception ex) {
@@ -64,7 +64,7 @@ public class HeadlessGameFrame extends GameFrame implements GameStarter {
 		startThread();
 		lastUpdateTime = System.nanoTime();
 		lastModelUpdateTime = System.nanoTime();
-		lastViewUpdateTime = System.nanoTime();
+		// lastViewUpdateTime = System.nanoTime();
 	}
 
 	@Override

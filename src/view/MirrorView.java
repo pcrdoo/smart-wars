@@ -14,16 +14,18 @@ import view.gfx.GlassSparks;
 
 public class MirrorView extends EntityView {
 	private final static double SPARKS_SPAWN_COOLDOWN = 0.2;
-	
+
 	private Mirror mirror;
 	private BufferedImage mirrorSprite;
 	private ArrayList<GlassSparks> sparks;
 	private double timeSinceLastSparksSpawn = 0.0;
-	
+
 	public MirrorView(Mirror mirror) {
 		this.mirror = mirror;
-		mirrorSprite = ImageCache.getInstance().get("mirror-" + (mirror.getOwner().getPlayerSide() == PlayerSide.LEFT_PLAYER ? "left" : "right") + "-" + (mirror.isLong() ? "long" : "short") + ".png");
-		
+		mirrorSprite = ImageCache.getInstance()
+				.get("mirror-" + (mirror.getOwner().getPlayerSide() == PlayerSide.LEFT_PLAYER ? "left" : "right") + "-"
+						+ (mirror.isLong() ? "long" : "short") + ".png");
+
 		sparks = new ArrayList<>();
 	}
 
@@ -37,15 +39,15 @@ public class MirrorView extends EntityView {
 				finishedSparks.add(s);
 			}
 		}
-		
+
 		for (GlassSparks s : finishedSparks) {
 			sparks.remove(s);
 			Pools.GLASS_SPARKS.free(s);
 		}
-		
+
 		timeSinceLastSparksSpawn += dt;
 	}
-	
+
 	@Override
 	public void onRemoved() {
 		for (GlassSparks s : sparks) {
@@ -60,20 +62,20 @@ public class MirrorView extends EntityView {
 
 		int x = (int) (mirror.getPosition().getX()), y = (int) (mirror.getPosition().getY());
 		AffineTransform cache = g.getTransform();
-		
+
 		g.setTransform(new AffineTransform());
 
 		g.scale(cache.getScaleX(), cache.getScaleY());
 		g.translate(x, y);
 		g.rotate(mirror.getAngle());
-		g.translate(-w/2, -h/2);
+		g.translate(-w / 2, -h / 2);
 
 		g.drawImage(mirrorSprite, 0, 0, null);
 
 		g.setTransform(cache);
-		//g.setColor(Color.RED);
-		//g.fillOval(x-5, y-5, 10, 10);
-		
+		// g.setColor(Color.RED);
+		// g.fillOval(x-5, y-5, 10, 10);
+
 		for (GlassSparks s : sparks) {
 			s.draw(g);
 		}
@@ -83,8 +85,9 @@ public class MirrorView extends EntityView {
 		if (timeSinceLastSparksSpawn < SPARKS_SPAWN_COOLDOWN) {
 			return;
 		}
-		
+
 		timeSinceLastSparksSpawn = 0.0;
-		sparks.add(Pools.GLASS_SPARKS.create(bulletPosition, mirror.getAngle(), !mirror.isPointOnBottomSide(bulletPosition), 1.5, 0.15));
+		sparks.add(Pools.GLASS_SPARKS.create(bulletPosition, mirror.getAngle(),
+				!mirror.isPointOnBottomSide(bulletPosition), 1.5, 0.15));
 	}
 }

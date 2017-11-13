@@ -13,11 +13,11 @@ public class AsteroidViewPool extends ObjectPool<AsteroidView> {
 	protected AsteroidView createEmpty() {
 		return new AsteroidView();
 	}
-	
+
 	public AsteroidView create(Asteroid asteroid) {
 		AsteroidView obj = super.create();
 		obj.init(asteroid);
-		
+
 		return obj;
 	}
 }

@@ -11,8 +11,8 @@ public class PointParticleEmitter implements ParticleEmitter {
 	private double accumulTime;
 	private double lifetime, lifetimeJitter;
 
-	public PointParticleEmitter(double spawnsPerSecond, double lifetime, double lifetimeJitter, Vector2D position, Vector2D positionJitter,
-			double velocity, double velocityJitter, double minAngle, double maxAngle) {
+	public PointParticleEmitter(double spawnsPerSecond, double lifetime, double lifetimeJitter, Vector2D position,
+			Vector2D positionJitter, double velocity, double velocityJitter, double minAngle, double maxAngle) {
 		this.spawnsPerSecond = spawnsPerSecond;
 		this.position = position;
 		this.positionJitter = positionJitter;
@@ -34,13 +34,18 @@ public class PointParticleEmitter implements ParticleEmitter {
 		emitInterval = 1 / spawnsPerSecond;
 	}
 	
+	public double getSpawnsPerSecond() {
+		return spawnsPerSecond;
+	}
+
 	private void spawn(Particles particles) {
 		Vector2D newPosition = position.add(positionJitter.scale(2.0 * Math.random() - 1.0));
-		
+
 		double angle = Math.random() * (maxAngle - minAngle) + minAngle;
-		Vector2D newVelocity = new Vector2D(Math.cos(angle), Math.sin(angle)).scale(velocity + (2.0 * Math.random() - 1.0) * velocityJitter);
+		Vector2D newVelocity = new Vector2D(Math.cos(angle), Math.sin(angle))
+				.scale(velocity + (2.0 * Math.random() - 1.0) * velocityJitter);
 		double t = lifetime + (2.0 * Math.random() - 1.0) * lifetimeJitter;
-		
+
 		particles.add(newPosition, newVelocity, t, 1.0);
 	}
 

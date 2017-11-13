@@ -8,26 +8,26 @@ public abstract class ObjectPool<T extends Poolable> {
 	private ArrayList<T> freeList;
 	private String statisticName;
 	private int size;
-	
+
 	public ObjectPool(int size, String statisticName) {
 		this.size = size;
 		this.statisticName = statisticName;
-		
+
 		repopulate();
 		reportFree();
 	}
-	
+
 	protected abstract T createEmpty();
-	
+
 	public void reportFree() {
 		PerformanceMonitor.getInstance().recordStatistic(statisticName, freeList.size());
 	}
-	
+
 	public void free(T o) {
 		freeList.add(o);
 		reportFree();
 	}
-	
+
 	public T create() {
 		if (freeList.isEmpty()) {
 			System.err.println("Warning: Object pool is full, satisfying the request by creating a new object.");
@@ -40,7 +40,7 @@ public abstract class ObjectPool<T extends Poolable> {
 			return obj;
 		}
 	}
-	
+
 	public void repopulate() {
 		freeList = new ArrayList<>();
 		for (int i = 0; i < size; i++) {

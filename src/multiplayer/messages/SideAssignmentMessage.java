@@ -9,18 +9,18 @@ import multiplayer.SerializationHelpers;
 
 public class SideAssignmentMessage implements Message {
 	private int MESSAGE_SIZE = 1 + 16 + 16;
-	
+
 	private PlayerSide clientSide;
 	private UUID leftPlayerUuid, rightPlayerUuid;
-	
+
 	public SideAssignmentMessage() {
-		
+
 	}
-	
+
 	public SideAssignmentMessage(Model model, ByteBuffer buffer) {
 		deserializeFrom(model, buffer);
 	}
-	
+
 	public SideAssignmentMessage(PlayerSide clientSide, UUID leftPlayerUuid, UUID rightPlayerUuid) {
 		this.clientSide = clientSide;
 		this.leftPlayerUuid = leftPlayerUuid;
@@ -29,7 +29,7 @@ public class SideAssignmentMessage implements Message {
 
 	@Override
 	public void serializeTo(ByteBuffer buffer) {
-		buffer.put((byte)clientSide.getNum());
+		buffer.put((byte) clientSide.getNum());
 		SerializationHelpers.serializeUuid(buffer, leftPlayerUuid);
 		SerializationHelpers.serializeUuid(buffer, rightPlayerUuid);
 	}
@@ -38,10 +38,14 @@ public class SideAssignmentMessage implements Message {
 	public void deserializeFrom(Model model, ByteBuffer buffer) {
 		byte sideByte = buffer.get();
 		switch (sideByte) {
-		case 0x01: clientSide = PlayerSide.LEFT_PLAYER; break;
-		case 0x02: clientSide = PlayerSide.RIGHT_PLAYER; break;
+		case 0x01:
+			clientSide = PlayerSide.LEFT_PLAYER;
+			break;
+		case 0x02:
+			clientSide = PlayerSide.RIGHT_PLAYER;
+			break;
 		}
-		
+
 		leftPlayerUuid = SerializationHelpers.deserializeUuid(buffer);
 		rightPlayerUuid = SerializationHelpers.deserializeUuid(buffer);
 	}
@@ -79,6 +83,5 @@ public class SideAssignmentMessage implements Message {
 	public void setRightPlayerUuid(UUID rightPlayerUuid) {
 		this.rightPlayerUuid = rightPlayerUuid;
 	}
-	
-	
+
 }

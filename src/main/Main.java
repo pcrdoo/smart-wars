@@ -1,7 +1,6 @@
 package main;
 
 import java.awt.Color;
-import java.net.InetSocketAddress;
 
 import debug.DebugDisplay;
 import debug.PerformanceMonitor;
@@ -16,22 +15,22 @@ public class Main {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	public static boolean isPerfMeasurement(String name) {
 		return isStringInArray(name, Constants.PERF_MEASUREMENTS_NAMES);
 	}
-	
+
 	public static boolean isPerfStatistic(String name) {
 		return isStringInArray(name, Constants.PERF_STATISTICS_NAMES);
 	}
-	
+
 	public static boolean isDebugCategory(String name) {
 		return isStringInArray(name, Constants.DEBUG_CATEGORY_NAMES);
 	}
-	
+
 	public static boolean displayPerfItem(PerformanceOverlay po, String name) {
 		if (isPerfMeasurement(name)) {
 			po.addDisplayedMeasurement(name);
@@ -40,26 +39,26 @@ public class Main {
 		} else {
 			return false;
 		}
-		
+
 		return true;
 	}
-	
+
 	public static boolean displayDebugCategory(String category, Color c) {
 		if (!isDebugCategory(category)) {
 			return false;
 		}
-		
+
 		DebugDisplay.getInstance().showCategory(category);
 		DebugDisplay.getInstance().setCategoryColor(category, c);
-		
+
 		return true;
 	}
-	
+
 	public static void main(String[] args) {
 		PerformanceOverlay po = null;
 		boolean fullscreen = false;
 		boolean server = false;
-		
+
 		for (String arg : args) {
 			if (arg.equals("+perf")) {
 				PerformanceMonitor.getInstance().setEnabled(true);
@@ -85,14 +84,11 @@ public class Main {
 						int pos = name.indexOf('=');
 						category = name.substring(0, pos);
 						String color = name.substring(pos + 1);
-						
+
 						try {
 							long colorInt = Long.parseLong(color, 16);
-							c = new Color(
-									((colorInt >> 16) & 0xff) / 255.0f,
-									((colorInt >> 8) & 0xff) / 255.0f,
-									((colorInt >> 0) & 0xff) / 255.0f,
-									((colorInt >> 24) & 0xff) / 255.0f);
+							c = new Color(((colorInt >> 16) & 0xff) / 255.0f, ((colorInt >> 8) & 0xff) / 255.0f,
+									((colorInt >> 0) & 0xff) / 255.0f, ((colorInt >> 24) & 0xff) / 255.0f);
 						} catch (NumberFormatException e) {
 							System.err.println("Invalid color: " + color);
 							return;
@@ -100,7 +96,7 @@ public class Main {
 					} else {
 						category = name;
 					}
-					
+
 					if (!displayDebugCategory(category, c)) {
 						System.err.println("Unknown debug category: " + category);
 						return;
@@ -115,14 +111,14 @@ public class Main {
 				return;
 			}
 		}
-		
+
 		if (server) {
 			HeadlessGameFrame gf = new HeadlessGameFrame();
 			gf.initGameWindow(false);
 			gf.startGame();
 		} else {
 			GameModeDialog gameModeDialog = new GameModeDialog();
-			GameWindow gw = new GameWindow(fullscreen, gameModeDialog.getGameMode(),gameModeDialog.getAddress());
+			GameWindow gw = new GameWindow(fullscreen, gameModeDialog.getGameMode(), gameModeDialog.getAddress());
 
 			gw.usePerformanceOverlay(po);
 			gw.initGameWindow(fullscreen);

@@ -8,5 +8,6 @@ public abstract class MainView {
 	}
 
 	public abstract void update(double dt);
+
 	public abstract void draw(Graphics2D g);
 }

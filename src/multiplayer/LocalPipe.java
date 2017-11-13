@@ -16,11 +16,12 @@ public class LocalPipe implements Pipe {
 	@Override
 	public void scheduleMessageWrite(Message message) {
 		queue.add(message);
+		System.out.println("Added message with type " + message.getType() + ", new size: " + queue.size());
 	}
 
 	@Override
 	public void writeScheduledMessages() {
-		
+
 	}
 
 	@Override
@@ -32,6 +33,7 @@ public class LocalPipe implements Pipe {
 	public Message readMessage(Model model) {
 		Message message = queue.getFirst();
 		queue.pop();
+		System.out.println("Read message, new size: " + queue.size());
 		return message;
 	}
 }

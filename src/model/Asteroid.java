@@ -12,14 +12,14 @@ import util.Vector2D;
 
 public class Asteroid extends BitmapEntity implements Poolable {
 	private final static int SERIALIZED_SIZE = 2;
-	
+
 	private final static int FRAMES_PER_X = 4;
 	private final static int FRAMES_PER_Y = 4;
-	
+
 	private static BufferedImage[][] collisionMasks;
-	
+
 	private int type, frame;
-	
+
 	@Override
 	public boolean shouldCull() {
 		Rectangle boundingBox = getBoundingBox();
@@ -29,23 +29,25 @@ public class Asteroid extends BitmapEntity implements Poolable {
 	private static void createCollisionMasks(BufferedImage spritesheet, int type) {
 		for (int y = 0; y < FRAMES_PER_Y; y++) {
 			for (int x = 0; x < FRAMES_PER_X; x++) {
-				collisionMasks[type][y * FRAMES_PER_X + x] = spritesheet.getSubimage(x, y, spritesheet.getWidth() / FRAMES_PER_X, spritesheet.getHeight() / FRAMES_PER_Y);
+				collisionMasks[type][y * FRAMES_PER_X + x] = spritesheet.getSubimage(x, y,
+						spritesheet.getWidth() / FRAMES_PER_X, spritesheet.getHeight() / FRAMES_PER_Y);
 			}
 		}
 	}
-	
+
 	public Asteroid() {
 		super(null, null);
 
 		if (collisionMasks == null) {
 			collisionMasks = new BufferedImage[Constants.ASTEROID_TYPE_COUNT][FRAMES_PER_X * FRAMES_PER_Y];
 			for (int i = 0; i < Constants.ASTEROID_TYPE_COUNT; i++) {
-				BufferedImage spritesheet = ImageCache.getInstance().get("asteroid-" + Integer.toString(i + 1) + ".png");
+				BufferedImage spritesheet = ImageCache.getInstance()
+						.get("asteroid-" + Integer.toString(i + 1) + ".png");
 				createCollisionMasks(spritesheet, i);
 			}
 		}
 	}
-	
+
 	public void init(Vector2D position, Vector2D velocity, int type, int frame) {
 		this.position = position;
 		this.velocity = velocity;
@@ -53,11 +55,11 @@ public class Asteroid extends BitmapEntity implements Poolable {
 		this.frame = frame;
 		collisionMask = collisionMasks[type][frame];
 	}
-	
+
 	public int getFrame() {
 		return frame;
 	}
-	
+
 	public int getType() {
 		return type;
 	}
@@ -72,14 +74,14 @@ public class Asteroid extends BitmapEntity implements Poolable {
 		this.velocity = null;
 		this.position = null;
 	}
-	
+
 	@Override
 	public void serializeTo(ByteBuffer buffer) {
 		super.serializeTo(buffer);
-		buffer.put((byte)type);
-		buffer.put((byte)frame);
+		buffer.put((byte) type);
+		buffer.put((byte) frame);
 	}
-	
+
 	@Override
 	public void deserializeFrom(Model model, ByteBuffer buffer) {
 		super.deserializeFrom(model, buffer);
@@ -87,7 +89,7 @@ public class Asteroid extends BitmapEntity implements Poolable {
 		frame = buffer.get();
 		collisionMask = collisionMasks[type][frame];
 	}
-	
+
 	@Override
 	public int getSerializedSize() {
 		return super.getSerializedSize() + SERIALIZED_SIZE;
