@@ -53,12 +53,12 @@ public class GameOverView implements Drawable, Updatable {
 
 		victoryFlares = new ParticleSystem(new AlphaSpriteParticleRenderer(particle), 150);
 		victoryFlares.addEmitter(new PointParticleEmitter(25.0, 3.0, 0.0,
-				new Vector2D(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2), new Vector2D(0, 0), 300.0, 300.0,
+				new Vector2D(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2), new Vector2D(0, 0), 600.0, 20.0,
 				0, 2 * Math.PI));
 		victoryFlares.addAffector(new ParticleAffectorDecay(3.5));
-		victoryFlares.addAffector(new ParticleAffectorDeceleration(50));
+		victoryFlares.addAffector(new ParticleAffectorDeceleration(25));
 		victoryFlares.addAffector(new ParticleAffectorRotation(
-				new Vector2D(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2), Math.PI / 3));
+				new Vector2D(Constants.WINDOW_WIDTH / 2, Constants.WINDOW_HEIGHT / 2), Math.PI / 4));
 	}
 
 	@Override
