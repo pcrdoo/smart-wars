@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -267,15 +268,15 @@ public class ClientController extends GameStateController {
 
 	// TODO This is why passing an object was a bad idea, definitely serialize on
 	// your own
-	private void doAddEntity(Entity e) {
-		EntityType type = EntityType.fromEntity(e);
-		EntityView v = createViewForEntity(type, e);
-		view.addDrawable(v, getZIndexForEntityType(type));
-		view.addUpdatable(v);
-		viewMap.put(e, v);
+	private void doAddEntity(Entity entity) {
+		EntityType type = EntityType.fromEntity(entity);
+		EntityView entityView = createViewForEntity(type, entity);
+		view.addDrawable(entityView, getZIndexForEntityType(type));
+		view.addUpdatable(entityView);
+		viewMap.put(entity, entityView);
 
 		if (gameMode == GameMode.NETWORK) {
-			model.addEntity(e);
+			model.addEntity(entity);
 		}
 	}
 
@@ -286,7 +287,7 @@ public class ClientController extends GameStateController {
 			model.removeEntity(entity);
 		}
 	}
-	
+
 	private void deleteView(Entity entity) {
 		EntityView entityView = viewMap.get(entity);
 		if (entityView != null) {
@@ -294,11 +295,10 @@ public class ClientController extends GameStateController {
 				view.removeUpdatable(entityView);
 				view.removeDrawable(entityView);
 				entityView.onRemoved();
-				viewMap.remove(entity);
 			}
+			viewMap.remove(entity);
 		} else {
-			System.err
-					.println("Warning: No view found for entity " + entity.getUuid() + " of type " + entity.getClass());
+			throw new RuntimeException("Error: No view found for entity " + entity.getUuid() + " of type " + entity.getClass());
 		}
 	}
 
@@ -315,10 +315,9 @@ public class ClientController extends GameStateController {
 	 */
 
 	private void doDisintegrateAsteroid(Asteroid asteroid) {
-		// Delete asteroid, keep just the view for the animation.
+		// Add view to disintegrating asteroids.
 		AsteroidView asteroidView = (AsteroidView) viewMap.get(asteroid);
 		disintegratingAsteroids.add(asteroidView);
-		viewMap.remove(asteroid);
 		asteroidView.onAsteroidDisintegrated();
 	}
 
