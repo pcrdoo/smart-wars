@@ -71,17 +71,6 @@ public class GameWindow extends GameFrame implements GameStarter {
 	@Override
 	public void startGame() {
 		stopThread = true;
-		int count = 0;
-		while(skipFirst) {
-			try {
-				Thread.sleep(100);
-			} catch (InterruptedException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-			System.out.println("MainThread!!!");
-		} 
-		skipFirst = true;
 		ImageCache.getInstance().preload(Constants.IMAGES_TO_PRELOAD);
 		Pools.repopulate();
 
@@ -175,32 +164,36 @@ public class GameWindow extends GameFrame implements GameStarter {
 
 	@Override
 	public void update() {
-
 		Measurement ms;
 		PerformanceMonitor m = PerformanceMonitor.getInstance();
 		if (gameMode == GameMode.LOCAL) {
 			ms = m.measure("SrvControllerUpdateTotal");
 			double dtServer = (double) (System.nanoTime() - lastServerUpdateTime) / 1e9;
 			localServerController.update(dtServer);
+
 			ms.done();
 			lastServerUpdateTime = System.nanoTime();
 			// localServerModel.update(dt);
 		}
+		
 		ms = m.measure("ControllerUpdateTotal");
 		double dtController = (double) (System.nanoTime() - lastUpdateTime) / 1e9;
 		controller.update(dtController);
+
 		lastUpdateTime = System.nanoTime();
 		ms.done();
 
 		ms = m.measure("ModelUpdateTotal");
 		double dtModel = (double) (System.nanoTime() - lastModelUpdateTime) / 1e9;
 		model.update(dtModel);
+
 		lastModelUpdateTime = System.nanoTime();
 		ms.done();
 
 		ms = m.measure("ViewUpdateTotal");
 		double dtView = (double) (System.nanoTime() - lastViewUpdateTime) / 1e9;
 		view.update(dtView);
+
 		lastViewUpdateTime = System.nanoTime();
 		ms.done();
 	}

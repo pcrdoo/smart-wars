@@ -79,21 +79,6 @@ public class CollisionController {
 					}
 				}
 			}
-
-			// Affect the bullet views by near wormholes
-			Wormhole nearestWormhole = null;
-			double nearestWormholeDistance = 0.0;
-			for (Wormhole w : model.getWormholes()) {
-				double dist = w.getPosition().sub(bullet.getPosition()).length();
-				if (nearestWormhole == null || dist < nearestWormholeDistance) {
-					nearestWormhole = w;
-					nearestWormholeDistance = dist;
-				}
-			}
-
-			if (nearestWormhole != null) {
-				broadcaster.broadcastWormholeAffect(bullet, nearestWormhole);
-			}
 		}
 		return impactedBullets;
 	}

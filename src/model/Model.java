@@ -169,7 +169,5 @@ public class Model extends NetworkObject {
 		entities.remove(player.getUuid());
 		player.setUuid(uuid);
 		entities.put(uuid, player);
-
-		System.out.println("switcharoo happened on " + player);
 	}
 }

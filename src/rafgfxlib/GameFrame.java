@@ -122,12 +122,31 @@ public abstract class GameFrame extends Canvas implements MouseListener,
 		
 		stopThread = false;
 		
+		
+		//runnerThread.start();
+	}
+	
+	/**
+	 * PoÄ�etak rada glavnog threada koji poziva update() i render() metoda, mora
+	 * se pozvati kako bi aplikacija poÄ�ela sa radom, najbolje na kraju naslijeÄ‘enog
+	 * konstruktora, nakon Å¡to se svi resursi uÄ�itaju i pripreme.
+	 */
+	public void startThread()
+	{
+		if (runnerThread != null && runnerThread.isAlive()) {
+			try {
+				runnerThread.join();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
 		runnerThread = new Thread(new Runnable()
 		{
 			@Override
 			public void run()
 			{
-				System.out.println("SideThread!!!");
 				while(buffStrategy == null)
 				{
 					try
@@ -140,9 +159,7 @@ public abstract class GameFrame extends Canvas implements MouseListener,
 				
 				while(true)
 				{
-					System.out.println("loop");
-					if(stopThread) {
-						System.out.println("break");
+					if (stopThread) {
 						break;
 					}
 					/*
@@ -167,6 +184,7 @@ public abstract class GameFrame extends Canvas implements MouseListener,
 					{
 						Graphics g = buffStrategy.getDrawGraphics();
 						doRendering(g);
+
 						g.dispose();
 						
 						if(swapInterval > 0)
@@ -182,9 +200,10 @@ public abstract class GameFrame extends Canvas implements MouseListener,
 									{
 										long frameTime = System.currentTimeMillis() - startTime;
 										long sleepTime = 1000 / updateRate - frameTime;
-										
+								
 										if(sleepTime > 0)
 											Thread.sleep(sleepTime);
+
 									} 
 									catch (InterruptedException e) { }
 								}
@@ -212,16 +231,6 @@ public abstract class GameFrame extends Canvas implements MouseListener,
 			}
 		});
 		
-		//runnerThread.start();
-	}
-	
-	/**
-	 * PoÄ�etak rada glavnog threada koji poziva update() i render() metoda, mora
-	 * se pozvati kako bi aplikacija poÄ�ela sa radom, najbolje na kraju naslijeÄ‘enog
-	 * konstruktora, nakon Å¡to se svi resursi uÄ�itaju i pripreme.
-	 */
-	public void startThread()
-	{
 		if(!runnerThread.isAlive()) 
 		{
 			runnerThread.start();

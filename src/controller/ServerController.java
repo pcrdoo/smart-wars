@@ -1,6 +1,7 @@
 package controller;
 
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.ArrayList;
@@ -9,6 +10,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
 import java.util.UUID;
+
+import javax.swing.SwingUtilities;
 
 import main.Constants;
 import main.GameMode;
@@ -125,12 +128,19 @@ public class ServerController extends GameStateController {
 		checkForIncomingMessages();
 		if (model.getGameState() != GameState.RUNNING) {
 			if (playersReadyForRestart.size() == 2) {
-				broadcaster.broadcastNewGameStarting();
-				gameStarter.startGame(); // start a new game
+				if (gameMode == GameMode.NETWORK) {
+					broadcaster.broadcastNewGameStarting();
+				}
+				
+				SwingUtilities.invokeLater(() -> {
+					gameStarter.startGame(); // start a new game
+				});
+				
+				OpenPipes.getInstance().writeScheduledMessagesOnAll();
 			}
 			return;
 		}
-
+		
 		fireGuns(model.getPlayerOnSide(PlayerSide.LEFT_PLAYER));
 		fireGuns(model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER));
 
@@ -140,6 +150,7 @@ public class ServerController extends GameStateController {
 		maybeSpawnWormholes(dt);
 		maybeSpawnAsteroids(dt);
 		cullEntities(getEntitiesToCull());
+		
 		maybeSendLocationUpdate(dt);
 		checkGameOver();
 		OpenPipes.getInstance().writeScheduledMessagesOnAll();

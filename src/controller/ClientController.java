@@ -9,7 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
-import javax.swing.plaf.synth.SynthSeparatorUI;
+import javax.swing.SwingUtilities;
 
 import main.Constants;
 import main.GameMode;
@@ -49,6 +49,7 @@ import view.EntityView;
 import view.MirrorView;
 import view.PlayerView;
 import view.WormholeView;
+import view.BulletView;
 
 public class ClientController extends GameStateController {
 
@@ -169,6 +170,10 @@ public class ClientController extends GameStateController {
 			}
 		} else {
 			checkDisintegratingAsteroids();
+
+			for (Bullet b : model.getBullets()) {
+				affectBulletByWormholes(b);
+			}
 		}
 		serverPipe.writeScheduledMessages();
 	}
@@ -231,6 +236,23 @@ public class ClientController extends GameStateController {
 		}
 	}
 
+	private void affectBulletByWormholes(Bullet bullet) {
+		// Affect the bullet views by near wormholes
+		Wormhole nearestWormhole = null;
+		double nearestWormholeDistance = 0.0;
+		for (Wormhole w : model.getWormholes()) {
+			double dist = w.getPosition().sub(bullet.getPosition()).length();
+			if (nearestWormhole == null || dist < nearestWormholeDistance) {
+				nearestWormhole = w;
+				nearestWormholeDistance = dist;
+			}
+		}
+
+		if (nearestWormhole != null) {
+			((BulletView) viewMap.get(bullet)).wormholeAffect(nearestWormhole.getPosition());
+		}
+	}
+	
 	private EntityView createViewForEntity(EntityType t, Entity e) {
 		switch (t) {
 		case ASTEROID:
@@ -356,7 +378,9 @@ public class ClientController extends GameStateController {
 	}
 
 	private void doNewGameStarting() {
-		gameStarter.startGame();
+		SwingUtilities.invokeLater(() -> {
+			gameStarter.startGame();
+		});
 	}
 
 	// Controls
