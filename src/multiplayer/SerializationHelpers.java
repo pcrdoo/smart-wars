@@ -29,7 +29,7 @@ public class SerializationHelpers {
 		if (destination == null) {
 			switch (type) {
 			case PLAYER:
-				e = new Player(PlayerSide.LEFT_PLAYER);
+				e = new Player(PlayerSide.LEFT_PLAYER, null);
 				break;
 			case ASTEROID:
 				e = Pools.ASTEROID.createEmpty();

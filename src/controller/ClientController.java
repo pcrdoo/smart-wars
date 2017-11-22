@@ -31,11 +31,14 @@ import multiplayer.NetworkPipe;
 import multiplayer.Pipe;
 import multiplayer.messages.AddEntityMessage;
 import multiplayer.messages.AsteroidHitMessage;
+import multiplayer.messages.ClientHelloMessage;
 import multiplayer.messages.DisintegrateAsteroidMessage;
 import multiplayer.messages.GameOverMessage;
 import multiplayer.messages.LocalPlayerControlMessage;
 import multiplayer.messages.Message;
+import multiplayer.messages.MessageType;
 import multiplayer.messages.MirrorBounceMessage;
+import multiplayer.messages.NewGameStartingMessage;
 import multiplayer.messages.PlayerControlMessage;
 import multiplayer.messages.PlayerHitMessage;
 import multiplayer.messages.PositionSyncMessage;
@@ -70,9 +73,10 @@ public class ClientController extends GameStateController {
 	private ArrayList<PlayerSide> sidesToControl; // 1 on network, 2 on local
 	private GameMode gameMode;
 	private long lastServerMessageTime;
-
+	private String username;
+	
 	public ClientController(GameStarter gameStarter, ClientView view, Model model, GameMode gameMode,
-			InetSocketAddress serverAddress) {
+			InetSocketAddress serverAddress, String username) {
 		super();
 		this.view = view;
 		this.model = model;
@@ -80,6 +84,7 @@ public class ClientController extends GameStateController {
 		sidesToControl = new ArrayList<>();
 		this.gameMode = gameMode;
 		this.serverAddress = serverAddress;
+		this.username = username;
 
 		viewMap = new HashMap<>();
 		disintegratingAsteroids = new ArrayList<>();
@@ -116,8 +121,11 @@ public class ClientController extends GameStateController {
 		socket.setTcpNoDelay(true);
 		
 		serverPipe = new NetworkPipe(socket);
+		serverPipe.scheduleMessageWrite(new ClientHelloMessage(username));
+		serverPipe.writeScheduledMessages();
+		
 		Message message = serverPipe.readMessage(model);
-		if (!(message instanceof SideAssignmentMessage)) {
+		if (message == null || message.getType() != MessageType.SIDE_ASSIGNMENT) {
 			throw new RuntimeException("First message from server is not SIDE_ASSIGNMENT");
 		}
 
@@ -133,6 +141,15 @@ public class ClientController extends GameStateController {
 
 		model.updatePlayerId(PlayerSide.LEFT_PLAYER, sideAssignment.getLeftPlayerUuid());
 		model.updatePlayerId(PlayerSide.RIGHT_PLAYER, sideAssignment.getRightPlayerUuid());
+		
+		message = serverPipe.readMessage(model);
+		if (message == null || message.getType() != MessageType.NEW_GAME_STARTING) {
+			throw new RuntimeException("Second message from server is not NEW_GAME_STARTING");
+		}
+		
+		NewGameStartingMessage gameStartingMessage = (NewGameStartingMessage) message;
+		model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).setUsername(gameStartingMessage.getLeftPlayerUsername());
+		model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER).setUsername(gameStartingMessage.getRightPlayerUsername());
 		
 		lastServerMessageTime = System.nanoTime();
 	}

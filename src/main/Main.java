@@ -117,7 +117,11 @@ public class Main {
 			gf.startGame();
 		} else {
 			GameModeDialog gameModeDialog = new GameModeDialog();
-			GameWindow gw = new GameWindow(fullscreen, gameModeDialog.getGameMode(), gameModeDialog.getAddress());
+			if (!gameModeDialog.isOkClicked()) {
+				return;
+			}
+			
+			GameWindow gw = new GameWindow(fullscreen, gameModeDialog.getGameMode(), gameModeDialog.getAddress(), gameModeDialog.getUsername());
 
 			gw.usePerformanceOverlay(po);
 			gw.initGameWindow(fullscreen);

@@ -1,7 +1,10 @@
 package view;
 
 import java.awt.AlphaComposite;
+import java.awt.Color;
 import java.awt.Composite;
+import java.awt.Font;
+import java.awt.FontMetrics;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
@@ -34,6 +37,7 @@ public class PlayerView extends EntityView {
 	private ParticleSystem trail;
 	private PointParticleEmitter trailEmitter;
 	private Explosion explosion;
+	private Font font;
 
 	public PlayerView(Player player) {
 		sprite = new AnimatedSprite(
@@ -46,6 +50,8 @@ public class PlayerView extends EntityView {
 		flareWidth = flare.getWidth();
 		flareHeight = flare.getHeight();
 
+		this.font = new Font("sans", Font.BOLD, Constants.USERNAME_FONT_SIZE);
+		
 		this.player = player;
 		trail = new ParticleSystem(new AdditiveSpriteParticleRenderer(ImageCache.getInstance()
 				.get("player-" + (player.getPlayerSide() == PlayerSide.LEFT_PLAYER ? "left" : "right") + "-trail.png")),
@@ -123,5 +129,15 @@ public class PlayerView extends EntityView {
 		int health_height = (int) (hbh * (double) player.getCurrHealth() / Constants.PLAYER_HEALTH);
 		g.drawImage(healthbar, hbx, hby + hbh - health_height, hbx + hbw, hby + hbh, hbw, hbh - health_height, 2 * hbw,
 				hbh, null);
+		
+		// Draw the username, if set
+		String username = player.getUsername();
+		if (username != null) {
+			FontMetrics metrics = g.getFontMetrics(font);
+			int usernameWidth = metrics.stringWidth(username);
+			g.setFont(font);
+			g.setColor(Color.WHITE);
+			g.drawString(username, (int) player.getPosition().getX() - usernameWidth / 2, (int)player.getPosition().getY() + Constants.PLAYER_USERNAME_SPACING);
+		}
 	}
 }

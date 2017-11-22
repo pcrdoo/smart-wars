@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import model.Model;
 import multiplayer.messages.AddEntityMessage;
 import multiplayer.messages.AsteroidHitMessage;
+import multiplayer.messages.ClientHelloMessage;
 import multiplayer.messages.DisintegrateAsteroidMessage;
 import multiplayer.messages.GameOverMessage;
 import multiplayer.messages.Message;
@@ -36,8 +37,6 @@ public class NetworkPipe implements Pipe {
 		while (pipeException == null) {
 			synchronized (buffer) {
 				try {
-					buffer.wait();
-
 					int fullSize = 0;
 					for (Message message : buffer) {
 						fullSize += message.getSerializedSize() + 1 /* for type */ + 4 /* for length */;
@@ -53,7 +52,8 @@ public class NetworkPipe implements Pipe {
 
 					buffer.clear();
 					outputStream.write(bytes, 0, bytes.length);
-
+					
+					buffer.wait();
 				} catch (IOException e) {
 					throw new NetworkException("IOException in writerThread: " + e.getMessage());
 				} catch (InterruptedException e) {
@@ -125,7 +125,14 @@ public class NetworkPipe implements Pipe {
 	}
 
 	private Message deserializeMessage(Model model, MessageType type, ByteBuffer buffer) {
+		if (type == null) {
+			System.err.println("Unrecognized message type!");
+			return null;
+		}
+		
 		switch (type) {
+		case CLIENT_HELLO:
+			return new ClientHelloMessage(model, buffer);
 		case ENTITY_ADDED:
 			return new AddEntityMessage(model, buffer);
 		case ENTITY_UPDATED:

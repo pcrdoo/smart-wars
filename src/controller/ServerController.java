@@ -28,11 +28,14 @@ import model.Wormhole;
 import model.abilities.MirrorMagic;
 import model.entitites.Entity;
 import multiplayer.LocalPipe;
+import multiplayer.NetworkException;
 import multiplayer.NetworkPipe;
 import multiplayer.OpenPipes;
 import multiplayer.Pipe;
+import multiplayer.messages.ClientHelloMessage;
 import multiplayer.messages.LocalPlayerControlMessage;
 import multiplayer.messages.Message;
+import multiplayer.messages.MessageType;
 import multiplayer.messages.PlayerControlMessage;
 import multiplayer.messages.SideAssignmentMessage;
 import util.Vector2D;
@@ -50,6 +53,7 @@ public class ServerController extends GameStateController {
 	private ServerEventBroadcaster broadcaster;
 	private HashMap<PlayerSide, Pipe> playerPipes;
 	private HashMap<PlayerSide, Boolean> playerFiring;
+	private HashMap<PlayerSide, String> playerUsernames;
 	private Pipe localPlayersPipe;
 	private GameMode gameMode;
 
@@ -58,6 +62,7 @@ public class ServerController extends GameStateController {
 		this.model = model;
 		this.gameStarter = gameStarter;
 		this.gameMode = gameMode;
+		
 		broadcaster = new ServerEventBroadcaster(gameMode);
 		collisionController = new CollisionController(broadcaster, model);
 		timeToNextAsteroidSpawn = Constants.ASTEROID_SPAWN_TIME;
@@ -66,12 +71,13 @@ public class ServerController extends GameStateController {
 		asteroidRandom = new Random();
 		playerPipes = new HashMap<>();
 		playerFiring = new HashMap<>();
+		playerUsernames = new HashMap<>();
 		playerFiring.put(PlayerSide.LEFT_PLAYER, false);
 		playerFiring.put(PlayerSide.RIGHT_PLAYER, false);
 	}
 
 	@Override
-	public void setUpConnections() throws IOException {
+	public void setUpConnections() throws IOException, NetworkException {
 		ServerSocket serverSocket = new ServerSocket(Constants.SERVER_PORT);
 		// wait for two
 		UUID leftUuid = model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).getUuid(),
@@ -81,22 +87,32 @@ public class ServerController extends GameStateController {
 			Socket socket = serverSocket.accept();
 			socket.setTcpNoDelay(true);
 			
+			Pipe playerPipe = new NetworkPipe(socket);
+			Message m = playerPipe.readMessage(model);
+			if (m == null || m.getType() != MessageType.CLIENT_HELLO) {
+				throw new NetworkException("Invalid first message type from client, expected CLIENT_HELLO");
+			}
+			
+			String username = ((ClientHelloMessage) m).getUsername();
+			
 			if (playerPipes.containsKey(PlayerSide.LEFT_PLAYER)) {
-				Pipe rightPipe = new NetworkPipe(socket);
-				playerPipes.put(PlayerSide.RIGHT_PLAYER, rightPipe);
-				OpenPipes.getInstance().addPipe(rightPipe);
+				playerPipes.put(PlayerSide.RIGHT_PLAYER, playerPipe);
+				playerUsernames.put(PlayerSide.RIGHT_PLAYER, username);
+				OpenPipes.getInstance().addPipe(playerPipe);
 
-				rightPipe.scheduleMessageWrite(new SideAssignmentMessage(PlayerSide.RIGHT_PLAYER, leftUuid, rightUuid));
+				playerPipe.scheduleMessageWrite(new SideAssignmentMessage(PlayerSide.RIGHT_PLAYER, leftUuid, rightUuid));
 				System.out.println("Right player connected from " + socket.getInetAddress().toString());
 			} else {
-				Pipe leftPipe = new NetworkPipe(socket);
-				playerPipes.put(PlayerSide.LEFT_PLAYER, leftPipe);
-				OpenPipes.getInstance().addPipe(leftPipe);
+				playerPipes.put(PlayerSide.LEFT_PLAYER, playerPipe);
+				playerUsernames.put(PlayerSide.LEFT_PLAYER, username);
+				OpenPipes.getInstance().addPipe(playerPipe);
 
-				leftPipe.scheduleMessageWrite(new SideAssignmentMessage(PlayerSide.LEFT_PLAYER, leftUuid, rightUuid));
+				playerPipe.scheduleMessageWrite(new SideAssignmentMessage(PlayerSide.LEFT_PLAYER, leftUuid, rightUuid));
 				System.out.println("Left player connected from " + socket.getInetAddress().toString());
 			}
 		}
+		
+		broadcaster.broadcastNewGameStarting(playerUsernames.get(PlayerSide.LEFT_PLAYER), playerUsernames.get(PlayerSide.RIGHT_PLAYER));
 		OpenPipes.getInstance().writeScheduledMessagesOnAll();
 		serverSocket.close();
 	}
@@ -125,7 +141,7 @@ public class ServerController extends GameStateController {
 		if (model.getGameState() != GameState.RUNNING) {
 			if (playersReadyForRestart.size() == 2) {
 				if (gameMode == GameMode.NETWORK) {
-					broadcaster.broadcastNewGameStarting();
+					broadcaster.broadcastNewGameStarting(playerUsernames.get(PlayerSide.LEFT_PLAYER), playerUsernames.get(PlayerSide.RIGHT_PLAYER));
 				}
 
 				gameStarter.startGame();

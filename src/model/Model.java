@@ -29,8 +29,8 @@ public class Model extends NetworkObject {
 		super();
 		gameState = GameState.RUNNING;
 		players = new HashMap<>();
-		players.put(PlayerSide.LEFT_PLAYER, new Player(PlayerSide.LEFT_PLAYER));
-		players.put(PlayerSide.RIGHT_PLAYER, new Player(PlayerSide.RIGHT_PLAYER));
+		players.put(PlayerSide.LEFT_PLAYER, new Player(PlayerSide.LEFT_PLAYER, null));
+		players.put(PlayerSide.RIGHT_PLAYER, new Player(PlayerSide.RIGHT_PLAYER, null));
 		bullets = new ArrayList<>();
 		asteroids = new ArrayList<>();
 		mirrors = new ArrayList<>();

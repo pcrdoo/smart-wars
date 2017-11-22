@@ -17,16 +17,19 @@ public class Player extends RoundEntity {
 	private double maxHealth;
 	private double currHealth;
 	private double speed; // pixels per second
-
+	private String username;
+	
 	private ArrayList<Ability> abilities;
 	private Gun gun;
 	private MirrorMagic shortMirrorMagic;
 	private MirrorMagic longMirrorMagic;
 
-	public Player(PlayerSide playerSide) {
+	public Player(PlayerSide playerSide, String username) {
 		super(playerSide == PlayerSide.LEFT_PLAYER ? Constants.LEFT_PLAYER_START_POS : Constants.RIGHT_PLAYER_START_POS,
 				Constants.PLAYER_RADIUS);
 		this.playerSide = playerSide;
+		this.username = username;
+		
 		currHealth = maxHealth = Constants.PLAYER_HEALTH;
 		speed = Constants.PLAYER_SPEED;
 		gun = new Gun(this);
@@ -131,5 +134,13 @@ public class Player extends RoundEntity {
 	@Override
 	public int getSerializedSize() {
 		return super.getSerializedSize() + SERIALIZED_SIZE;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 }

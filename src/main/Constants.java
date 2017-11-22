@@ -26,7 +26,9 @@ public class Constants {
 	public static final double PLAYER_SPEED = 300;
 	public static final double PLAYER_RADIUS = 20;
 	public static final double PLAYER_HEALTH = 100;
-
+	public static final int USERNAME_FONT_SIZE = 12;
+	public static final int PLAYER_USERNAME_SPACING = 30;
+	
 	// Bullet
 	public static final double BULLET_SPEED = 500;
 	public static final Vector2D BULLET_SIZE = new Vector2D(8, 8);
@@ -177,6 +179,8 @@ public class Constants {
 	public static final int SERVER_PORT = 24570;
 	public static final double LOCATION_UPDATE_TIME = 1.0;
 	public static final int CONNECTION_TIMEOUT = 30;
+	public static final int USERNAME_MIN_CHARS = 1;
+	public static final int USERNAME_MAX_CHARS = 32;
 	
 }
 

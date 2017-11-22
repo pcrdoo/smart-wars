@@ -84,8 +84,8 @@ public class ServerEventBroadcaster {
 		OpenPipes.getInstance().scheduleMessageWriteToAll(new GameOverMessage(gameState));
 	}
 
-	public void broadcastNewGameStarting() {
-		OpenPipes.getInstance().scheduleMessageWriteToAll(new NewGameStartingMessage());
+	public void broadcastNewGameStarting(String leftPlayerUsername, String rightPlayerUsername) {
+		OpenPipes.getInstance().scheduleMessageWriteToAll(new NewGameStartingMessage(leftPlayerUsername, rightPlayerUsername));
 	}
 
 }

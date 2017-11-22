@@ -22,6 +22,7 @@ import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.border.EmptyBorder;
 
+import main.Constants;
 import main.GameMode;
 
 @SuppressWarnings("serial")
@@ -31,15 +32,19 @@ public class GameModeDialog extends JDialog {
 	private ButtonGroup group;
 	private JRadioButton local, network;
 	private JPanel gameModeOptions;
-	private JPanel hostnamePanel, portPanel;
+	private JPanel hostnamePanel, portPanel, usernamePanel;
 	private JLabel hostnameLabel;
 	private JLabel portLabel;
+	private JLabel usernameLabel;
 	private JTextField hostnameField;
 	private JTextField portField;
+	private JTextField usernameField;
 	private JButton submit;
 
-	private GameMode gameMode;
-	private InetSocketAddress address;
+	private GameMode gameMode = null;
+	private InetSocketAddress address = null;
+	private String username = null;
+	private boolean okClicked = false;
 
 	public GameModeDialog() {
 		super();
@@ -57,20 +62,23 @@ public class GameModeDialog extends JDialog {
 			public void actionPerformed(ActionEvent e) {
 				hostnameField.setEnabled(false);
 				portField.setEnabled(false);
+				usernameField.setEnabled(false);
 				hostnameField.setBackground(Color.LIGHT_GRAY);
 				portField.setBackground(Color.LIGHT_GRAY);
+				usernameField.setBackground(Color.LIGHT_GRAY);
 			}
 		});
 		network = new JRadioButton("Network");
 		network.setSelected(true);
 		network.addActionListener(new ActionListener() {
-
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				hostnameField.setEnabled(true);
 				portField.setEnabled(true);
+				usernameField.setEnabled(true);
 				hostnameField.setBackground(Color.WHITE);
 				portField.setBackground(Color.WHITE);
+				usernameField.setBackground(Color.WHITE);
 			}
 		});
 		group.add(local);
@@ -93,19 +101,29 @@ public class GameModeDialog extends JDialog {
 		hostnameLabel = new JLabel("Host ");
 		hostnameField = new JTextField("", 20);
 		hostnamePanel.add(hostnameLabel);
-		hostnamePanel.add(Box.createRigidArea(new Dimension(40, 0)));
+		hostnamePanel.add(Box.createRigidArea(new Dimension(60, 0)));
 		hostnamePanel.add(hostnameField);
 		panel.add(hostnamePanel);
 
 		portPanel = new JPanel();
 		portPanel.setLayout(new BoxLayout(portPanel, BoxLayout.X_AXIS));
 		portLabel = new JLabel("Port ");
-		portField = new JTextField("", 5);
+		portField = new JTextField(Integer.toString(Constants.SERVER_PORT), 5);
 		portPanel.add(portLabel);
-		portPanel.add(Box.createRigidArea(new Dimension(42, 0)));
+		portPanel.add(Box.createRigidArea(new Dimension(62, 0)));
 		portPanel.add(portField);
 		panel.add(portPanel);
+		
+		usernamePanel = new JPanel();
+		usernamePanel.setLayout(new BoxLayout(usernamePanel, BoxLayout.X_AXIS));
+		usernameLabel = new JLabel("Username ");
+		usernameField = new JTextField("", 5);
+		usernamePanel.add(usernameLabel);
+		usernamePanel.add(Box.createRigidArea(new Dimension(21, 0)));
+		usernamePanel.add(usernameField);
 
+		panel.add(usernamePanel);
+		
 		submit = new JButton("Go!");
 		submit.setAlignmentX(Component.CENTER_ALIGNMENT);
 		submit.addActionListener(new ActionListener() {
@@ -117,10 +135,20 @@ public class GameModeDialog extends JDialog {
 						port = Integer.parseInt(portField.getText());
 						address = new InetSocketAddress(hostnameField.getText(), port);
 					} catch (NumberFormatException ex) {
-						JOptionPane.showMessageDialog(new JFrame(), "Invalid port number.");
+						JOptionPane.showMessageDialog(null, "Invalid port number.", "Error", JOptionPane.ERROR_MESSAGE);
+						return;
+					}
+					
+					username = usernameField.getText();
+					int usernameLength = username.length();
+					if (usernameLength < Constants.USERNAME_MIN_CHARS || usernameLength > Constants.USERNAME_MAX_CHARS) {
+						JOptionPane.showMessageDialog(null,
+								"Username must be between " + Constants.USERNAME_MIN_CHARS + " and " + Constants.USERNAME_MAX_CHARS + " characters long.", "Error",
+								JOptionPane.ERROR_MESSAGE);
 						return;
 					}
 				}
+				okClicked = true;
 				finish();
 			}
 		});
@@ -130,8 +158,8 @@ public class GameModeDialog extends JDialog {
 		panel.setBorder(new EmptyBorder(10, 10, 10, 10));
 		this.add(panel, BorderLayout.CENTER);
 		this.setModalityType(ModalityType.APPLICATION_MODAL);
-		this.setLocationRelativeTo(null);
 		this.pack();
+		this.setLocationRelativeTo(null);
 		this.setVisible(true);
 	}
 
@@ -146,5 +174,13 @@ public class GameModeDialog extends JDialog {
 
 	public InetSocketAddress getAddress() {
 		return address;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public boolean isOkClicked() {
+		return okClicked;
 	}
 }

@@ -45,13 +45,15 @@ public class GameWindow extends GameFrame implements GameStarter {
 	private boolean fullscreen;
 	private GameMode gameMode;
 	private InetSocketAddress serverAddress;
+	private String username;
 
-	public GameWindow(boolean fullscreen, GameMode gameMode, InetSocketAddress serverAddress) {
+	public GameWindow(boolean fullscreen, GameMode gameMode, InetSocketAddress serverAddress, String username) {
 		super("Smart Wars", Constants.WINDOW_WIDTH, Constants.WINDOW_HEIGHT);
 
 		this.fullscreen = fullscreen;
 		this.gameMode = gameMode;
 		this.serverAddress = serverAddress;
+		this.username = username;
 		loadingWindow = new LoadingWindow();
 		loadingWindow.setVisible(true);
 
@@ -95,10 +97,10 @@ public class GameWindow extends GameFrame implements GameStarter {
 		// localServerModel = new Model();
 		view = new ClientView();
 		if (gameMode == GameMode.NETWORK) {
-			controller = new ClientController(this, view, model, gameMode, serverAddress);
+			controller = new ClientController(this, view, model, gameMode, serverAddress, username);
 		} else {
 			localServerController = new ServerController(this, model, gameMode);
-			controller = new ClientController(this, view, model, gameMode, null);
+			controller = new ClientController(this, view, model, gameMode, null, null);
 		}
 		lastUpdateTime = System.nanoTime();
 
@@ -149,7 +151,7 @@ public class GameWindow extends GameFrame implements GameStarter {
 			// Run game thread after sync
 			try {
 				controller.setUpConnections();
-			} catch (IOException ex) {
+			} catch (IOException | RuntimeException ex) {
 				System.err.println("Could not connect to the server: " + ex);
 				System.exit(-1);
 			}
