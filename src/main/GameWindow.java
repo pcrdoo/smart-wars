@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.InetSocketAddress;
 
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 
 import controller.ClientController;
 import controller.ServerController;
@@ -74,6 +75,18 @@ public class GameWindow extends GameFrame implements GameStarter {
 	
 	@Override
 	public void startGame() {
+		if (Thread.currentThread() == runnerThread) {
+			// Running startGame() from the game runner thread happens when the controller decides
+			// the game should be restarted. However, this would deadlock, so if we're on the runner
+			// thread, we'll ask Swing to run this same method from the UI thread.
+			stopThread = true;
+			SwingUtilities.invokeLater(() -> {
+				startGame();
+			});
+			
+			return;
+		}
+		
 		stopThread = true;
 		ImageCache.getInstance().preload(Constants.IMAGES_TO_PRELOAD);
 		Pools.repopulate(true);

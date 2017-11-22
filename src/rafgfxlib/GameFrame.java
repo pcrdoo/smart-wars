@@ -78,7 +78,7 @@ public abstract class GameFrame extends Canvas implements MouseListener,
 	
 	private boolean useHQ = false;
 	
-	private Thread runnerThread = null;
+	protected Thread runnerThread = null;
 	
 	private boolean[] mouseButtons = new boolean[GFMouseButton.values().length];
 	private boolean[] keyboardKeys = new boolean[1024];

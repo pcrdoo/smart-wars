@@ -182,7 +182,7 @@ public class ClientController extends GameStateController {
 			}
 		}
 		
-		if ((System.nanoTime() - lastServerMessageTime) / 1e9 > Constants.CONNECTION_TIMEOUT) {
+		if (gameMode == GameMode.NETWORK && (System.nanoTime() - lastServerMessageTime) / 1e9 > Constants.CONNECTION_TIMEOUT) {
 			JOptionPane.showMessageDialog(null, "Timed out: server hasn't sent a message in " + Constants.CONNECTION_TIMEOUT + " seconds.", "Error", JOptionPane.ERROR_MESSAGE);
 			System.exit(-1);
 		}
@@ -510,6 +510,7 @@ public class ClientController extends GameStateController {
 		if (sidesToControl.contains(PlayerSide.LEFT_PLAYER)) {
 			handlePlayerKeyUp(keyCode, model.getPlayerOnSide(PlayerSide.LEFT_PLAYER), leftPlayerControls);
 		}
+		
 		if (sidesToControl.contains(PlayerSide.RIGHT_PLAYER)) {
 			handlePlayerKeyUp(keyCode, model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER), rightPlayerControls);
 		}
