@@ -12,6 +12,10 @@ public class NetworkObject {
 	protected UUID uuid;
 
 	public NetworkObject() {
+		init();
+	}
+	
+	public void init() {
 		this.uuid = UUID.randomUUID();
 	}
 

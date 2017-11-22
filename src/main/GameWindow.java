@@ -110,8 +110,8 @@ public class GameWindow extends GameFrame implements GameStarter {
 			try {
 				controller.setUpConnections();
 			} catch (Exception ex) {
-				System.out.println("Failed to start game. Crash?");
-				// TODO: how to handle
+				System.err.println("Could not connect to the server: " + ex.getMessage());
+				System.exit(-1);
 			}
 		} else {
 			LocalMessageQueue clientToServer = new LocalMessageQueue();

@@ -76,7 +76,6 @@ public class HeadlessGameFrame implements GameStarter {
 		} catch (Exception ex) {
 			ex.printStackTrace();
 			throw new RuntimeException("Failed to start game.");
-			// TODO: how to handle
 		}
 
 		System.out.println("Starting game thread.");

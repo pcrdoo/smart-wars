@@ -49,6 +49,8 @@ public class Asteroid extends BitmapEntity implements Poolable {
 	}
 
 	public void init(Vector2D position, Vector2D velocity, int type, int frame) {
+		super.init();
+		
 		this.position = position;
 		this.velocity = velocity;
 		this.type = type;

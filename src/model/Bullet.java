@@ -23,6 +23,8 @@ public class Bullet extends RectEntity implements Poolable {
 	}
 
 	public void init(Vector2D position, Vector2D velocity, Player owner) {
+		super.init();
+	
 		this.position = position;
 		this.velocity = velocity;
 		this.owner = owner;

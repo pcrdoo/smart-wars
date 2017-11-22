@@ -296,17 +296,11 @@ public class ClientController extends GameStateController {
 	// TODO This is why passing an object was a bad idea, definitely serialize on
 	// your own
 	private void doAddEntity(Entity entity) {
-		if (entity == null) {
-			System.err.println("TODO fix this");
-			return;
-		}
-		
 		EntityType type = EntityType.fromEntity(entity);
 		EntityView entityView = createViewForEntity(type, entity);
 		view.addDrawable(entityView, getZIndexForEntityType(type));
 		view.addUpdatable(entityView);
 		viewMap.put(entity, entityView);
-
 		if (gameMode == GameMode.NETWORK) {
 			model.addEntity(entity);
 		}
@@ -314,7 +308,7 @@ public class ClientController extends GameStateController {
 
 	private void doRemoveEntity(Entity entity) {
 		if (entity == null) {
-			System.err.println("TODO fix this");
+			System.err.println("Error: Tried to remove a non-existent entity");
 			return;
 		}
 		
@@ -335,7 +329,6 @@ public class ClientController extends GameStateController {
 			}
 			viewMap.remove(entity);
 		} else {
-			// TODO: back to rte
 			System.err.println(
 					"Error: No view found for entity " + entity.getUuid() + " of type " + entity.getClass());
 		}
@@ -345,13 +338,6 @@ public class ClientController extends GameStateController {
 		Entity entity = model.getEntityById(entityId);
 		entity.setPosition(newPosition);
 	}
-
-	// TODO: Reinstate this only on the client side (as it's purely gfx)
-	/*
-	 * private void doWormholeAffect(UUID bulletId, Vector2D wormholePosition) {
-	 * Bullet bullet = (Bullet) model.getEntityById(bulletId); ((BulletView)
-	 * viewMap.get(bullet)).wormholeAffect(wormholePosition); }
-	 */
 
 	private void doDisintegrateAsteroid(Asteroid asteroid) {
 		// Add view to disintegrating asteroids.
