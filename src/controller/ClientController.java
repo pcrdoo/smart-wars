@@ -328,6 +328,7 @@ public class ClientController extends GameStateController {
 		EntityType type = EntityType.fromEntity(entity);
 		EntityView entityView = createViewForEntity(type, entity);
 		view.addDrawable(entityView, getZIndexForEntityType(type));
+		
 		view.addUpdatable(entityView);
 		viewMap.put(entity, entityView);
 		if (gameMode == GameMode.NETWORK) {
@@ -365,7 +366,11 @@ public class ClientController extends GameStateController {
 
 	private void doPositionSync(UUID entityId, Vector2D newPosition) {
 		Entity entity = model.getEntityById(entityId);
-		entity.setPosition(newPosition);
+		if (entity != null) {
+			entity.setPosition(newPosition);
+		} else {
+			System.err.println("Warning: no entity " + entityId + " for position sync");
+		}
 	}
 
 	private void doDisintegrateAsteroid(Asteroid asteroid) {

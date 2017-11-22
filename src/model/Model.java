@@ -143,7 +143,9 @@ public class Model extends NetworkObject {
 	}
 
 	public Entity getEntityById(UUID id) {
-		return entities.get(id);
+		synchronized(entities) {
+			return entities.get(id);
+		}
 	}
 
 	public void setGameState(GameState gameState) {

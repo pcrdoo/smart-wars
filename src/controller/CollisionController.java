@@ -1,6 +1,7 @@
 package controller;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 import main.Constants;
 import model.Asteroid;
@@ -45,7 +46,7 @@ public class CollisionController {
 	}
 
 	public ArrayList<Entity> checkBulletCollisions() {
-		ArrayList<Entity> impactedBullets = new ArrayList<>();
+		HashSet<Entity> impactedBullets = new HashSet<>();
 		for (Bullet bullet : model.getBullets()) {
 			if ((bullet.getBounces() > 0 || bullet.getOwner() == model.getPlayerOnSide(PlayerSide.RIGHT_PLAYER))
 					&& model.getPlayerOnSide(PlayerSide.LEFT_PLAYER).hitTest(bullet.getPosition())) {
@@ -80,7 +81,13 @@ public class CollisionController {
 				}
 			}
 		}
-		return impactedBullets;
+		
+		ArrayList<Entity> entityArray = new ArrayList<>();
+		for (Entity e : impactedBullets) {
+			entityArray.add(e);
+		}
+
+		return entityArray;
 	}
 
 	private void handleWormholeHit(Wormhole wormhole, Bullet bullet) {
