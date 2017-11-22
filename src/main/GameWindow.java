@@ -112,10 +112,33 @@ public class GameWindow extends GameFrame implements GameStarter {
 
 			oldDisplayMode = device.getDisplayMode();
 			try {
-				DisplayMode dm = new DisplayMode(1280, 720, DisplayMode.BIT_DEPTH_MULTI,
-						DisplayMode.REFRESH_RATE_UNKNOWN);
-				device.setFullScreenWindow(getWindow());
-				device.setDisplayMode(dm);
+				DisplayMode[] availableModes = device.getDisplayModes();
+				DisplayMode dm = null;
+				
+				for (DisplayMode mode : availableModes) {
+					if (mode.getWidth() == Constants.WINDOW_WIDTH && mode.getHeight() == Constants.WINDOW_HEIGHT) {
+						if (dm == null) {
+							dm = mode;
+						} else {
+							if (mode.getBitDepth() != DisplayMode.BIT_DEPTH_MULTI && mode.getBitDepth() > dm.getBitDepth()) {
+								dm = mode;
+							} else if (mode.getBitDepth() == dm.getBitDepth()) {
+								if (mode.getRefreshRate() != DisplayMode.REFRESH_RATE_UNKNOWN && mode.getRefreshRate() > dm.getRefreshRate()) {
+									dm = mode;
+								}
+							}
+						}
+					}
+				}
+				
+				if (dm != null) {
+					device.setFullScreenWindow(getWindow());
+					device.setDisplayMode(dm);
+				} else {
+					System.err.println("Could not find a suitable resolution. Falling back to windowed mode.");
+					fullscreen = false;
+				}
+				
 			} catch (Exception e) {
 				System.err.println("Setting fullscreen failed: " + e.getMessage());
 				System.exit(-1);
