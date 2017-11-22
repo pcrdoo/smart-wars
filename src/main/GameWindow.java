@@ -137,8 +137,8 @@ public class GameWindow extends GameFrame implements GameStarter {
 					device.setFullScreenWindow(getWindow());
 					device.setDisplayMode(dm);
 				} else {
-					System.err.println("Could not find a suitable resolution. Falling back to windowed mode.");
-					fullscreen = false;
+					System.err.println("Could not find a suitable resolution.");
+					System.exit(-1);
 				}
 				
 			} catch (Exception e) {
