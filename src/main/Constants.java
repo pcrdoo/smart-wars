@@ -35,7 +35,7 @@ public class Constants {
 	public static final double BULLET_COOLDOWN = 0.1;
 	public static final double BULLET_DAMAGE = 10;
 	public static final int MAX_BULLET_BOUNCES = 10;
-	public static final double BULLET_VELOCITY_CHANGE_COOLDOWN = 10;
+	public static final double BULLET_VELOCITY_CHANGE_COOLDOWN = 0.1;
 
 	// Asteroid
 	public static final double ASTEROID_SPAWN_PROBABILITY = 0.9; // per second
