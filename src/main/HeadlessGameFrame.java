@@ -3,9 +3,12 @@ package main;
 import java.awt.Color;
 import java.awt.Graphics2D;
 
+import javax.swing.SwingUtilities;
+
 import controller.ServerController;
 import memory.Pools;
 import model.Model;
+import multiplayer.NetworkException;
 import rafgfxlib.GameFrame;
 import view.ServerView;
 
@@ -15,7 +18,7 @@ public class HeadlessGameFrame implements GameStarter {
 	private long lastModelUpdateTime;
 
 	private boolean stopThread = false;
-	
+
 	private Model model;
 	private ServerController controller;
 	private Thread runnerThread;
@@ -47,23 +50,34 @@ public class HeadlessGameFrame implements GameStarter {
 		}
 	}
 	
-	public void startThread() {
+	public void stopThread() {
 		if (runnerThread != null && runnerThread.isAlive()) {
 			stopThread = true;
 			try {
 				runnerThread.join();
 			} catch (InterruptedException e) { }
+			stopThread = false;
 		}
-		
-		stopThread = false;
+	}
+	
+	public void startThread() {
+		stopThread();
 		runnerThread = new Thread(() -> {
 			threadWorker();
 		});
 		runnerThread.start();
 	}
+	
 	@Override
 	public void startGame() {
-		stopThread = true;
+		if (Thread.currentThread() == runnerThread) {
+			// Restarting the game from the runner thread just means we want to stop it.
+			// The main thread will join on it and then restart it properly.
+			stopThread = true;
+			return;
+		}
+		
+		stopThread();
 		Pools.repopulate(false);
 
 		model = new Model();
@@ -82,12 +96,24 @@ public class HeadlessGameFrame implements GameStarter {
 		startThread();
 		lastUpdateTime = System.nanoTime();
 		lastModelUpdateTime = System.nanoTime();
+		
+		// Pause until the game is finished.
+		try {
+			runnerThread.join();
+		} catch (InterruptedException e) { }
 	}
 	
 	public void update() {
-		controller.update((System.nanoTime() - lastUpdateTime) / 1.0e9);
-		lastUpdateTime = System.nanoTime();
-		model.update((System.nanoTime() - lastModelUpdateTime) / 1.0e9);
-		lastModelUpdateTime = System.nanoTime();
+		try {
+			controller.update((System.nanoTime() - lastUpdateTime) / 1.0e9);
+			lastUpdateTime = System.nanoTime();
+			model.update((System.nanoTime() - lastModelUpdateTime) / 1.0e9);
+			lastModelUpdateTime = System.nanoTime();
+		} catch (NetworkException e) {
+			System.err.println("Network error: " + e.getMessage());
+			System.err.println("Restarting game.");
+			
+			startGame();
+		}
 	}
 }

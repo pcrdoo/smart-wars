@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
+import javax.swing.JOptionPane;
 import javax.swing.SwingUtilities;
 
 import main.Constants;
@@ -68,6 +69,7 @@ public class ClientController extends GameStateController {
 	private Pipe serverPipe;
 	private ArrayList<PlayerSide> sidesToControl; // 1 on network, 2 on local
 	private GameMode gameMode;
+	private long lastServerMessageTime;
 
 	public ClientController(GameStarter gameStarter, ClientView view, Model model, GameMode gameMode,
 			InetSocketAddress serverAddress) {
@@ -131,6 +133,8 @@ public class ClientController extends GameStateController {
 
 		model.updatePlayerId(PlayerSide.LEFT_PLAYER, sideAssignment.getLeftPlayerUuid());
 		model.updatePlayerId(PlayerSide.RIGHT_PLAYER, sideAssignment.getRightPlayerUuid());
+		
+		lastServerMessageTime = System.nanoTime();
 	}
 
 	@Override
@@ -177,6 +181,12 @@ public class ClientController extends GameStateController {
 				affectBulletByWormholes(b);
 			}
 		}
+		
+		if ((System.nanoTime() - lastServerMessageTime) / 1e9 > Constants.CONNECTION_TIMEOUT) {
+			JOptionPane.showMessageDialog(null, "Timed out: server hasn't sent a message in " + Constants.CONNECTION_TIMEOUT + " seconds.", "Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
+		}
+		
 		serverPipe.writeScheduledMessages();
 	}
 
@@ -184,6 +194,10 @@ public class ClientController extends GameStateController {
 		ArrayList<Message> messages = new ArrayList<>();
 		while (serverPipe.hasMessages()) {
 			messages.add(serverPipe.readMessage(model));
+		}
+		
+		if (!messages.isEmpty()) {
+			lastServerMessageTime = System.nanoTime();
 		}
 
 		for (Message message : messages) {
@@ -292,9 +306,7 @@ public class ClientController extends GameStateController {
 			return -1;
 		}
 	}
-
-	// TODO This is why passing an object was a bad idea, definitely serialize on
-	// your own
+	
 	private void doAddEntity(Entity entity) {
 		EntityType type = EntityType.fromEntity(entity);
 		EntityView entityView = createViewForEntity(type, entity);

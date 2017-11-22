@@ -30,8 +30,48 @@ public class NetworkPipe implements Pipe {
 	private OutputStream outputStream;
 	private ArrayList<Message> buffer;
 	private Thread writerThread;
+	private NetworkException pipeException;
 
-	public NetworkPipe(Socket socket) {
+	public void writerThreadWorker() throws NetworkException {
+		while (pipeException == null) {
+			synchronized (buffer) {
+				try {
+					buffer.wait();
+
+					int fullSize = 0;
+					for (Message message : buffer) {
+						fullSize += message.getSerializedSize() + 1 /* for type */ + 4 /* for length */;
+					}
+
+					byte[] bytes = new byte[fullSize];
+					ByteBuffer buf = ByteBuffer.wrap(bytes);
+					for (Message message : buffer) {
+						buf.put((byte) message.getType().getNum());
+						buf.putInt(message.getSerializedSize());
+						message.serializeTo(buf);
+					}
+
+					buffer.clear();
+					outputStream.write(bytes, 0, bytes.length);
+
+				} catch (IOException e) {
+					throw new NetworkException("IOException in writerThread: " + e.getMessage());
+				} catch (InterruptedException e) {
+					throw new NetworkException("InterruptedException in writerThread: " + e.getMessage());
+				}
+			}
+		}
+	}
+	
+	private void checkWriterThreadErrors() throws NetworkException {
+		synchronized (this) {
+			if (pipeException != null) {
+				throw pipeException;
+			}
+		}
+	}
+	
+	public NetworkPipe(Socket socket) throws NetworkException {
 		try {
 			inputStream = new BufferedInputStream(socket.getInputStream());
 			outputStream = socket.getOutputStream();
@@ -40,58 +80,43 @@ public class NetworkPipe implements Pipe {
 			throw new NetworkException("IOException in initialize: " + e.getMessage());
 		}
 
-		writerThread = new Thread() {
-			public void run() {
-				while (true) {
-					synchronized (buffer) {
-						try {
-							buffer.wait();
-
-							int fullSize = 0;
-							for (Message message : buffer) {
-								fullSize += message.getSerializedSize() + 1 /* for type */ + 4 /* for length */;
-							}
-
-							byte[] bytes = new byte[fullSize];
-							ByteBuffer buf = ByteBuffer.wrap(bytes);
-							for (Message message : buffer) {
-								buf.put((byte) message.getType().getNum());
-								buf.putInt(message.getSerializedSize());
-								message.serializeTo(buf);
-							}
-
-							buffer.clear();
-							outputStream.write(bytes, 0, bytes.length);
-
-						} catch (IOException e) {
-							throw new NetworkException("IOException in writerThread: " + e.getMessage());
-						} catch (InterruptedException e) {
-							throw new NetworkException("InterruptedException in writerThread: " + e.getMessage());
-						}
-					}
+		NetworkPipe self = this;
+		pipeException = null;
+		writerThread = new Thread(() -> {
+			try {
+				writerThreadWorker();
+			} catch (NetworkException e) {
+				synchronized (self) {
+					pipeException = e;
 				}
 			}
-		};
+		});
 
 		writerThread.start();
 	}
 
 	@Override
-	public void scheduleMessageWrite(Message message) {
+	public void scheduleMessageWrite(Message message) throws NetworkException {
+		checkWriterThreadErrors();
+		
 		synchronized (buffer) {
 			buffer.add(message);
 		}
 	}
 
 	@Override
-	public void writeScheduledMessages() {
+	public void writeScheduledMessages() throws NetworkException {
+		checkWriterThreadErrors();
+		
 		synchronized (buffer) {
 			buffer.notify();
 		}
 	}
 
 	@Override
-	public boolean hasMessages() {
+	public boolean hasMessages() throws NetworkException {
+		checkWriterThreadErrors();
+		
 		try {
 			return inputStream.available() > 0;
 		} catch (IOException e) {
@@ -132,7 +157,7 @@ public class NetworkPipe implements Pipe {
 	}
 
 	@Override
-	public Message readMessage(Model model) {
+	public Message readMessage(Model model) throws NetworkException {
 		try {
 			byte[] header = new byte[1 + 4];
 			inputStream.read(header, 0, 1 + 4);

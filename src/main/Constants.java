@@ -176,6 +176,7 @@ public class Constants {
 	// Multiplayer
 	public static final int SERVER_PORT = 24570;
 	public static final double LOCATION_UPDATE_TIME = 1.0;
+	public static final int CONNECTION_TIMEOUT = 30;
 	
 }
 

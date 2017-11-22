@@ -128,10 +128,8 @@ public class ServerController extends GameStateController {
 					broadcaster.broadcastNewGameStarting();
 				}
 
-				SwingUtilities.invokeLater(() -> {
-					gameStarter.startGame(); // start a new game
-				});
-
+				gameStarter.startGame();
+				
 				OpenPipes.getInstance().writeScheduledMessagesOnAll();
 			}
 			return;

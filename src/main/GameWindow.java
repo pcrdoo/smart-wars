@@ -6,7 +6,10 @@ import java.awt.Graphics2D;
 import java.awt.GraphicsDevice;
 import java.awt.GraphicsEnvironment;
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.net.InetSocketAddress;
+
+import javax.swing.JOptionPane;
 
 import controller.ClientController;
 import controller.ServerController;
@@ -18,6 +21,7 @@ import memory.Pools;
 import model.Model;
 import multiplayer.LocalMessageQueue;
 import multiplayer.LocalPipe;
+import multiplayer.NetworkException;
 import rafgfxlib.GameFrame;
 import util.ImageCache;
 import view.ClientView;
@@ -109,8 +113,8 @@ public class GameWindow extends GameFrame implements GameStarter {
 			// Run game thread after sync
 			try {
 				controller.setUpConnections();
-			} catch (Exception ex) {
-				System.err.println("Could not connect to the server: " + ex.getMessage());
+			} catch (IOException ex) {
+				System.err.println("Could not connect to the server: " + ex);
 				System.exit(-1);
 			}
 		} else {
@@ -164,6 +168,15 @@ public class GameWindow extends GameFrame implements GameStarter {
 
 	@Override
 	public void update() {
+		try {
+			doUpdate();
+		} catch (NetworkException e) {
+			JOptionPane.showMessageDialog(null, "A network error has occurred: " + e.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
+			System.exit(-1);
+		}
+	}
+	
+	public void doUpdate() {
 		Measurement ms;
 		PerformanceMonitor m = PerformanceMonitor.getInstance();
 		if (gameMode == GameMode.LOCAL) {
